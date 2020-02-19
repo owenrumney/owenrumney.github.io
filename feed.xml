@@ -1,0 +1,197 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Owen Rumney Blog</title>
+    <description>Bits of blogging by Owen Rumney</description>
+    <link>https://www.owenrumney.co.uk/</link>
+    <atom:link href="https://www.owenrumney.co.uk/feed.xml" rel="self" type="application/rss+xml"/>
+    <pubDate>Wed, 19 Feb 2020 17:33:03 +0000</pubDate>
+    <lastBuildDate>Wed, 19 Feb 2020 17:33:03 +0000</lastBuildDate>
+    <generator>Jekyll v4.0.0</generator>
+    
+      <item>
+        <title>Using the AWS waiter</title>
+        <description>&lt;p&gt;The AWS SDK provides a number of &lt;code class=&quot;highlighter-rouge&quot;&gt;waiters&lt;/code&gt; that allow you to block your code while waiting for a process to complete. One that we make use of in our managed ECS container rollout is the &lt;code class=&quot;highlighter-rouge&quot;&gt;services_stable&lt;/code&gt; waiter. This will wait for a defined amount of time for an ECS service to become stable, or raise an exception.&lt;/p&gt; &lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;c1&quot;&gt;# bring in the boto3 import &lt;/span&gt; &lt;span class=&quot;kn&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;boto3&lt;/span&gt; &lt;span class=&quot;kn&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;botocore&lt;/span&gt; &lt;span class=&quot;c1&quot;&gt;# create a session object &lt;/span&gt; &lt;span class=&quot;n&quot;&gt;session&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;boto3&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;session&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Session&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;c1&quot;&gt;#...</description>
+        <pubDate>Wed, 19 Feb 2020 17:05:15 +0000</pubDate>
+        <link>https://www.owenrumney.co.uk/using-the-aws-waiter/</link>
+        <guid isPermaLink="true">https://www.owenrumney.co.uk/using-the-aws-waiter/</guid>
+        
+        <category>aws</category>
+        
+        <category>python</category>
+        
+        <category>lambda</category>
+        
+        
+      </item>
+    
+      <item>
+        <title>Using Docker Multi stage build</title>
+        <description>&lt;p&gt;I have been using using Docker and Kubernetes off and on for work and personal for a few years now, but I was recently shown a feature in the Docker file that I wasn’t aware of.&lt;/p&gt; &lt;p&gt;A bit of background - I was building a Go application that would sit alongside Squid to perform some updates. Although I was building the appliction with &lt;code class=&quot;highlighter-rouge&quot;&gt;GOOS&lt;/code&gt; configured, the created Docker image would only work on my Macbook. Setting &lt;code class=&quot;highlighter-rouge&quot;&gt;GOARCH&lt;/code&gt; also fixed it, but this is more interesting and certainly more portable solution.&lt;/p&gt; &lt;h2 id=&quot;multi-stage&quot;&gt;Multi Stage&lt;/h2&gt; &lt;p&gt;Since version &lt;a href=&quot;https://docs.docker.com/engine/#17061-ee-1&quot;&gt;17.06.1-ee-1&lt;/a&gt;, Docker...</description>
+        <pubDate>Sat, 25 Jan 2020 12:10:59 +0000</pubDate>
+        <link>https://www.owenrumney.co.uk/using-docker-as-a-build-env/</link>
+        <guid isPermaLink="true">https://www.owenrumney.co.uk/using-docker-as-a-build-env/</guid>
+        
+        <category>go</category>
+        
+        <category>docker</category>
+        
+        
+        <category>Programming</category>
+        
+        <category>SysAdmin</category>
+        
+      </item>
+    
+      <item>
+        <title>Moving AWS Diagrams, aka Docker for cheapskates</title>
+        <description>&lt;p&gt;Last year I created a diagram tool specifically for AWS diagrams. It was essentially a hack of the underlying code draw.io uses.&lt;/p&gt; &lt;p&gt;The reality is, if you’re going to be doing diagrams you might as well use the proper draw.io app but I wanted to provide a way that didn’t need signup or any personal data being handed over. (I did add analytics so I could see if it was being used).&lt;/p&gt; &lt;h2 id=&quot;the-setup&quot;&gt;The Setup&lt;/h2&gt; &lt;p&gt;I have been running the application (Java and HTML/JS/CSS) as a Docker container in Amazon Fargate for the past 6 months or so, this was...</description>
+        <pubDate>Sat, 11 Jan 2020 00:00:00 +0000</pubDate>
+        <link>https://www.owenrumney.co.uk/moving-aws-diagrams-as-a-cheapsake/</link>
+        <guid isPermaLink="true">https://www.owenrumney.co.uk/moving-aws-diagrams-as-a-cheapsake/</guid>
+        
+        <category>aws</category>
+        
+        <category>docker</category>
+        
+        <category>diagrams</category>
+        
+        <category>nginx</category>
+        
+        <category>letsencrypt</category>
+        
+        
+        <category>Amazon Web Services</category>
+        
+      </item>
+    
+      <item>
+        <title>Adding Help to a Makefile</title>
+        <description>&lt;p&gt;Sometimes you inherit or even create a huge &lt;code class=&quot;highlighter-rouge&quot;&gt;Makefile&lt;/code&gt; which is unwieldly and difficult to understand. The longer it is, the more complicated it can be to find out which targets are available and what they do.&lt;/p&gt; &lt;p&gt;This post covers an effective way to add a help target to a &lt;code class=&quot;highlighter-rouge&quot;&gt;Makefile&lt;/code&gt; which will give an overview of what targets are available.&lt;/p&gt; &lt;h2 id=&quot;basic-makefile&quot;&gt;Basic Makefile&lt;/h2&gt; &lt;p&gt;I’m going to use a really basic but real &lt;code class=&quot;highlighter-rouge&quot;&gt;Makefile&lt;/code&gt; as a starting example. It runs a suite of tests, creates a dockerised environment for testing against or can stop the env.&lt;/p&gt; &lt;div...</description>
+        <pubDate>Mon, 16 Dec 2019 00:00:00 +0000</pubDate>
+        <link>https://www.owenrumney.co.uk/help-in-make-file/</link>
+        <guid isPermaLink="true">https://www.owenrumney.co.uk/help-in-make-file/</guid>
+        
+        <category>make</category>
+        
+        <category>documentation</category>
+        
+        
+        <category>SysAdmin</category>
+        
+      </item>
+    
+      <item>
+        <title>Combining rows into an array in pyspark</title>
+        <description>&lt;h2 id=&quot;overview&quot;&gt;Overview&lt;/h2&gt; &lt;p&gt;I’ve just spent a bit of time trying to work out how to group a Spark Dataframe by a given column then aggregate up the rows into a single &lt;code class=&quot;highlighter-rouge&quot;&gt;ArrayType&lt;/code&gt; column.&lt;/p&gt; &lt;p&gt;Given the input;&lt;/p&gt; &lt;table&gt; &lt;thead&gt; &lt;tr&gt; &lt;th&gt;transaction_id&lt;/th&gt; &lt;th&gt;item&lt;/th&gt; &lt;/tr&gt; &lt;/thead&gt; &lt;tbody&gt; &lt;tr&gt; &lt;td&gt;1&lt;/td&gt; &lt;td&gt;a&lt;/td&gt; &lt;/tr&gt; &lt;tr&gt; &lt;td&gt;1&lt;/td&gt; &lt;td&gt;b&lt;/td&gt; &lt;/tr&gt; &lt;tr&gt; &lt;td&gt;1&lt;/td&gt; &lt;td&gt;c&lt;/td&gt; &lt;/tr&gt; &lt;tr&gt; &lt;td&gt;1&lt;/td&gt; &lt;td&gt;d&lt;/td&gt; &lt;/tr&gt; &lt;tr&gt; &lt;td&gt;2&lt;/td&gt; &lt;td&gt;a&lt;/td&gt; &lt;/tr&gt; &lt;tr&gt; &lt;td&gt;2&lt;/td&gt; &lt;td&gt;d&lt;/td&gt; &lt;/tr&gt; &lt;tr&gt; &lt;td&gt;3&lt;/td&gt; &lt;td&gt;c&lt;/td&gt; &lt;/tr&gt; &lt;tr&gt; &lt;td&gt;4&lt;/td&gt; &lt;td&gt;b&lt;/td&gt; &lt;/tr&gt; &lt;tr&gt; &lt;td&gt;4&lt;/td&gt; &lt;td&gt;c&lt;/td&gt; &lt;/tr&gt; &lt;tr&gt; &lt;td&gt;4&lt;/td&gt; &lt;td&gt;d&lt;/td&gt; &lt;/tr&gt; &lt;/tbody&gt; &lt;/table&gt; &lt;p&gt;I want to turn that into the following;&lt;/p&gt; &lt;table&gt; &lt;thead&gt; &lt;tr&gt; &lt;th&gt;transaction_id&lt;/th&gt; &lt;th&gt;items&lt;/th&gt;...</description>
+        <pubDate>Thu, 30 May 2019 00:00:00 +0100</pubDate>
+        <link>https://www.owenrumney.co.uk/pyspark-opposite-of-explode/</link>
+        <guid isPermaLink="true">https://www.owenrumney.co.uk/pyspark-opposite-of-explode/</guid>
+        
+        <category>pyspark</category>
+        
+        <category>python</category>
+        
+        <category>spark</category>
+        
+        <category>collect_list</category>
+        
+        <category>explode</category>
+        
+        
+        <category>Programming</category>
+        
+      </item>
+    
+      <item>
+        <title>Testing private methods with ScalaTest</title>
+        <description>&lt;h2 id=&quot;overview&quot;&gt;Overview&lt;/h2&gt; &lt;p&gt;As part of my journey into using Scala I have had to get used to the ScalaTest and the wealth of functionality it offers.&lt;/p&gt; &lt;p&gt;One of the enduring headaches with unit testing is find a clean way to test private methods without being left feeling that you’ve somehow compromised the solution in order to fully test.&lt;/p&gt; &lt;h2 id=&quot;example&quot;&gt;Example&lt;/h2&gt; &lt;p&gt;I’ve used an example which is reasonably common so easy to see the usefulness of the &lt;a href=&quot;http://doc.scalatest.org/3.0.1/#org.scalatest.PrivateMethodTester&quot;&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;PrivateMethodTester&lt;/code&gt;&lt;/a&gt; trait.&lt;/p&gt; &lt;p&gt;The example is that of a file loader where the source might be local, or S3 or similar. In this...</description>
+        <pubDate>Wed, 29 May 2019 00:00:00 +0100</pubDate>
+        <link>https://www.owenrumney.co.uk/testing-private-methods/</link>
+        <guid isPermaLink="true">https://www.owenrumney.co.uk/testing-private-methods/</guid>
+        
+        <category>scalatest</category>
+        
+        <category>scala</category>
+        
+        <category>testing</category>
+        
+        
+        <category>Programming</category>
+        
+      </item>
+    
+      <item>
+        <title>Databricks Single SignOn with Azure Active Directory</title>
+        <description>&lt;h2 id=&quot;overview&quot;&gt;Overview&lt;/h2&gt; &lt;p&gt;At my current workplace we are using Databricks with much success. Having recently activated the Security Operations Package I was keen to implement the Single SignOn (SSO) functionality.&lt;/p&gt; &lt;p&gt;The documentation provided by Databricks doesn’t seem to cover integrating with Azure Active Directory as a SAML 2.0 Identity Provider and it took some effort to work out how to do it.&lt;/p&gt; &lt;h2 id=&quot;simple-steps&quot;&gt;Simple Steps&lt;/h2&gt; &lt;ol&gt; &lt;li&gt; &lt;p&gt;Log into Azure Portal and from the menu on the left, select &lt;code class=&quot;highlighter-rouge&quot;&gt;Azure Active Directory&lt;/code&gt; then &lt;code class=&quot;highlighter-rouge&quot;&gt;Enterprise applications&lt;/code&gt; from the secondary menu. &lt;img src=&quot;/images/azure_ad_enterprise_apps.png&quot; alt=&quot;Azure Active Directory - Enterprise Apps&quot; /&gt;&lt;/p&gt;...</description>
+        <pubDate>Thu, 23 May 2019 00:00:00 +0100</pubDate>
+        <link>https://www.owenrumney.co.uk/databricks_with_azure_ad/</link>
+        <guid isPermaLink="true">https://www.owenrumney.co.uk/databricks_with_azure_ad/</guid>
+        
+        <category>platform</category>
+        
+        <category>azure</category>
+        
+        <category>databrick</category>
+        
+        <category>authentication</category>
+        
+        <category>saml</category>
+        
+        
+        <category>Spark</category>
+        
+      </item>
+    
+      <item>
+        <title>CIDR Cheatsheet for available IP Address</title>
+        <description>&lt;p&gt;This is less of a post and more of a CIDR to mask cheatsheet to remind me how many IPs I get for a given block.&lt;/p&gt; &lt;table&gt; &lt;thead&gt; &lt;tr&gt; &lt;th&gt;CIDR&lt;/th&gt; &lt;th style=&quot;text-align: left&quot;&gt;Subnet&lt;/th&gt; &lt;th style=&quot;text-align: right&quot;&gt;Total IPs&lt;/th&gt; &lt;th style=&quot;text-align: right&quot;&gt;Usable IPs&lt;/th&gt; &lt;/tr&gt; &lt;/thead&gt; &lt;tbody&gt; &lt;tr&gt; &lt;td&gt;/32&lt;/td&gt; &lt;td style=&quot;text-align: left&quot;&gt;255.255.255.255&lt;/td&gt; &lt;td style=&quot;text-align: right&quot;&gt;1&lt;/td&gt; &lt;td style=&quot;text-align: right&quot;&gt;1&lt;/td&gt; &lt;/tr&gt; &lt;tr&gt; &lt;td&gt;/31&lt;/td&gt; &lt;td style=&quot;text-align: left&quot;&gt;255.255.255.254&lt;/td&gt; &lt;td style=&quot;text-align: right&quot;&gt;2&lt;/td&gt; &lt;td style=&quot;text-align: right&quot;&gt;0&lt;/td&gt; &lt;/tr&gt; &lt;tr&gt; &lt;td&gt;/30&lt;/td&gt; &lt;td style=&quot;text-align: left&quot;&gt;255.255.255.252&lt;/td&gt; &lt;td style=&quot;text-align: right&quot;&gt;4&lt;/td&gt; &lt;td style=&quot;text-align: right&quot;&gt;2&lt;/td&gt; &lt;/tr&gt; &lt;tr&gt; &lt;td&gt;/29&lt;/td&gt; &lt;td style=&quot;text-align: left&quot;&gt;255.255.255.248&lt;/td&gt; &lt;td style=&quot;text-align: right&quot;&gt;8&lt;/td&gt; &lt;td style=&quot;text-align: right&quot;&gt;6&lt;/td&gt; &lt;/tr&gt; &lt;tr&gt; &lt;td&gt;/28&lt;/td&gt; &lt;td style=&quot;text-align: left&quot;&gt;255.255.255.240&lt;/td&gt; &lt;td style=&quot;text-align: right&quot;&gt;16&lt;/td&gt;...</description>
+        <pubDate>Tue, 30 Apr 2019 00:00:00 +0100</pubDate>
+        <link>https://www.owenrumney.co.uk/cidr-ips-cheatsheet/</link>
+        <guid isPermaLink="true">https://www.owenrumney.co.uk/cidr-ips-cheatsheet/</guid>
+        
+        <category>networking</category>
+        
+        <category>cheatsheet</category>
+        
+        
+      </item>
+    
+      <item>
+        <title>git alias for concise history</title>
+        <description>&lt;p&gt;This is pretty short post. H/T to &lt;a href=&quot;https://twitter.com/prokopp&quot;&gt;@prokopp&lt;/a&gt; for telling me know about this.&lt;/p&gt; &lt;p&gt;Git allows you to add aliases in your global config - this is the first one I’ve actually added and all it does is a concise, clearly formatted git log.&lt;/p&gt; &lt;p&gt;To add it to you git global config, just run the command below in your terminal&lt;/p&gt; &lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;git config --global alias.hist &quot;log --pretty=format:'%h %ad | %s%d [%an]' --graph --date=short&quot; &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt; &lt;p&gt;An example of the output from this site’s repository in my github account is below.&lt;/p&gt; &lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;* 8295bc3 2019-03-13 | update...</description>
+        <pubDate>Wed, 03 Apr 2019 00:00:00 +0100</pubDate>
+        <link>https://www.owenrumney.co.uk/concise-git-log/</link>
+        <guid isPermaLink="true">https://www.owenrumney.co.uk/concise-git-log/</guid>
+        
+        <category>git</category>
+        
+        <category>alias</category>
+        
+        <category>nice</category>
+        
+        
+        <category>Git</category>
+        
+      </item>
+    
+      <item>
+        <title>How it works - www.aws-glossary.info</title>
+        <description>&lt;p&gt;I recently posted an entry &lt;a href=&quot;/aws-glossary-info/&quot;&gt;announcing www.aws-glossary.info&lt;/a&gt;. In this post I want to cover how it actually works.&lt;/p&gt; &lt;h2 id=&quot;basic-architecture&quot;&gt;Basic Architecture&lt;/h2&gt; &lt;p&gt;The logical diagram below details the basic structure of the application. The core components are;&lt;/p&gt; &lt;table&gt; &lt;thead&gt; &lt;tr&gt; &lt;th style=&quot;text-align: left&quot;&gt;Component&lt;/th&gt; &lt;th style=&quot;text-align: left&quot;&gt;Purpose&lt;/th&gt; &lt;/tr&gt; &lt;/thead&gt; &lt;tbody&gt; &lt;tr&gt; &lt;td style=&quot;text-align: left&quot;&gt;Github&lt;/td&gt; &lt;td style=&quot;text-align: left&quot;&gt;Static content stored in github&lt;/td&gt; &lt;/tr&gt; &lt;tr&gt; &lt;td style=&quot;text-align: left&quot;&gt;CodePipeline&lt;/td&gt; &lt;td style=&quot;text-align: left&quot;&gt;On commit to the master branch of the github repo - UI components deployed to S3&lt;/td&gt; &lt;/tr&gt; &lt;tr&gt; &lt;td style=&quot;text-align: left&quot;&gt;S3&lt;/td&gt; &lt;td style=&quot;text-align: left&quot;&gt;Static content for the application is stored in an S3...</description>
+        <pubDate>Wed, 27 Feb 2019 00:00:00 +0000</pubDate>
+        <link>https://www.owenrumney.co.uk/aws-glossary-architecture/</link>
+        <guid isPermaLink="true">https://www.owenrumney.co.uk/aws-glossary-architecture/</guid>
+        
+        <category>aws</category>
+        
+        <category>architecture</category>
+        
+        <category>glossary</category>
+        
+        
+        <category>Amazon Web Services</category>
+        
+      </item>
+    
+  </channel>
+</rss>
