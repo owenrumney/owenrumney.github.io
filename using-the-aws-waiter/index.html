@@ -199,7 +199,9 @@
 
 <span class="c1"># trigger an update to the service 
 </span>
-<span class="n">ecs</span><span class="o">.</span><span class="n">update_service</span><span class="p">(</span><span class="n">cluster</span><span class="o">=</span><span class="s">'myCluster'</span><span class="p">,</span> <span class="n">service</span><span class="o">=</span><span class="s">'myService'</span><span class="p">,</span> <span class="n">taskDefinition</span><span class="o">=</span><span class="s">'myServiceTaskDefinition:10'</span><span class="p">)</span>
+<span class="n">ecs</span><span class="o">.</span><span class="n">update_service</span><span class="p">(</span><span class="n">cluster</span><span class="o">=</span><span class="s">'myCluster'</span><span class="p">,</span> 
+									 <span class="n">service</span><span class="o">=</span><span class="s">'myService'</span><span class="p">,</span> 
+                   <span class="n">taskDefinition</span><span class="o">=</span><span class="s">'myServiceTaskDefinition:10'</span><span class="p">)</span>
 
 <span class="c1"># create a waiter
 </span>
@@ -213,15 +215,17 @@
 	<span class="n">waiter</span><span class="o">.</span><span class="n">wait</span><span class="p">(</span><span class="n">cluster</span><span class="o">=</span><span class="s">'myCluster'</span><span class="p">,</span> <span class="n">services</span><span class="o">=</span><span class="p">[</span><span class="s">'myService'</span><span class="p">]</span>
 
 <span class="k">except</span> <span class="n">botocore</span><span class="o">.</span><span class="n">exceptions</span><span class="o">.</span><span class="n">WaitError</span> <span class="k">as</span> <span class="n">wex</span><span class="p">:</span>
-	<span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s">'The service '</span><span class="n">myService</span><span class="s">' didn'</span><span class="n">t</span> <span class="n">become</span> <span class="n">stable</span> <span class="ow">in</span> <span class="n">the</span> <span class="n">allowed</span> <span class="n">time</span><span class="o">.</span> <span class="p">{}</span><span class="s">'.format(wex))</span><span class="err">
+	<span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s">'The service '</span><span class="n">myService</span><span class="s">' didn'</span><span class="n">t</span> <span class="n">become</span> <span class="n">stable</span><span class="o">.</span> <span class="p">{}</span><span class="s">'.format(wex))</span><span class="err">
 
 </span></code></pre></div></div>
 
-<p>The Boto3 documentation has the available waiters for each service that supports them, for example the <code class="highlighter-rouge">ecs</code> waiters <a href="https://boto3.amazonaws.com/v1/documentation/api/1.9.42/reference/services/ecs.html#waiters">can be found here</a>.</p>
+<p>The Boto3 documentation has the available waiters for each service that supports them, for example the <code class="highlighter-rouge">ecs</code> waiters <a href="https://boto3.amazonaws.com/v1/documentation/api/1.9.42/reference/services/ecs.html#waiters">can be found here</a>.{:target=”_blank”}</p>
 
 <p>By default, the <code class="highlighter-rouge">ServicesStable</code> waiter will check every 15 seconds for 40 attempts. You can pass overrides into the wait call if required;</p>
 
-<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">waiter</span><span class="o">.</span><span class="n">wait</span><span class="p">(</span><span class="n">cluste_name</span><span class="o">=</span><span class="s">'myCluster'</span><span class="p">,</span> <span class="n">services</span><span class="o">=</span><span class="p">[</span><span class="s">'myService'</span><span class="p">],</span> <span class="n">WaiterConfig</span><span class="o">=</span><span class="p">{</span><span class="s">'Delay'</span><span class="p">:</span> <span class="mi">30</span><span class="p">,</span> <span class="s">'MaxAttempts'</span><span class="p">:</span> <span class="mi">10</span><span class="p">})</span>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">waiter</span><span class="o">.</span><span class="n">wait</span><span class="p">(</span><span class="n">cluste_name</span><span class="o">=</span><span class="s">'myCluster'</span><span class="p">,</span> 
+						<span class="n">services</span><span class="o">=</span><span class="p">[</span><span class="s">'myService'</span><span class="p">],</span> 
+					  <span class="n">WaiterConfig</span><span class="o">=</span><span class="p">{</span><span class="s">'Delay'</span><span class="p">:</span> <span class="mi">30</span><span class="p">,</span> <span class="s">'MaxAttempts'</span><span class="p">:</span> <span class="mi">10</span><span class="p">})</span>
 </code></pre></div></div>
 
 <p>This will wait for 5 minutes (300 seconds) for the service to become stable before throwing a <code class="highlighter-rouge">botocore.exceptions.WaitError</code> if not successful.</p>
