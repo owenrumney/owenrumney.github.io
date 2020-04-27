@@ -208,7 +208,7 @@
 <span class="k">using</span> <span class="nn">log4net</span><span class="p">;</span>
 <span class="k">using</span> <span class="nn">System</span><span class="p">;</span>
 <span class="k">using</span> <span class="nn">System.Configuration</span><span class="p">;</span>
- 
+
 <span class="k">namespace</span> <span class="nn">AwsCredentialsExample.Credentials</span>
 <span class="p">{</span>
     <span class="k">public</span> <span class="k">class</span> <span class="nc">ExternalRefreshingAWSCredentials</span> <span class="p">:</span> <span class="n">RefreshingAWSCredentials</span>
@@ -246,20 +246,20 @@
               <span class="n">Logger</span><span class="p">.</span><span class="nf">Info</span><span class="p">(</span><span class="kt">string</span><span class="p">.</span><span class="nf">Format</span><span class="p">(</span><span class="s">"Credential file profile is {0}"</span><span class="p">,</span> <span class="n">credentialFileProfile</span><span class="p">));</span>
             <span class="n">credentialRefreshState</span> <span class="p">=</span> <span class="nf">GenerateNewCredentials</span><span class="p">();</span>
         <span class="p">}</span>
- 
+
         <span class="k">public</span> <span class="k">override</span> <span class="k">void</span> <span class="nf">ClearCredentials</span><span class="p">()</span>
         <span class="p">{</span>
             <span class="n">Logger</span><span class="p">.</span><span class="nf">Info</span><span class="p">(</span><span class="s">"Clearing the credentials"</span><span class="p">);</span>
             <span class="n">credentialRefreshState</span> <span class="p">=</span> <span class="k">null</span><span class="p">;</span>
         <span class="p">}</span>
- 
+
         <span class="k">protected</span> <span class="k">override</span> <span class="n">CredentialsRefreshState</span> <span class="nf">GenerateNewCredentials</span><span class="p">()</span>
         <span class="p">{</span>
             <span class="n">Logger</span><span class="p">.</span><span class="nf">Info</span><span class="p">(</span><span class="kt">string</span><span class="p">.</span><span class="nf">Format</span><span class="p">(</span><span class="s">"Generating credentials, valid for {0} minutes"</span><span class="p">,</span> <span class="n">refreshMinutes</span><span class="p">));</span>
             <span class="kt">var</span> <span class="n">credFile</span> <span class="p">=</span> <span class="k">new</span> <span class="nf">StoredProfileAWSCredentials</span><span class="p">(</span><span class="n">credentialFileProfile</span><span class="p">,</span> <span class="n">credentialFileLocation</span><span class="p">);</span>
             <span class="k">return</span> <span class="k">new</span> <span class="nf">CredentialsRefreshState</span><span class="p">(</span><span class="n">credFile</span><span class="p">.</span><span class="nf">GetCredentials</span><span class="p">(),</span> <span class="n">DateTime</span><span class="p">.</span><span class="n">Now</span><span class="p">.</span><span class="nf">AddMinutes</span><span class="p">(</span><span class="n">refreshMinutes</span><span class="p">));</span>
         <span class="p">}</span>
- 
+
         <span class="k">public</span> <span class="k">override</span> <span class="n">ImmutableCredentials</span> <span class="nf">GetCredentials</span><span class="p">()</span>
         <span class="p">{</span>
             <span class="k">if</span> <span class="p">(</span><span class="n">credentialRefreshState</span> <span class="p">==</span> <span class="k">null</span> <span class="p">||</span> <span class="n">credentialRefreshState</span><span class="p">.</span><span class="n">Expiration</span> <span class="p">&lt;</span> <span class="n">DateTime</span><span class="p">.</span><span class="n">Now</span><span class="p">)</span>
@@ -287,6 +287,13 @@
 
 <div class="language-csharp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kt">var</span> <span class="n">s3Client</span> <span class="p">=</span> <span class="k">new</span> <span class="nf">AmazonS3Client</span><span class="p">(</span><span class="n">ExternalRefreshingAWSCredentials</span><span class="p">.</span><span class="n">Credentials</span><span class="p">);</span>
 </code></pre></div></div>
+
+
+            <div class="post-content bs-callout bs-callout-info">
+Are you confused about the ever growing number of services in AWS and Azure? Why not checkout these super useful glossaries that are always up to date!
+<br />There is one for <a href="https://tools.owenrumney.co.uk/aws/index.html">AWS</a>
+and one for <a href="https://tools.owenrumney.co.uk/azure/index.html">Azure</a>
+</div>
 
             <div class="tags">
                 

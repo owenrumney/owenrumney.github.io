@@ -182,21 +182,28 @@
     <section class="post" itemscope itemtype="http://schema.org/BlogPosting">
 
         <article role="article" id="scroll" class="post-content" itemprop="articleBody">
-            <p><strong><em>NOTE: Creating a keytab file is easy enough but I have to refresh myself each time so I thought I would document it in a blog post.</em></strong></p>
+            <div class="post-content bs-callout bs-callout-info">
+NOTE: Creating a keytab is easy this is just to remind me.
+
+</div>
 
 <h2 id="assumptions">Assumptions</h2>
+
 <p>I’m assuming for anyone who is doing this that you have your <code class="highlighter-rouge">/etc/krb5.conf</code> in order and that isn’t going to get in your way.</p>
 
 <p>One thing you’re going to want to know is what your permitted and default <code class="highlighter-rouge">enctypes</code> and the realm are from this file. In my case I’m going to use <code class="highlighter-rouge">aes128-cts-hmac-sha1-96</code> and my realm is <code class="highlighter-rouge">DPE.INTERNAL</code>.</p>
 
 <h2 id="creating-the-keytab-file">Creating the keytab file</h2>
+
 <p>To create the keytab file you’re going to need <code class="highlighter-rouge">ktutil</code> (and a number of other <code class="highlighter-rouge">kxxxxxx</code> commands)</p>
 
 <p><strong>RHEL/Centos</strong></p>
+
 <div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>sudo yum install krb5-workstation
 </code></pre></div></div>
 
 <p><strong>Ubuntu</strong></p>
+
 <div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>sudo apt-get install krb5-user
 </code></pre></div></div>
 
@@ -227,6 +234,7 @@ user@DPE.INTERNAL: kvno <span class="o">=</span> 1
 <p>The <code class="highlighter-rouge">-e</code> refers to the enctype mentioned earlier. This needs to be one of those that are permitted in your <code class="highlighter-rouge">krb5.conf</code> file so you’re using an accepted and appropriate encryption.</p>
 
 <h2 id="testing-the-key">Testing the Key</h2>
+
 <p>We can now test the keytab for successfully login</p>
 
 <div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>kinit <span class="nt">-kt</span> user.keytab user@DPE.INTERNAL
@@ -244,6 +252,13 @@ Valid Starting           Expires                Service principal
 </code></pre></div></div>
 
 <p>To clear out the ticket, you can use <code class="highlighter-rouge">kdestroy</code>. This will remove all current authentications.</p>
+
+
+            <div class="post-content bs-callout bs-callout-info">
+Are you confused about the ever growing number of services in AWS and Azure? Why not checkout these super useful glossaries that are always up to date!
+<br />There is one for <a href="https://tools.owenrumney.co.uk/aws/index.html">AWS</a>
+and one for <a href="https://tools.owenrumney.co.uk/azure/index.html">Azure</a>
+</div>
 
             <div class="tags">
                 

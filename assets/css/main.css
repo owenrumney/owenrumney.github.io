@@ -10,6 +10,7 @@ body {
   margin: 0;
 }
 
+
 article,
 aside,
 details,
@@ -1056,6 +1057,7 @@ body {
 .post-content h4,
 .post-content ul,
 .post-content ol,
+.post-content div,
 .post-content .tags,
 .post-content iframe {
   *zoom: 1;
@@ -1086,6 +1088,7 @@ body {
 .post-content h4:before,
 .post-content ul:before,
 .post-content ol:before,
+.post-content div:before,
 .post-content .tags:before,
 .post-content iframe:before,
 .post-content p:after,
@@ -1095,6 +1098,7 @@ body {
 .post-content h4:after,
 .post-content ul:after,
 .post-content ol:after,
+.post-content div:after,
 .post-content .tags:after,
 .post-content iframe:after {
   content: "";
@@ -1108,6 +1112,7 @@ body {
 .post-content h4:after,
 .post-content ul:after,
 .post-content ol:after,
+.post-content div:after,
 .post-content .tags:after,
 .post-content iframe:after {
   clear: both;

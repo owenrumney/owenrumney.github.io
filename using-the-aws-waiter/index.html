@@ -197,10 +197,10 @@
 </span>
 <span class="n">ecs</span> <span class="o">=</span> <span class="n">session</span><span class="o">.</span><span class="n">client</span><span class="p">(</span><span class="s">'ecs'</span><span class="p">)</span>
 
-<span class="c1"># trigger an update to the service 
+<span class="c1"># trigger an update to the service
 </span>
-<span class="n">ecs</span><span class="o">.</span><span class="n">update_service</span><span class="p">(</span><span class="n">cluster</span><span class="o">=</span><span class="s">'myCluster'</span><span class="p">,</span> 
-									 <span class="n">service</span><span class="o">=</span><span class="s">'myService'</span><span class="p">,</span> 
+<span class="n">ecs</span><span class="o">.</span><span class="n">update_service</span><span class="p">(</span><span class="n">cluster</span><span class="o">=</span><span class="s">'myCluster'</span><span class="p">,</span>
+									 <span class="n">service</span><span class="o">=</span><span class="s">'myService'</span><span class="p">,</span>
                    <span class="n">taskDefinition</span><span class="o">=</span><span class="s">'myServiceTaskDefinition:10'</span><span class="p">)</span>
 
 <span class="c1"># create a waiter
@@ -223,14 +223,21 @@
 
 <p>By default, the <code class="highlighter-rouge">ServicesStable</code> waiter will check every 15 seconds for 40 attempts. You can pass overrides into the wait call if required;</p>
 
-<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">waiter</span><span class="o">.</span><span class="n">wait</span><span class="p">(</span><span class="n">cluste_name</span><span class="o">=</span><span class="s">'myCluster'</span><span class="p">,</span> 
-						<span class="n">services</span><span class="o">=</span><span class="p">[</span><span class="s">'myService'</span><span class="p">],</span> 
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">waiter</span><span class="o">.</span><span class="n">wait</span><span class="p">(</span><span class="n">cluste_name</span><span class="o">=</span><span class="s">'myCluster'</span><span class="p">,</span>
+						<span class="n">services</span><span class="o">=</span><span class="p">[</span><span class="s">'myService'</span><span class="p">],</span>
 					  <span class="n">WaiterConfig</span><span class="o">=</span><span class="p">{</span><span class="s">'Delay'</span><span class="p">:</span> <span class="mi">30</span><span class="p">,</span> <span class="s">'MaxAttempts'</span><span class="p">:</span> <span class="mi">10</span><span class="p">})</span>
 </code></pre></div></div>
 
 <p>This will wait for 5 minutes (300 seconds) for the service to become stable before throwing a <code class="highlighter-rouge">botocore.exceptions.WaitError</code> if not successful.</p>
 
 <p>If you’re waiting for a large number of services, its worth noting that you can only pass 10 services at a time, so you’ll need to chunk them.</p>
+
+
+            <div class="post-content bs-callout bs-callout-info">
+Are you confused about the ever growing number of services in AWS and Azure? Why not checkout these super useful glossaries that are always up to date!
+<br />There is one for <a href="https://tools.owenrumney.co.uk/aws/index.html">AWS</a>
+and one for <a href="https://tools.owenrumney.co.uk/azure/index.html">Azure</a>
+</div>
 
             <div class="tags">
                 

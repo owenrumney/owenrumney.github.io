@@ -216,7 +216,7 @@
 <span class="k">func</span> <span class="n">StartServer</span><span class="p">(</span><span class="n">stop</span> <span class="k">chan</span> <span class="kt">bool</span><span class="p">)</span> <span class="p">{</span>
 	<span class="n">start</span> <span class="o">:=</span> <span class="nb">make</span><span class="p">(</span><span class="k">chan</span> <span class="kt">bool</span><span class="p">,</span> <span class="m">1</span><span class="p">)</span>
 
-	<span class="n">http</span><span class="o">.</span><span class="n">HandleFunc</span><span class="p">(</span><span class="s">"/"</span><span class="p">,</span> <span class="n">HttpCodeServer</span><span class="p">)</span>
+	<span class="n">http</span><span class="o">.</span><span class="n">HandleFunc</span><span class="p">(</span><span class="s">"/"</span><span class="p">,</span> <span class="n">HttpCodeServer</span><span class="p">)</span><span class="m">3</span>
 
 	<span class="k">go</span> <span class="k">func</span><span class="p">()</span> <span class="p">{</span>
 		<span class="k">for</span> <span class="p">{</span>
@@ -361,6 +361,13 @@
 * Connection #0 to host localhost left intact
 * Closing connection 0
 </code></pre></div></div>
+
+
+            <div class="post-content bs-callout bs-callout-info">
+Are you confused about the ever growing number of services in AWS and Azure? Why not checkout these super useful glossaries that are always up to date!
+<br />There is one for <a href="https://tools.owenrumney.co.uk/aws/index.html">AWS</a>
+and one for <a href="https://tools.owenrumney.co.uk/azure/index.html">Azure</a>
+</div>
 
             <div class="tags">
                 

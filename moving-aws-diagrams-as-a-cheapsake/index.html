@@ -256,7 +256,7 @@ COPY backend/target/backend-1.0-SNAPSHOT-jar-with-dependencies.jar /backend.jar
 # expose port of the container
 EXPOSE 8080
 
-# run application with this command line 
+# run application with this command line
 CMD ["/usr/bin/java", "-jar", "backend.jar", "-cp", "/*"]
 </code></pre></div></div>
 
@@ -301,6 +301,12 @@ services:
 
 <p>You can see the finished result running at <a href="https://aws-diagrams.owenrumney.co.uk">AWS Diagrams</a></p>
 
+
+            <div class="post-content bs-callout bs-callout-info">
+Are you confused about the ever growing number of services in AWS and Azure? Why not checkout these super useful glossaries that are always up to date!
+<br />There is one for <a href="https://tools.owenrumney.co.uk/aws/index.html">AWS</a>
+and one for <a href="https://tools.owenrumney.co.uk/azure/index.html">Azure</a>
+</div>
 
             <div class="tags">
                 

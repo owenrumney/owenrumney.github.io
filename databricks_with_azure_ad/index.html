@@ -199,10 +199,12 @@
     <p>Select <code class="highlighter-rouge">New Application</code> to create a new Enterprise application
 <img src="/images/azure_ad_new_app.png" alt="Azure Active Directory - New App" /></p>
   </li>
-  <li>
-    <p>Databricks isn’t one of the Gallery Applications at the time of writing, so select <code class="highlighter-rouge">Non-Gallery Application</code> from the available list.
-<img src="/images/azure_ad_non_gallery.png" alt="Azure Active Directory - Non Gallery Application" /></p>
-  </li>
+</ol>
+
+<p>3) Databricks isn’t one of the Gallery Applications at the time of writing, so select <code class="highlighter-rouge">Non-Gallery Application</code> from the available list.
+   <img src="/images/azure_ad_non_gallery.png" alt="Azure Active Directory - Non Gallery Application" /></p>
+
+<ol>
   <li>
     <p>This is where the Databricks instructions is unclear, you need to use your Databricks URL as the <code class="highlighter-rouge">Identity Provider Entity ID</code>.
 <img src="/images/azure_ad_basic_saml.png" alt="Azure Active Directory - Basic SAML Settings" /></p>
@@ -224,7 +226,15 @@
 </ol>
 
 <h3 id="a-note-on-allow-user-creation">A Note on Allow User Creation</h3>
+
 <p>If you enable <code class="highlighter-rouge">Allow auto user creation</code>, when a user logs in, it will create the user for them automatically. This is fine if you’ve configured Azure Active Directory to specify users who have a Role to use the <code class="highlighter-rouge">Enterprise Application</code>. For our use case, I’ve gone with this option disabled and enabled open access at the Active Directory end. This means that unknown (from a Databricks perspective) but otherwise authenticated users don’t have access to the environment</p>
+
+
+            <div class="post-content bs-callout bs-callout-info">
+Are you confused about the ever growing number of services in AWS and Azure? Why not checkout these super useful glossaries that are always up to date!
+<br />There is one for <a href="https://tools.owenrumney.co.uk/aws/index.html">AWS</a>
+and one for <a href="https://tools.owenrumney.co.uk/azure/index.html">Azure</a>
+</div>
 
             <div class="tags">
                 
