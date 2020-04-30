@@ -1,14 +1,6 @@
 [
   
     {
-      "title"    : "Manual TFE state resource removal",
-      "category" : "",
-      "tags"     : "terraform and tfe",
-      "url"      : "/manual-removal-from-terraform-state/",
-      "date"     : "23 Mar 2020"
-    } ,
-  
-    {
       "title"    : "Using the AWS waiter",
       "category" : "",
       "tags"     : "aws, python, and lambda",

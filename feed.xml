@@ -5,33 +5,9 @@
     <description>Bits of blogging by Owen Rumney</description>
     <link>https://www.owenrumney.co.uk/</link>
     <atom:link href="https://www.owenrumney.co.uk/feed.xml" rel="self" type="application/rss+xml"/>
-    <pubDate>Mon, 27 Apr 2020 10:09:00 +0100</pubDate>
-    <lastBuildDate>Mon, 27 Apr 2020 10:09:00 +0100</lastBuildDate>
+    <pubDate>Thu, 30 Apr 2020 11:49:25 +0100</pubDate>
+    <lastBuildDate>Thu, 30 Apr 2020 11:49:25 +0100</lastBuildDate>
     <generator>Jekyll v4.0.0</generator>
-    
-      <item>
-        <title>Manual TFE state resource removal</title>
-        <description>&lt;p&gt;This post is generally aimed at needing to remove a resource from Terraform Enterprise remote state but can be applied to locally run Terraform just as easily.&lt;/p&gt;
-
-&lt;p&gt;I found an issue were a workspace which uses the Logzio Terraform provider had an alert in it’s state that had been manually deleted from the Alert Definitions in Logz. Rather that repairing or deposing it, Terraform was throwing a 404 on the plan and wouldn’t progress.&lt;/p&gt;
-
-&lt;h2 id=&quot;setting-up-the-backend&quot;&gt;Setting up the backend&lt;/h2&gt;
-
-&lt;div class=&quot;post-content bs-callout bs-callout-warning&quot;&gt;
-Ensure that you are using the exact Terraform version as the remote state.
-
-&lt;/div&gt;
-</description>
-        <pubDate>Mon, 23 Mar 2020 11:55:15 +0000</pubDate>
-        <link>https://www.owenrumney.co.uk/manual-removal-from-terraform-state/</link>
-        <guid isPermaLink="true">https://www.owenrumney.co.uk/manual-removal-from-terraform-state/</guid>
-        
-        <category>terraform</category>
-        
-        <category>tfe</category>
-        
-        
-      </item>
     
       <item>
         <title>Using the AWS waiter</title>
@@ -196,6 +172,24 @@ Ensure that you are using the exact Terraform version as the remote state.
         
         
         <category>Git</category>
+        
+      </item>
+    
+      <item>
+        <title>How it works - www.aws-glossary.info</title>
+        <description>&lt;p&gt;I recently posted an entry &lt;a href=&quot;/aws-glossary-info/&quot;&gt;announcing www.aws-glossary.info&lt;/a&gt;. In this post I want to cover how it actually works.&lt;/p&gt; &lt;h2 id=&quot;basic-architecture&quot;&gt;Basic Architecture&lt;/h2&gt; &lt;p&gt;The logical diagram below details the basic structure of the application. The core components are;&lt;/p&gt; &lt;table&gt; &lt;thead&gt; &lt;tr&gt; &lt;th style=&quot;text-align: left&quot;&gt;Component&lt;/th&gt; &lt;th style=&quot;text-align: left&quot;&gt;Purpose&lt;/th&gt; &lt;/tr&gt; &lt;/thead&gt; &lt;tbody&gt; &lt;tr&gt; &lt;td style=&quot;text-align: left&quot;&gt;Github&lt;/td&gt; &lt;td style=&quot;text-align: left&quot;&gt;Static content stored in github&lt;/td&gt; &lt;/tr&gt; &lt;tr&gt; &lt;td style=&quot;text-align: left&quot;&gt;CodePipeline&lt;/td&gt; &lt;td style=&quot;text-align: left&quot;&gt;On commit to the master branch of the github repo - UI components deployed to S3&lt;/td&gt; &lt;/tr&gt; &lt;tr&gt; &lt;td style=&quot;text-align: left&quot;&gt;S3&lt;/td&gt; &lt;td style=&quot;text-align: left&quot;&gt;Static content for the application is stored in an S3...</description>
+        <pubDate>Wed, 27 Feb 2019 00:00:00 +0000</pubDate>
+        <link>https://www.owenrumney.co.uk/aws-glossary-architecture/</link>
+        <guid isPermaLink="true">https://www.owenrumney.co.uk/aws-glossary-architecture/</guid>
+        
+        <category>aws</category>
+        
+        <category>architecture</category>
+        
+        <category>glossary</category>
+        
+        
+        <category>Amazon Web Services</category>
         
       </item>
     
