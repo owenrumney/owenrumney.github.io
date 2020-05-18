@@ -235,7 +235,7 @@
 
             <div class="post-content bs-callout bs-callout-info">
 Are you confused about the ever growing number of services in AWS and Azure? Why not checkout these super useful glossaries that are always up to date!
-<br />There is one for <a target="_blank" href="https://tools.owenrumney.co.uk/aws/index.html">AWS</a>
+<br />There is one for <a target="_blank" href="https://aws.servicelist.cloud">AWS</a>
 and one for <a target="_blank" href="https://tools.owenrumney.co.uk/azure/index.html">Azure</a>
 </div>
 
@@ -323,7 +323,10 @@ and one for <a target="_blank" href="https://tools.owenrumney.co.uk/azure/index.
     $(function () {
         if (window.location.href.indexOf('#')  == -1) {
             setTimeout(function () {
-                $('#scrolllink').click();
+                
+                if (window.scrollY== 0) {
+                    $('#scrolllink').click();
+                }
             }, 1200);
         }
         

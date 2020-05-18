@@ -73,15 +73,15 @@
     } ,
   
     {
-      "title"    : "How it works - www.aws-glossary.info",
+      "title"    : "How it works - www.aws.servicelist.cloud",
       "category" : "Amazon Web Services",
-      "tags"     : "aws, architecture, and glossary",
+      "tags"     : "aws, architecture, and Service List",
       "url"      : "/aws-glossary-architecture/",
       "date"     : "27 Feb 2019"
     } ,
   
     {
-      "title"    : "Dynamic AWS Glossary",
+      "title"    : "Dynamic AWS Service List",
       "category" : "Amazon Web Services",
       "tags"     : "aws",
       "url"      : "/aws-glossary-info/",

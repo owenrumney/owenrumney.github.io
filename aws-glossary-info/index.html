@@ -5,7 +5,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <title>Dynamic AWS Glossary</title>
+    <title>Dynamic AWS Service List</title>
     <meta name="description" content="Bits of blogging by Owen Rumney">
 
     <!-- Google Authorship Markup -->
@@ -26,7 +26,7 @@
     <!-- Social: Twitter -->
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:site" content="@owenrum">
-    <meta name="twitter:title" content="Dynamic AWS Glossary">
+    <meta name="twitter:title" content="Dynamic AWS Service List">
     <meta name="twitter:description" content="Bits of blogging by Owen Rumney">
     
     <meta property="twitter:image:src" content="https://www.owenrumney.co.uk/assets/img/blog-image.png">
@@ -34,7 +34,7 @@
 
     <!-- Social: Facebook / Open Graph -->
     <meta property="og:url" content="https://www.owenrumney.co.uk/aws-glossary-info/">
-    <meta property="og:title" content="Dynamic AWS Glossary">
+    <meta property="og:title" content="Dynamic AWS Service List">
     
     <meta property="og:image" content="https://www.owenrumney.co.uk/assets/img/blog-image.png">
     
@@ -42,7 +42,7 @@
     <meta property="og:site_name" content="Owen Rumney Blog">
 
     <!-- Social: Google+ / Schema.org  -->
-    <meta itemprop="name" content="Dynamic AWS Glossary"/>
+    <meta itemprop="name" content="Dynamic AWS Service List"/>
     <meta itemprop="description" content="Bits of blogging by Owen Rumney">
     <meta itemprop="image" content="https://www.owenrumney.co.uk/assets/img/blog-image.png"/>
 
@@ -131,7 +131,7 @@
         
             <time itemprop="datePublished" datetime="2019-02-21 00:00:00 +0000" class="date">21 Feb 2019</time>
         
-        <h1 class="post-title" itemprop="name">Dynamic AWS Glossary</h1>
+        <h1 class="post-title" itemprop="name">Dynamic AWS Service List</h1>
         <p itemprop="description" class="subtitle"></p>
     </div>
      <a class="down" id="scrolllink" data-scroll href="#scroll"><svg class="icon icon-angle-down"><use xlink:href="#icon-angle-down"></use></svg></a>
@@ -182,14 +182,14 @@
     <section class="post" itemscope itemtype="http://schema.org/BlogPosting">
 
         <article role="article" id="scroll" class="post-content" itemprop="articleBody">
-            <p>Yesterday I created a scraper for the AWS documentation landing page to give an aws glossary of all of the services that have available documentation.</p>
+            <p>Yesterday I created a scraper for the AWS documentation landing page to give an aws Service List of all of the services that have available documentation.</p>
 
-<p>Originally I posted it as a page in this site, I’ve now moved it to <a href="https://tools.owenrumney.co.uk/aws/index.html">https://tools.owenrumney.co.uk/aws/index.html</a></p>
+<p>Originally I posted it as a page in this site, I’ve now moved it to <a href="https://aws.servicelist.cloud">https://aws.servicelist.cloud</a></p>
 
 
             <div class="post-content bs-callout bs-callout-info">
 Are you confused about the ever growing number of services in AWS and Azure? Why not checkout these super useful glossaries that are always up to date!
-<br />There is one for <a target="_blank" href="https://tools.owenrumney.co.uk/aws/index.html">AWS</a>
+<br />There is one for <a target="_blank" href="https://aws.servicelist.cloud">AWS</a>
 and one for <a target="_blank" href="https://tools.owenrumney.co.uk/azure/index.html">Azure</a>
 </div>
 
@@ -267,7 +267,10 @@ and one for <a target="_blank" href="https://tools.owenrumney.co.uk/azure/index.
     $(function () {
         if (window.location.href.indexOf('#')  == -1) {
             setTimeout(function () {
-                $('#scrolllink').click();
+                
+                if (window.scrollY== 0) {
+                    $('#scrolllink').click();
+                }
             }, 1200);
         }
         

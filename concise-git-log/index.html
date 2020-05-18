@@ -194,8 +194,8 @@
 <p>An example of the output from this site’s repository in my github account is below.</p>
 
 <div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>* 8295bc3 2019-03-13 | update the truncator (HEAD -&gt; master, origin/master, origin/HEAD) [owenrumney]
-* a014dcc 2019-03-13 | update the diagram for the aws glossary site [owenrumney]
-* 608f994 2019-03-01 | Update the aws-glossary diagram [owenrumney]
+* a014dcc 2019-03-13 | update the diagram for the aws Service List site [owenrumney]
+* 608f994 2019-03-01 | Update the aws-Service List diagram [owenrumney]
 * a5c519c 2019-02-27 | update disqus [owenrumney]
 * f1cb250 2019-02-27 | update image [owenrumney]
 * 3b24958 2019-02-27 | add the new post [owenrumney]
@@ -222,7 +222,7 @@
 
             <div class="post-content bs-callout bs-callout-info">
 Are you confused about the ever growing number of services in AWS and Azure? Why not checkout these super useful glossaries that are always up to date!
-<br />There is one for <a target="_blank" href="https://tools.owenrumney.co.uk/aws/index.html">AWS</a>
+<br />There is one for <a target="_blank" href="https://aws.servicelist.cloud">AWS</a>
 and one for <a target="_blank" href="https://tools.owenrumney.co.uk/azure/index.html">Azure</a>
 </div>
 
@@ -304,7 +304,10 @@ and one for <a target="_blank" href="https://tools.owenrumney.co.uk/azure/index.
     $(function () {
         if (window.location.href.indexOf('#')  == -1) {
             setTimeout(function () {
-                $('#scrolllink').click();
+                
+                if (window.scrollY== 0) {
+                    $('#scrolllink').click();
+                }
             }, 1200);
         }
         
