@@ -182,7 +182,7 @@
     <section class="post" itemscope itemtype="http://schema.org/BlogPosting">
 
         <article role="article" id="scroll" class="post-content" itemprop="articleBody">
-            <p>The AWS SDK provides a number of <code class="highlighter-rouge">waiters</code> that allow you to block your code while waiting for a process to complete. One that we make use of in our managed ECS container rollout is the <code class="highlighter-rouge">services_stable</code> waiter. This will wait for a defined amount of time for an ECS service to become stable, or raise an exception.</p>
+            <p>The AWS SDK provides a number of <code class="language-plaintext highlighter-rouge">waiters</code> that allow you to block your code while waiting for a process to complete. One that we make use of in our managed ECS container rollout is the <code class="language-plaintext highlighter-rouge">services_stable</code> waiter. This will wait for a defined amount of time for an ECS service to become stable, or raise an exception.</p>
 
 <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># bring in the boto3 import
 </span>
@@ -191,53 +191,54 @@
 
 <span class="c1"># create a session object
 </span>
-<span class="n">session</span> <span class="o">=</span> <span class="n">boto3</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">Session</span><span class="p">()</span>
+<span class="n">session</span> <span class="o">=</span> <span class="n">boto3</span><span class="p">.</span><span class="n">session</span><span class="p">.</span><span class="n">Session</span><span class="p">()</span>
 
 <span class="c1"># create an ECS client
 </span>
-<span class="n">ecs</span> <span class="o">=</span> <span class="n">session</span><span class="o">.</span><span class="n">client</span><span class="p">(</span><span class="s">'ecs'</span><span class="p">)</span>
+<span class="n">ecs</span> <span class="o">=</span> <span class="n">session</span><span class="p">.</span><span class="n">client</span><span class="p">(</span><span class="s">'ecs'</span><span class="p">)</span>
 
 <span class="c1"># trigger an update to the service
 </span>
-<span class="n">ecs</span><span class="o">.</span><span class="n">update_service</span><span class="p">(</span><span class="n">cluster</span><span class="o">=</span><span class="s">'myCluster'</span><span class="p">,</span>
+<span class="n">ecs</span><span class="p">.</span><span class="n">update_service</span><span class="p">(</span><span class="n">cluster</span><span class="o">=</span><span class="s">'myCluster'</span><span class="p">,</span>
 									 <span class="n">service</span><span class="o">=</span><span class="s">'myService'</span><span class="p">,</span>
                    <span class="n">taskDefinition</span><span class="o">=</span><span class="s">'myServiceTaskDefinition:10'</span><span class="p">)</span>
 
 <span class="c1"># create a waiter
 </span>
-<span class="n">waiter</span> <span class="o">=</span> <span class="n">ecs</span><span class="o">.</span><span class="n">get_waiter</span><span class="p">(</span><span class="s">'services_stable'</span><span class="p">)</span>
+<span class="n">waiter</span> <span class="o">=</span> <span class="n">ecs</span><span class="p">.</span><span class="n">get_waiter</span><span class="p">(</span><span class="s">'services_stable'</span><span class="p">)</span>
 
 <span class="k">try</span><span class="p">:</span>
-	<span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s">'waiting for myService to become stable'</span><span class="p">)</span>
+	<span class="n">logger</span><span class="p">.</span><span class="n">info</span><span class="p">(</span><span class="s">'waiting for myService to become stable'</span><span class="p">)</span>
 
 	<span class="c1"># call the wait method passing in an array of services you want to wait for
 </span>
-	<span class="n">waiter</span><span class="o">.</span><span class="n">wait</span><span class="p">(</span><span class="n">cluster</span><span class="o">=</span><span class="s">'myCluster'</span><span class="p">,</span> <span class="n">services</span><span class="o">=</span><span class="p">[</span><span class="s">'myService'</span><span class="p">]</span>
+	<span class="n">waiter</span><span class="p">.</span><span class="n">wait</span><span class="p">(</span><span class="n">cluster</span><span class="o">=</span><span class="s">'myCluster'</span><span class="p">,</span> <span class="n">services</span><span class="o">=</span><span class="p">[</span><span class="s">'myService'</span><span class="p">]</span>
 
-<span class="k">except</span> <span class="n">botocore</span><span class="o">.</span><span class="n">exceptions</span><span class="o">.</span><span class="n">WaitError</span> <span class="k">as</span> <span class="n">wex</span><span class="p">:</span>
-	<span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s">'The service '</span><span class="n">myService</span><span class="s">' didn'</span><span class="n">t</span> <span class="n">become</span> <span class="n">stable</span><span class="o">.</span> <span class="p">{}</span><span class="s">'.format(wex))</span><span class="err">
+<span class="k">except</span> <span class="n">botocore</span><span class="p">.</span><span class="n">exceptions</span><span class="p">.</span><span class="n">WaitError</span> <span class="k">as</span> <span class="n">wex</span><span class="p">:</span>
+	<span class="n">logger</span><span class="p">.</span><span class="n">error</span><span class="p">(</span><span class="s">'The service '</span><span class="n">myService</span><span class="s">' didn'</span><span class="n">t</span> <span class="n">become</span> <span class="n">stable</span><span class="p">.</span> <span class="p">{}</span><span class="s">'.format(wex))
 
 </span></code></pre></div></div>
 
-<p>The Boto3 documentation has the available waiters for each service that supports them, for example the <code class="highlighter-rouge">ecs</code> waiters <a href="https://boto3.amazonaws.com/v1/documentation/api/1.9.42/reference/services/ecs.html#waiters">can be found here</a>.{:target=”_blank”}</p>
+<p>The Boto3 documentation has the available waiters for each service that supports them, for example the <code class="language-plaintext highlighter-rouge">ecs</code> waiters <a href="https://boto3.amazonaws.com/v1/documentation/api/1.9.42/reference/services/ecs.html#waiters">can be found here</a>.{:target=”_blank”}</p>
 
-<p>By default, the <code class="highlighter-rouge">ServicesStable</code> waiter will check every 15 seconds for 40 attempts. You can pass overrides into the wait call if required;</p>
+<p>By default, the <code class="language-plaintext highlighter-rouge">ServicesStable</code> waiter will check every 15 seconds for 40 attempts. You can pass overrides into the wait call if required;</p>
 
-<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">waiter</span><span class="o">.</span><span class="n">wait</span><span class="p">(</span><span class="n">cluste_name</span><span class="o">=</span><span class="s">'myCluster'</span><span class="p">,</span>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">waiter</span><span class="p">.</span><span class="n">wait</span><span class="p">(</span><span class="n">cluste_name</span><span class="o">=</span><span class="s">'myCluster'</span><span class="p">,</span>
 						<span class="n">services</span><span class="o">=</span><span class="p">[</span><span class="s">'myService'</span><span class="p">],</span>
 					  <span class="n">WaiterConfig</span><span class="o">=</span><span class="p">{</span><span class="s">'Delay'</span><span class="p">:</span> <span class="mi">30</span><span class="p">,</span> <span class="s">'MaxAttempts'</span><span class="p">:</span> <span class="mi">10</span><span class="p">})</span>
 </code></pre></div></div>
 
-<p>This will wait for 5 minutes (300 seconds) for the service to become stable before throwing a <code class="highlighter-rouge">botocore.exceptions.WaitError</code> if not successful.</p>
+<p>This will wait for 5 minutes (300 seconds) for the service to become stable before throwing a <code class="language-plaintext highlighter-rouge">botocore.exceptions.WaitError</code> if not successful.</p>
 
 <p>If you’re waiting for a large number of services, its worth noting that you can only pass 10 services at a time, so you’ll need to chunk them.</p>
 
 
             <div class="post-content bs-callout bs-callout-info">
-Are you confused about the ever growing number of services in AWS and Azure? Why not checkout these super useful glossaries that are always up to date!
-<br />There is one for <a target="_blank" href="https://aws.servicelist.cloud">AWS</a>
-and one for <a target="_blank" href="https://tools.owenrumney.co.uk/azure/index.html">Azure</a>
-</div>
+                Are you confused about the ever growing number of services in AWS and Azure? Why not checkout these
+                super useful glossaries that are always up to date!
+                <br />There is one for <a target="_blank" href="https://aws.servicelist.cloud/">AWS</a>
+                and one for <a target="_blank" href="https://azure.servicelist.cloud">Azure</a>
+            </div>
 
             <div class="tags">
                 
@@ -248,9 +249,9 @@ and one for <a target="_blank" href="https://tools.owenrumney.co.uk/azure/index.
                 <a href="/tags/#lambda">lambda</a>
                 
             </div>
-<a href="#" data-scroll role="button" id="back-to-top" class="back-to-top" style="display: inline;">Top</a>
+            <a href="#" data-scroll role="button" id="back-to-top" class="back-to-top" style="display: inline;">Top</a>
         </article>
-                                    
+
         <section class="share">
     <h3>Share</h3>
     <a aria-label="Share on Twitter" href="https://twitter.com/intent/tweet?text=&quot;Using the waiter in your AWS lambda&quot;%20https://www.owenrumney.co.uk/using-the-aws-waiter/%20via%20&#64;owenrum&hashtags=aws,python,lambda,"
@@ -315,15 +316,15 @@ and one for <a target="_blank" href="https://tools.owenrumney.co.uk/azure/index.
 </body>
 <script>
     $(function () {
-        if (window.location.href.indexOf('#')  == -1) {
+        if (window.location.href.indexOf('#') == -1) {
             setTimeout(function () {
-                
-                if (window.scrollY== 0) {
+
+                if (window.scrollY == 0) {
                     $('#scrolllink').click();
                 }
             }, 1200);
         }
-        
+
     });
 </script>
 

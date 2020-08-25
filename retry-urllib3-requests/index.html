@@ -192,32 +192,32 @@
 
 <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">urllib3</span>
 
-<span class="n">http</span> <span class="o">=</span> <span class="n">urllib3</span><span class="o">.</span><span class="n">PoolManager</span><span class="p">()</span>
-<span class="n">r</span> <span class="o">=</span> <span class="n">http</span><span class="o">.</span><span class="n">request</span><span class="p">(</span><span class="s">'GET'</span><span class="p">,</span> <span class="s">'http://www.myflakyendpoint.com/dicey'</span><span class="p">)</span>
-<span class="k">if</span> <span class="n">r</span><span class="o">.</span><span class="n">status</span> <span class="o">==</span> <span class="mi">200</span><span class="p">:</span>
-    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s">'That was lucky'</span><span class="p">)</span>
+<span class="n">http</span> <span class="o">=</span> <span class="n">urllib3</span><span class="p">.</span><span class="n">PoolManager</span><span class="p">()</span>
+<span class="n">r</span> <span class="o">=</span> <span class="n">http</span><span class="p">.</span><span class="n">request</span><span class="p">(</span><span class="s">'GET'</span><span class="p">,</span> <span class="s">'http://www.myflakyendpoint.com/dicey'</span><span class="p">)</span>
+<span class="k">if</span> <span class="n">r</span><span class="p">.</span><span class="n">status</span> <span class="o">==</span> <span class="mi">200</span><span class="p">:</span>
+    <span class="n">logger</span><span class="p">.</span><span class="n">info</span><span class="p">(</span><span class="s">'That was lucky'</span><span class="p">)</span>
 </code></pre></div></div>
 
 <p>We have once chance to get it right. Yes, some convoluted while loop against the status code could be used, but thats ugly.</p>
 
-<p>Another option available to us is to make use of <code class="highlighter-rouge">urllib3.util.Retry</code> and get our request to retry a specified amount of times.</p>
+<p>Another option available to us is to make use of <code class="language-plaintext highlighter-rouge">urllib3.util.Retry</code> and get our request to retry a specified amount of times.</p>
 
 <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">urllib3</span>
 <span class="kn">from</span> <span class="nn">urllib3.util</span> <span class="kn">import</span> <span class="n">Retry</span>
 <span class="kn">from</span> <span class="nn">urllib3.exceptions</span> <span class="kn">import</span> <span class="n">MaxRetryError</span>
 
-<span class="n">http</span> <span class="o">=</span> <span class="n">urllib3</span><span class="o">.</span><span class="n">PoolManager</span><span class="p">()</span>
+<span class="n">http</span> <span class="o">=</span> <span class="n">urllib3</span><span class="p">.</span><span class="n">PoolManager</span><span class="p">()</span>
 <span class="n">retry</span> <span class="o">=</span> <span class="n">Retry</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="n">raise_on_status</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">status_forcelist</span><span class="o">=</span><span class="nb">range</span><span class="p">(</span><span class="mi">500</span><span class="p">,</span> <span class="mi">600</span><span class="p">))</span>
 
 <span class="k">try</span><span class="p">:</span>
-    <span class="n">r</span> <span class="o">=</span> <span class="n">http</span><span class="o">.</span><span class="n">request</span><span class="p">(</span><span class="s">'GET'</span><span class="p">,</span> <span class="s">'http://www.myflakyendpoint.com/dicey'</span><span class="p">,</span> <span class="n">retries</span><span class="o">=</span><span class="n">retry</span><span class="p">)</span>
+    <span class="n">r</span> <span class="o">=</span> <span class="n">http</span><span class="p">.</span><span class="n">request</span><span class="p">(</span><span class="s">'GET'</span><span class="p">,</span> <span class="s">'http://www.myflakyendpoint.com/dicey'</span><span class="p">,</span> <span class="n">retries</span><span class="o">=</span><span class="n">retry</span><span class="p">)</span>
 <span class="k">except</span> <span class="n">MaxRetryError</span> <span class="k">as</span> <span class="n">m_err</span><span class="p">:</span>
-    <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s">'Failed due to {}'</span><span class="o">.</span><span class="nb">format</span><span class="p">(</span><span class="n">m_err</span><span class="o">.</span><span class="n">reason</span><span class="p">))</span>
+    <span class="n">logger</span><span class="p">.</span><span class="n">error</span><span class="p">(</span><span class="s">'Failed due to {}'</span><span class="p">.</span><span class="nb">format</span><span class="p">(</span><span class="n">m_err</span><span class="p">.</span><span class="n">reason</span><span class="p">))</span>
 </code></pre></div></div>
 
-<p>In this code we’ve created a <code class="highlighter-rouge">Retry</code> object telling it to retry a total of 3 times and throw an exception if all retries are exhausted. The <code class="highlighter-rouge">status_forcelist</code> is the HTTP status codes that will be considered to be failures.</p>
+<p>In this code we’ve created a <code class="language-plaintext highlighter-rouge">Retry</code> object telling it to retry a total of 3 times and throw an exception if all retries are exhausted. The <code class="language-plaintext highlighter-rouge">status_forcelist</code> is the HTTP status codes that will be considered to be failures.</p>
 
-<p>Some other interesting arguments for the <code class="highlighter-rouge">Retry</code> object are.</p>
+<p>Some other interesting arguments for the <code class="language-plaintext highlighter-rouge">Retry</code> object are.</p>
 
 <table>
   <thead>
@@ -263,10 +263,11 @@
 
 
             <div class="post-content bs-callout bs-callout-info">
-Are you confused about the ever growing number of services in AWS and Azure? Why not checkout these super useful glossaries that are always up to date!
-<br />There is one for <a target="_blank" href="https://aws.servicelist.cloud">AWS</a>
-and one for <a target="_blank" href="https://tools.owenrumney.co.uk/azure/index.html">Azure</a>
-</div>
+                Are you confused about the ever growing number of services in AWS and Azure? Why not checkout these
+                super useful glossaries that are always up to date!
+                <br />There is one for <a target="_blank" href="https://aws.servicelist.cloud/">AWS</a>
+                and one for <a target="_blank" href="https://azure.servicelist.cloud">Azure</a>
+            </div>
 
             <div class="tags">
                 
@@ -277,9 +278,9 @@ and one for <a target="_blank" href="https://tools.owenrumney.co.uk/azure/index.
                 <a href="/tags/#retry-logic">retry logic</a>
                 
             </div>
-<a href="#" data-scroll role="button" id="back-to-top" class="back-to-top" style="display: inline;">Top</a>
+            <a href="#" data-scroll role="button" id="back-to-top" class="back-to-top" style="display: inline;">Top</a>
         </article>
-                                    
+
         <section class="share">
     <h3>Share</h3>
     <a aria-label="Share on Twitter" href="https://twitter.com/intent/tweet?text=&quot;&quot;%20https://www.owenrumney.co.uk/retry-urllib3-requests/%20via%20&#64;owenrum&hashtags=python,urllib3,retry logic,"
@@ -344,15 +345,15 @@ and one for <a target="_blank" href="https://tools.owenrumney.co.uk/azure/index.
 </body>
 <script>
     $(function () {
-        if (window.location.href.indexOf('#')  == -1) {
+        if (window.location.href.indexOf('#') == -1) {
             setTimeout(function () {
-                
-                if (window.scrollY== 0) {
+
+                if (window.scrollY == 0) {
                     $('#scrolllink').click();
                 }
             }, 1200);
         }
-        
+
     });
 </script>
 

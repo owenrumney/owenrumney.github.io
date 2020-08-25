@@ -194,50 +194,51 @@
 
 <h3 id="install-spark">Install Spark</h3>
 
-<p>To install spark, I use <code class="highlighter-rouge">brew</code></p>
+<p>To install spark, I use <code class="language-plaintext highlighter-rouge">brew</code></p>
 
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>brew install spark
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>brew install spark
 </code></pre></div></div>
 
 <h3 id="install-jupyter">Install Jupyter</h3>
 
-<p>Installing jupyter notebooks is done with <code class="highlighter-rouge">pip</code></p>
+<p>Installing jupyter notebooks is done with <code class="language-plaintext highlighter-rouge">pip</code></p>
 
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>pip install jupyter
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>pip install jupyter
 </code></pre></div></div>
 
 <h3 id="getting-some-data">Getting some data</h3>
 
-<p>I took a single file from the S3 bucket to play with locally, for no particular reason I went with <code class="highlighter-rouge">01aJourneyDataExtract10Jan16-23Jan16.csv</code></p>
+<p>I took a single file from the S3 bucket to play with locally, for no particular reason I went with <code class="language-plaintext highlighter-rouge">01aJourneyDataExtract10Jan16-23Jan16.csv</code></p>
 
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>aws s3 cp s3://cycling.data.tfl.gov.uk/usage-stats/01aJourneyDataExtract10Jan16-23Jan16.csv ~/datasets/cycling/.
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>aws s3 cp s3://cycling.data.tfl.gov.uk/usage-stats/01aJourneyDataExtract10Jan16-23Jan16.csv ~/datasets/cycling/.
 </code></pre></div></div>
 
 <h3 id="starting-up">Starting Up</h3>
 
 <p>Run the following commands to get your Jupyter Notebook up and running</p>
 
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>export PYSPARK_DRIVER_PYTHON=jupyter
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>export PYSPARK_DRIVER_PYTHON=jupyter
 export PYSPARK_DRIVER_PYTHON_OPTS='notebook'
 pyspark
 </code></pre></div></div>
 
 <h2 id="quick-test">Quick Test</h2>
 
-<p>Finally a quick test to see how it looks. In the <code class="highlighter-rouge">Jupyter notebook</code> I can do</p>
+<p>Finally a quick test to see how it looks. In the <code class="language-plaintext highlighter-rouge">Jupyter notebook</code> I can do</p>
 
-<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">data</span> <span class="o">=</span> <span class="n">spark</span><span class="o">.</span><span class="n">read</span><span class="o">.</span><span class="n">csv</span><span class="p">(</span><span class="s">'~/datasets/cycling/01aJourneyDataExtract10Jan16-23Jan16.csv'</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">inferSchema</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
-<span class="n">data</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">data</span> <span class="o">=</span> <span class="n">spark</span><span class="p">.</span><span class="n">read</span><span class="p">.</span><span class="n">csv</span><span class="p">(</span><span class="s">'~/datasets/cycling/01aJourneyDataExtract10Jan16-23Jan16.csv'</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">inferSchema</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+<span class="n">data</span><span class="p">.</span><span class="n">show</span><span class="p">()</span>
 </code></pre></div></div>
 
 <p>This should show you 20 rows from the data set and we’re off.</p>
 
 
             <div class="post-content bs-callout bs-callout-info">
-Are you confused about the ever growing number of services in AWS and Azure? Why not checkout these super useful glossaries that are always up to date!
-<br />There is one for <a target="_blank" href="https://aws.servicelist.cloud">AWS</a>
-and one for <a target="_blank" href="https://tools.owenrumney.co.uk/azure/index.html">Azure</a>
-</div>
+                Are you confused about the ever growing number of services in AWS and Azure? Why not checkout these
+                super useful glossaries that are always up to date!
+                <br />There is one for <a target="_blank" href="https://aws.servicelist.cloud/">AWS</a>
+                and one for <a target="_blank" href="https://azure.servicelist.cloud">Azure</a>
+            </div>
 
             <div class="tags">
                 
@@ -252,9 +253,9 @@ and one for <a target="_blank" href="https://tools.owenrumney.co.uk/azure/index.
                 <a href="/tags/#datasets">datasets</a>
                 
             </div>
-<a href="#" data-scroll role="button" id="back-to-top" class="back-to-top" style="display: inline;">Top</a>
+            <a href="#" data-scroll role="button" id="back-to-top" class="back-to-top" style="display: inline;">Top</a>
         </article>
-                                    
+
         <section class="share">
     <h3>Share</h3>
     <a aria-label="Share on Twitter" href="https://twitter.com/intent/tweet?text=&quot;&quot;%20https://www.owenrumney.co.uk/tfl_cycling_data_part1/%20via%20&#64;owenrum&hashtags=python,programming,spark,learning,datasets,"
@@ -319,15 +320,15 @@ and one for <a target="_blank" href="https://tools.owenrumney.co.uk/azure/index.
 </body>
 <script>
     $(function () {
-        if (window.location.href.indexOf('#')  == -1) {
+        if (window.location.href.indexOf('#') == -1) {
             setTimeout(function () {
-                
-                if (window.scrollY== 0) {
+
+                if (window.scrollY == 0) {
                     $('#scrolllink').click();
                 }
             }, 1200);
         }
-        
+
     });
 </script>
 

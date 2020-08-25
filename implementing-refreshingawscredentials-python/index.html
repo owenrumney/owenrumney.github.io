@@ -184,7 +184,7 @@
         <article role="article" id="scroll" class="post-content" itemprop="articleBody">
             <p>In a recent post I covered an <a href="/implementing-refreshingawscredentials/">using RefreshingAWSCredentials within .NET AWS SDK</a> to solve an issue with the way my current organisation has configured SingleSignOn (SSO) and temporary credentials.</p>
 
-<p>Essentially, the solution involves a background process updating a credenial file then using a time limited <code class="highlighter-rouge">AWSCredential</code> object to refresh the credentials.</p>
+<p>Essentially, the solution involves a background process updating a credenial file then using a time limited <code class="language-plaintext highlighter-rouge">AWSCredential</code> object to refresh the credentials.</p>
 
 <h2 id="next">Next…</h2>
 
@@ -200,10 +200,10 @@
 
 <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">from</span> <span class="nn">botocore.session</span> <span class="kn">import</span> <span class="n">get_session</span>
 
-<span class="n">queues</span><span class="p">[</span><span class="s">'incoming'</span><span class="p">]</span> <span class="o">=</span> <span class="n">session</span><span class="o">.</span><span class="n">resource</span><span class="p">(</span><span class="s">'sqs'</span><span class="p">,</span> <span class="n">region</span><span class="p">)</span><span class="o">.</span><span class="n">get_queue_by_name</span><span class="p">(</span><span class="n">QueueName</span><span class="o">=</span><span class="s">'incoming_queue'</span><span class="p">)</span>
+<span class="n">queues</span><span class="p">[</span><span class="s">'incoming'</span><span class="p">]</span> <span class="o">=</span> <span class="n">session</span><span class="p">.</span><span class="n">resource</span><span class="p">(</span><span class="s">'sqs'</span><span class="p">,</span> <span class="n">region</span><span class="p">).</span><span class="n">get_queue_by_name</span><span class="p">(</span><span class="n">QueueName</span><span class="o">=</span><span class="s">'incoming_queue'</span><span class="p">)</span>
 </code></pre></div></div>
 
-<p>There is only a small amount of work to make this refreshing against the externally updated credential file. For this we’ll make use of the <code class="highlighter-rouge">RefreshableCredentials</code> from <code class="highlighter-rouge">botocore.credentials</code>.</p>
+<p>There is only a small amount of work to make this refreshing against the externally updated credential file. For this we’ll make use of the <code class="language-plaintext highlighter-rouge">RefreshableCredentials</code> from <code class="language-plaintext highlighter-rouge">botocore.credentials</code>.</p>
 
 <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">from</span> <span class="nn">botocore.credentials</span> <span class="kn">import</span> <span class="n">RefreshableCredentials</span>
 <span class="kn">from</span> <span class="nn">botocore.session</span> <span class="kn">import</span> <span class="n">get_session</span>
@@ -212,35 +212,35 @@
 
 <span class="k">def</span> <span class="nf">refresh_external_credentials</span><span class="p">():</span>
     <span class="n">config</span> <span class="o">=</span> <span class="n">ConfigParser</span><span class="p">()</span>
-    <span class="n">config</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">credential_file_path</span><span class="p">)</span>
-    <span class="n">profile</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">profile_name</span><span class="p">)</span>
-    <span class="n">expiry</span> <span class="o">=</span> <span class="p">(</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">(</span><span class="n">timezone</span><span class="o">.</span><span class="n">utc</span><span class="p">)</span> <span class="o">+</span> <span class="n">timedelta</span><span class="p">(</span><span class="n">minutes</span><span class="o">=</span><span class="n">refresh_minutes</span><span class="p">))</span>
+    <span class="n">config</span><span class="p">.</span><span class="n">read</span><span class="p">(</span><span class="n">credential_file_path</span><span class="p">)</span>
+    <span class="n">profile</span> <span class="o">=</span> <span class="n">config</span><span class="p">.</span><span class="n">get</span><span class="p">(</span><span class="n">profile_name</span><span class="p">)</span>
+    <span class="n">expiry</span> <span class="o">=</span> <span class="p">(</span><span class="n">datetime</span><span class="p">.</span><span class="n">now</span><span class="p">(</span><span class="n">timezone</span><span class="p">.</span><span class="n">utc</span><span class="p">)</span> <span class="o">+</span> <span class="n">timedelta</span><span class="p">(</span><span class="n">minutes</span><span class="o">=</span><span class="n">refresh_minutes</span><span class="p">))</span>
     <span class="k">return</span> <span class="p">{</span>
-        <span class="s">"access_key"</span><span class="p">:</span> <span class="n">profile</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">'aws_access_key_id'</span><span class="p">),</span>
-        <span class="s">"secret_key"</span><span class="p">:</span> <span class="n">profile</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">'aws_secret_access_key'</span><span class="p">),</span>
-        <span class="s">"token"</span><span class="p">:</span> <span class="n">profile</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">'aws_session_token'</span><span class="p">),</span>
-        <span class="s">"expiry_time"</span><span class="p">:</span> <span class="n">expiry</span><span class="o">.</span><span class="n">isoformat</span><span class="p">()</span>
+        <span class="s">"access_key"</span><span class="p">:</span> <span class="n">profile</span><span class="p">.</span><span class="n">get</span><span class="p">(</span><span class="s">'aws_access_key_id'</span><span class="p">),</span>
+        <span class="s">"secret_key"</span><span class="p">:</span> <span class="n">profile</span><span class="p">.</span><span class="n">get</span><span class="p">(</span><span class="s">'aws_secret_access_key'</span><span class="p">),</span>
+        <span class="s">"token"</span><span class="p">:</span> <span class="n">profile</span><span class="p">.</span><span class="n">get</span><span class="p">(</span><span class="s">'aws_session_token'</span><span class="p">),</span>
+        <span class="s">"expiry_time"</span><span class="p">:</span> <span class="n">expiry</span><span class="p">.</span><span class="n">isoformat</span><span class="p">()</span>
     <span class="p">}</span>
 </code></pre></div></div>
 
 <p>There are a few config entries here.</p>
 
 <ul>
-  <li><code class="highlighter-rouge">credential_file_path</code> is the location of the credential file that is getting externally updated</li>
-  <li><code class="highlighter-rouge">profile_name</code> is the profile in the credential file that you want to use</li>
-  <li><code class="highlighter-rouge">refresh_minutes</code> is the time before the AWS credential will expire and the <code class="highlighter-rouge">refresh_external_credentials()</code> function will get called.</li>
+  <li><code class="language-plaintext highlighter-rouge">credential_file_path</code> is the location of the credential file that is getting externally updated</li>
+  <li><code class="language-plaintext highlighter-rouge">profile_name</code> is the profile in the credential file that you want to use</li>
+  <li><code class="language-plaintext highlighter-rouge">refresh_minutes</code> is the time before the AWS credential will expire and the <code class="language-plaintext highlighter-rouge">refresh_external_credentials()</code> function will get called.</li>
 </ul>
 
 <p>We now need to create the credential object for a session which will then be able to auto refresh.</p>
 
-<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">session_credentials</span> <span class="o">=</span> <span class="n">RefreshableCredentials</span><span class="o">.</span><span class="n">create_from_metadata</span><span class="p">(</span>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">session_credentials</span> <span class="o">=</span> <span class="n">RefreshableCredentials</span><span class="p">.</span><span class="n">create_from_metadata</span><span class="p">(</span>
     <span class="n">metadata</span> <span class="o">=</span> <span class="n">refresh_external_credentials</span><span class="p">(),</span>
     <span class="n">refresh_using</span> <span class="o">=</span> <span class="n">refresh_external_credentials</span><span class="p">,</span>
     <span class="n">method</span> <span class="o">=</span> <span class="s">'sts-assume-role'</span>
 <span class="p">)</span>
 </code></pre></div></div>
 
-<p>Going back to the original code, the new <code class="highlighter-rouge">session_credentials</code> can be plugged in to provide long life application against temporary tokens.</p>
+<p>Going back to the original code, the new <code class="language-plaintext highlighter-rouge">session_credentials</code> can be plugged in to provide long life application against temporary tokens.</p>
 
 <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">boto3</span>
 
@@ -249,19 +249,20 @@
 <span class="n">incoming_queue_name</span> <span class="o">=</span> <span class="s">'incoming_queue'</span>
 
 <span class="n">session</span> <span class="o">=</span> <span class="n">get_session</span><span class="p">()</span>
-<span class="n">session</span><span class="o">.</span><span class="n">_credentials</span> <span class="o">=</span> <span class="n">session_credentials</span>
-<span class="n">autorefresh_session</span> <span class="o">=</span> <span class="n">boto3</span><span class="o">.</span><span class="n">Session</span><span class="p">(</span><span class="n">botocore_session</span><span class="o">=</span><span class="n">session</span><span class="p">)</span>
+<span class="n">session</span><span class="p">.</span><span class="n">_credentials</span> <span class="o">=</span> <span class="n">session_credentials</span>
+<span class="n">autorefresh_session</span> <span class="o">=</span> <span class="n">boto3</span><span class="p">.</span><span class="n">Session</span><span class="p">(</span><span class="n">botocore_session</span><span class="o">=</span><span class="n">session</span><span class="p">)</span>
 
-<span class="n">queues</span><span class="p">[</span><span class="s">'incoming'</span><span class="p">]</span> <span class="o">=</span> <span class="n">autorefresh_session</span><span class="o">.</span><span class="n">resource</span><span class="p">(</span><span class="s">'sqs'</span><span class="p">,</span> <span class="n">region</span><span class="p">)</span><span class="o">.</span><span class="n">get_queue_by_name</span><span class="p">(</span><span class="n">QueueName</span><span class="o">=</span><span class="n">incoming_queue_name</span><span class="p">)</span>
+<span class="n">queues</span><span class="p">[</span><span class="s">'incoming'</span><span class="p">]</span> <span class="o">=</span> <span class="n">autorefresh_session</span><span class="p">.</span><span class="n">resource</span><span class="p">(</span><span class="s">'sqs'</span><span class="p">,</span> <span class="n">region</span><span class="p">).</span><span class="n">get_queue_by_name</span><span class="p">(</span><span class="n">QueueName</span><span class="o">=</span><span class="n">incoming_queue_name</span><span class="p">)</span>
 
 </code></pre></div></div>
 
 
             <div class="post-content bs-callout bs-callout-info">
-Are you confused about the ever growing number of services in AWS and Azure? Why not checkout these super useful glossaries that are always up to date!
-<br />There is one for <a target="_blank" href="https://aws.servicelist.cloud">AWS</a>
-and one for <a target="_blank" href="https://tools.owenrumney.co.uk/azure/index.html">Azure</a>
-</div>
+                Are you confused about the ever growing number of services in AWS and Azure? Why not checkout these
+                super useful glossaries that are always up to date!
+                <br />There is one for <a target="_blank" href="https://aws.servicelist.cloud/">AWS</a>
+                and one for <a target="_blank" href="https://azure.servicelist.cloud">Azure</a>
+            </div>
 
             <div class="tags">
                 
@@ -274,9 +275,9 @@ and one for <a target="_blank" href="https://tools.owenrumney.co.uk/azure/index.
                 <a href="/tags/#boto3">boto3</a>
                 
             </div>
-<a href="#" data-scroll role="button" id="back-to-top" class="back-to-top" style="display: inline;">Top</a>
+            <a href="#" data-scroll role="button" id="back-to-top" class="back-to-top" style="display: inline;">Top</a>
         </article>
-                                    
+
         <section class="share">
     <h3>Share</h3>
     <a aria-label="Share on Twitter" href="https://twitter.com/intent/tweet?text=&quot;&quot;%20https://www.owenrumney.co.uk/implementing-refreshingawscredentials-python/%20via%20&#64;owenrum&hashtags=aws,python,botocore,boto3,"
@@ -341,15 +342,15 @@ and one for <a target="_blank" href="https://tools.owenrumney.co.uk/azure/index.
 </body>
 <script>
     $(function () {
-        if (window.location.href.indexOf('#')  == -1) {
+        if (window.location.href.indexOf('#') == -1) {
             setTimeout(function () {
-                
-                if (window.scrollY== 0) {
+
+                if (window.scrollY == 0) {
                     $('#scrolllink').click();
                 }
             }, 1200);
         }
-        
+
     });
 </script>
 

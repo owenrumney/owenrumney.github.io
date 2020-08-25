@@ -184,7 +184,7 @@
         <article role="article" id="scroll" class="post-content" itemprop="articleBody">
             <p>I have been using using Docker and Kubernetes off and on for work and personal for a few years now, but I was recently shown a feature in the Docker file that I wasn’t aware of.</p>
 
-<p>A bit of background - I was building a Go application that would sit alongside Squid to perform some updates. Although I was building the appliction with <code class="highlighter-rouge">GOOS</code> configured, the created Docker image would only work on my Macbook. Setting <code class="highlighter-rouge">GOARCH</code> also fixed it, but this is more interesting and certainly more portable solution.</p>
+<p>A bit of background - I was building a Go application that would sit alongside Squid to perform some updates. Although I was building the appliction with <code class="language-plaintext highlighter-rouge">GOOS</code> configured, the created Docker image would only work on my Macbook. Setting <code class="language-plaintext highlighter-rouge">GOARCH</code> also fixed it, but this is more interesting and certainly more portable solution.</p>
 
 <h2 id="multi-stage">Multi Stage</h2>
 
@@ -251,7 +251,7 @@
 
 <h4 id="main-command">Main command</h4>
 
-<p>The application needs an entry point, this is found in <code class="highlighter-rouge">main.go</code> under <code class="highlighter-rouge">cmd/httpcodes</code> path.</p>
+<p>The application needs an entry point, this is found in <code class="language-plaintext highlighter-rouge">main.go</code> under <code class="language-plaintext highlighter-rouge">cmd/httpcodes</code> path.</p>
 
 <div class="language-go highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">package</span> <span class="n">main</span>
 
@@ -274,15 +274,15 @@
 	<span class="o">&lt;-</span><span class="n">stop</span>
 <span class="p">}</span>
 </code></pre></div></div>
-<p>This code starts the httpcodes server which will do the listening. A channel is used to stop the server when the application recieves a <code class="highlighter-rouge">SIGINT</code>.</p>
+<p>This code starts the httpcodes server which will do the listening. A channel is used to stop the server when the application recieves a <code class="language-plaintext highlighter-rouge">SIGINT</code>.</p>
 
 <h3 id="folder-structure">Folder Structure</h3>
 
 <p>I have followed the folder structure laid down in the <a href="https://github.com/golang-standards/project-layout">Go project layout guide</a>.</p>
 
-<p>This puts the <code class="highlighter-rouge">Dockerfile</code> into the <code class="highlighter-rouge">build/packages</code> structure.</p>
+<p>This puts the <code class="language-plaintext highlighter-rouge">Dockerfile</code> into the <code class="language-plaintext highlighter-rouge">build/packages</code> structure.</p>
 
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>.
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>.
 ├── build
 │   └── package
 │       └── httpcodes
@@ -298,7 +298,7 @@
 
 <h3 id="dockerfile">Dockerfile</h3>
 
-<p>This was the original point of the post, the <code class="highlighter-rouge">Dockerfile</code>.</p>
+<p>This was the original point of the post, the <code class="language-plaintext highlighter-rouge">Dockerfile</code>.</p>
 
 <div class="language-docker highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">FROM</span><span class="s"> golang:alpine AS builder</span>
 
@@ -319,34 +319,34 @@
 
 <p>I have kept it deliberately straight forward to highlight the main point.</p>
 
-<p>At the top I am using <code class="highlighter-rouge">golang:alpine</code> which has all the required packages already installed to build my application. Notice that I mark this <code class="highlighter-rouge">AS builder</code>.</p>
+<p>At the top I am using <code class="language-plaintext highlighter-rouge">golang:alpine</code> which has all the required packages already installed to build my application. Notice that I mark this <code class="language-plaintext highlighter-rouge">AS builder</code>.</p>
 
-<p>Now, when I create the actually build of the main image, in the <code class="highlighter-rouge">COPY</code> command you can see that the <code class="highlighter-rouge">--from=builder</code> attribute is used. This attribute is telling the second image to grab the <code class="highlighter-rouge">/go/bin/httpcodes</code> binary from the output of the first stage and copy them to the <code class="highlighter-rouge">/app</code> folder.</p>
+<p>Now, when I create the actually build of the main image, in the <code class="language-plaintext highlighter-rouge">COPY</code> command you can see that the <code class="language-plaintext highlighter-rouge">--from=builder</code> attribute is used. This attribute is telling the second image to grab the <code class="language-plaintext highlighter-rouge">/go/bin/httpcodes</code> binary from the output of the first stage and copy them to the <code class="language-plaintext highlighter-rouge">/app</code> folder.</p>
 
 <h3 id="building-and-running">Building and Running</h3>
 
 <p>All that is left now is to build and run. From the root of the project run;</p>
 
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>docker build -t httpcodes -f build/package/httpcodes/Dockerfile .
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>docker build -t httpcodes -f build/package/httpcodes/Dockerfile .
 </code></pre></div></div>
 
 <p>This will build the project and you can now run it with;</p>
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>docker run -d -p 8080:8080 httpcodes
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>docker run -d -p 8080:8080 httpcodes
 </code></pre></div></div>
 
-<p>This command will start the image with port <code class="highlighter-rouge">8080</code> mapped to the host machine so we can access it. The <code class="highlighter-rouge">-d</code> just runs it in detached mode.</p>
+<p>This command will start the image with port <code class="language-plaintext highlighter-rouge">8080</code> mapped to the host machine so we can access it. The <code class="language-plaintext highlighter-rouge">-d</code> just runs it in detached mode.</p>
 
 <h3 id="testing">Testing</h3>
 
-<p>To test, execute a curl command against <code class="highlighter-rouge">localhost:8080/</code> passing a status code.</p>
+<p>To test, execute a curl command against <code class="language-plaintext highlighter-rouge">localhost:8080/</code> passing a status code.</p>
 
 <p>for example;</p>
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>curl -v http://localhost:8080/502
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>curl -v http://localhost:8080/502
 </code></pre></div></div>
 
-<p>This should return a verbose message saying we got a <code class="highlighter-rouge">502</code></p>
+<p>This should return a verbose message saying we got a <code class="language-plaintext highlighter-rouge">502</code></p>
 
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>*   Trying 127.0.0.1...
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>*   Trying 127.0.0.1...
 * TCP_NODELAY set
 * Connected to localhost (127.0.0.1) port 8080 (#0)
 &gt; GET /502 HTTP/1.1
@@ -364,10 +364,11 @@
 
 
             <div class="post-content bs-callout bs-callout-info">
-Are you confused about the ever growing number of services in AWS and Azure? Why not checkout these super useful glossaries that are always up to date!
-<br />There is one for <a target="_blank" href="https://aws.servicelist.cloud">AWS</a>
-and one for <a target="_blank" href="https://tools.owenrumney.co.uk/azure/index.html">Azure</a>
-</div>
+                Are you confused about the ever growing number of services in AWS and Azure? Why not checkout these
+                super useful glossaries that are always up to date!
+                <br />There is one for <a target="_blank" href="https://aws.servicelist.cloud/">AWS</a>
+                and one for <a target="_blank" href="https://azure.servicelist.cloud">Azure</a>
+            </div>
 
             <div class="tags">
                 
@@ -376,9 +377,9 @@ and one for <a target="_blank" href="https://tools.owenrumney.co.uk/azure/index.
                 <a href="/tags/#docker">docker</a>
                 
             </div>
-<a href="#" data-scroll role="button" id="back-to-top" class="back-to-top" style="display: inline;">Top</a>
+            <a href="#" data-scroll role="button" id="back-to-top" class="back-to-top" style="display: inline;">Top</a>
         </article>
-                                    
+
         <section class="share">
     <h3>Share</h3>
     <a aria-label="Share on Twitter" href="https://twitter.com/intent/tweet?text=&quot;Using Docker multi stage builds&quot;%20https://www.owenrumney.co.uk/using-docker-as-a-build-env/%20via%20&#64;owenrum&hashtags=go,docker,"
@@ -443,15 +444,15 @@ and one for <a target="_blank" href="https://tools.owenrumney.co.uk/azure/index.
 </body>
 <script>
     $(function () {
-        if (window.location.href.indexOf('#')  == -1) {
+        if (window.location.href.indexOf('#') == -1) {
             setTimeout(function () {
-                
-                if (window.scrollY== 0) {
+
+                if (window.scrollY == 0) {
                     $('#scrolllink').click();
                 }
             }, 1200);
         }
-        
+
     });
 </script>
 

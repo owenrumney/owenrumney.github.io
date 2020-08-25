@@ -190,7 +190,7 @@
 
 <p>The issue I found setting up this functionality is that I need to configure the printer to relay through an SMTP server to send the messages to me. This is a pain and I didn’t want to have to stand up a simple SMTP server here just so I could use this feature.</p>
 
-<p>My next thought was to try and use <code class="highlighter-rouge">smtp.gmail.com</code>. Even with the usual port and authenticating using my emails creds this still didn’t work properly so I figured why not make use of Amazon’s Simple Email Service. It’s simple, reliable and you can relay through it.</p>
+<p>My next thought was to try and use <code class="language-plaintext highlighter-rouge">smtp.gmail.com</code>. Even with the usual port and authenticating using my emails creds this still didn’t work properly so I figured why not make use of Amazon’s Simple Email Service. It’s simple, reliable and you can relay through it.</p>
 
 <h2 id="setting-it-up">Setting it up</h2>
 
@@ -198,9 +198,9 @@
 
 <h3 id="verifying-the-email-address">Verifying the Email Address</h3>
 
-<p>First things first is to log into the AWS Console and navigate to <code class="highlighter-rouge">Simple Email Service</code>.</p>
+<p>First things first is to log into the AWS Console and navigate to <code class="language-plaintext highlighter-rouge">Simple Email Service</code>.</p>
 
-<p>Under <code class="highlighter-rouge">Identity Management</code> select <code class="highlighter-rouge">Email Addresses</code> then click the <code class="highlighter-rouge">Verify a New Email Address</code> button.</p>
+<p>Under <code class="language-plaintext highlighter-rouge">Identity Management</code> select <code class="language-plaintext highlighter-rouge">Email Addresses</code> then click the <code class="language-plaintext highlighter-rouge">Verify a New Email Address</code> button.</p>
 
 <p>This will being up the dialog where you can specify the email you want to approve.</p>
 
@@ -212,15 +212,15 @@
 
 <h3 id="creating-the-smtp-credentials">Creating the SMTP credentials</h3>
 
-<p>The next thing you need to do is create some credentials with which to relay through the SMTP server with. Clicking on <code class="highlighter-rouge">SMTP Settings</code> under the <code class="highlighter-rouge">Email Sending</code> section will show you the details - as below;</p>
+<p>The next thing you need to do is create some credentials with which to relay through the SMTP server with. Clicking on <code class="language-plaintext highlighter-rouge">SMTP Settings</code> under the <code class="language-plaintext highlighter-rouge">Email Sending</code> section will show you the details - as below;</p>
 
 <p><img src="/images/ses_smtp_relay_details.png" alt="SMTP Settings" /></p>
 
-<p>Click on the <code class="highlighter-rouge">Create My SMTP Credentials</code> button and either accept the IAM user name or change to something more appropriate</p>
+<p>Click on the <code class="language-plaintext highlighter-rouge">Create My SMTP Credentials</code> button and either accept the IAM user name or change to something more appropriate</p>
 
 <p><img src="/images/create_ses_creds.png" alt="SES IAM User" /></p>
 
-<p>Clicking <code class="highlighter-rouge">Create</code> will generate the new credentials for the IAM user which you can download and make a note of.</p>
+<p>Clicking <code class="language-plaintext highlighter-rouge">Create</code> will generate the new credentials for the IAM user which you can download and make a note of.</p>
 
 <p><img src="/images/creds_download.png" alt="IAM User Credentials" /></p>
 
@@ -234,10 +234,11 @@
 
 
             <div class="post-content bs-callout bs-callout-info">
-Are you confused about the ever growing number of services in AWS and Azure? Why not checkout these super useful glossaries that are always up to date!
-<br />There is one for <a target="_blank" href="https://aws.servicelist.cloud">AWS</a>
-and one for <a target="_blank" href="https://tools.owenrumney.co.uk/azure/index.html">Azure</a>
-</div>
+                Are you confused about the ever growing number of services in AWS and Azure? Why not checkout these
+                super useful glossaries that are always up to date!
+                <br />There is one for <a target="_blank" href="https://aws.servicelist.cloud/">AWS</a>
+                and one for <a target="_blank" href="https://azure.servicelist.cloud">Azure</a>
+            </div>
 
             <div class="tags">
                 
@@ -254,9 +255,9 @@ and one for <a target="_blank" href="https://tools.owenrumney.co.uk/azure/index.
                 <a href="/tags/#smtp">smtp</a>
                 
             </div>
-<a href="#" data-scroll role="button" id="back-to-top" class="back-to-top" style="display: inline;">Top</a>
+            <a href="#" data-scroll role="button" id="back-to-top" class="back-to-top" style="display: inline;">Top</a>
         </article>
-                                    
+
         <section class="share">
     <h3>Share</h3>
     <a aria-label="Share on Twitter" href="https://twitter.com/intent/tweet?text=&quot;&quot;%20https://www.owenrumney.co.uk/scan-to-email-with-hp-printer/%20via%20&#64;owenrum&hashtags=aws,ses,simple email service,hp printer,email relay,smtp,"
@@ -321,15 +322,15 @@ and one for <a target="_blank" href="https://tools.owenrumney.co.uk/azure/index.
 </body>
 <script>
     $(function () {
-        if (window.location.href.indexOf('#')  == -1) {
+        if (window.location.href.indexOf('#') == -1) {
             setTimeout(function () {
-                
-                if (window.scrollY== 0) {
+
+                if (window.scrollY == 0) {
                     $('#scrolllink').click();
                 }
             }, 1200);
         }
-        
+
     });
 </script>
 

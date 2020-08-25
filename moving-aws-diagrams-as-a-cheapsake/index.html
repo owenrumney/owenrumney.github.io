@@ -214,7 +214,7 @@
 
 <p>I am using Docker Compose to create the containers on the box so I need a docker compose file for nginx and lets encrypt companion.</p>
 
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>version: '2'
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>version: '2'
 
 services:
   nginx-proxy:
@@ -244,9 +244,9 @@ services:
 
 <p>AWS Backend is the name I gave the backend for the AWS diagram tool. In hindsight, it sounds a lot loftier a name that it actually does.</p>
 
-<p>The solution is comprised of a <code class="highlighter-rouge">jar</code> and some html. The docker file is fairly basic too</p>
+<p>The solution is comprised of a <code class="language-plaintext highlighter-rouge">jar</code> and some html. The docker file is fairly basic too</p>
 
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>FROM amazoncorretto:8
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>FROM amazoncorretto:8
 # copy WAR into image
 COPY www /editor
 COPY index.html /index.html
@@ -266,26 +266,26 @@ CMD ["/usr/bin/java", "-jar", "backend.jar", "-cp", "/*"]
   <li>Login to Docker</li>
 </ol>
 
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>docker login -u owenrumney`
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>docker login -u owenrumney`
 </code></pre></div></div>
 
 <ol>
   <li>Build the image</li>
 </ol>
 
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>docker build -t owenrumney/awsbackend .
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>docker build -t owenrumney/awsbackend .
 </code></pre></div></div>
 
 <ol>
-  <li>Push to <code class="highlighter-rouge">Dockerhub</code></li>
+  <li>Push to <code class="language-plaintext highlighter-rouge">Dockerhub</code></li>
 </ol>
 
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>docker push owenrumney/awsbackend
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>docker push owenrumney/awsbackend
 </code></pre></div></div>
 
 <p>Now the image is available for use, I can add another compose file.</p>
 
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>version: '2'
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>version: '2'
 
 services:
   awsbackend:
@@ -303,10 +303,11 @@ services:
 
 
             <div class="post-content bs-callout bs-callout-info">
-Are you confused about the ever growing number of services in AWS and Azure? Why not checkout these super useful glossaries that are always up to date!
-<br />There is one for <a target="_blank" href="https://aws.servicelist.cloud">AWS</a>
-and one for <a target="_blank" href="https://tools.owenrumney.co.uk/azure/index.html">Azure</a>
-</div>
+                Are you confused about the ever growing number of services in AWS and Azure? Why not checkout these
+                super useful glossaries that are always up to date!
+                <br />There is one for <a target="_blank" href="https://aws.servicelist.cloud/">AWS</a>
+                and one for <a target="_blank" href="https://azure.servicelist.cloud">Azure</a>
+            </div>
 
             <div class="tags">
                 
@@ -321,9 +322,9 @@ and one for <a target="_blank" href="https://tools.owenrumney.co.uk/azure/index.
                 <a href="/tags/#letsencrypt">letsencrypt</a>
                 
             </div>
-<a href="#" data-scroll role="button" id="back-to-top" class="back-to-top" style="display: inline;">Top</a>
+            <a href="#" data-scroll role="button" id="back-to-top" class="back-to-top" style="display: inline;">Top</a>
         </article>
-                                    
+
         <section class="share">
     <h3>Share</h3>
     <a aria-label="Share on Twitter" href="https://twitter.com/intent/tweet?text=&quot;&quot;%20https://www.owenrumney.co.uk/moving-aws-diagrams-as-a-cheapsake/%20via%20&#64;owenrum&hashtags=aws,docker,diagrams,nginx,letsencrypt,"
@@ -388,15 +389,15 @@ and one for <a target="_blank" href="https://tools.owenrumney.co.uk/azure/index.
 </body>
 <script>
     $(function () {
-        if (window.location.href.indexOf('#')  == -1) {
+        if (window.location.href.indexOf('#') == -1) {
             setTimeout(function () {
-                
-                if (window.scrollY== 0) {
+
+                if (window.scrollY == 0) {
                     $('#scrolllink').click();
                 }
             }, 1200);
         }
-        
+
     });
 </script>
 

@@ -184,9 +184,9 @@
         <article role="article" id="scroll" class="post-content" itemprop="articleBody">
             <p>I have been setting up a couple of Red Hat boxes and I need to have a cron task to mount a network share from an AD domain, copy the files then dismount.</p>
 
-<p>In the past I have successfully accessed the network shares using a given set of credentials but I could not get it to work after install <code class="highlighter-rouge">samba-client</code> and <code class="highlighter-rouge">samba-common</code>.</p>
+<p>In the past I have successfully accessed the network shares using a given set of credentials but I could not get it to work after install <code class="language-plaintext highlighter-rouge">samba-client</code> and <code class="language-plaintext highlighter-rouge">samba-common</code>.</p>
 
-<p>My script on the new machine was the same as the script on the working machine so there had to be a discrepency on installed packages, step in <code class="highlighter-rouge">yum history</code>.</p>
+<p>My script on the new machine was the same as the script on the working machine so there had to be a discrepency on installed packages, step in <code class="language-plaintext highlighter-rouge">yum history</code>.</p>
 
 <p>To get the history of yum commands use</p>
 
@@ -206,10 +206,11 @@
 
 
             <div class="post-content bs-callout bs-callout-info">
-Are you confused about the ever growing number of services in AWS and Azure? Why not checkout these super useful glossaries that are always up to date!
-<br />There is one for <a target="_blank" href="https://aws.servicelist.cloud">AWS</a>
-and one for <a target="_blank" href="https://tools.owenrumney.co.uk/azure/index.html">Azure</a>
-</div>
+                Are you confused about the ever growing number of services in AWS and Azure? Why not checkout these
+                super useful glossaries that are always up to date!
+                <br />There is one for <a target="_blank" href="https://aws.servicelist.cloud/">AWS</a>
+                and one for <a target="_blank" href="https://azure.servicelist.cloud">Azure</a>
+            </div>
 
             <div class="tags">
                 
@@ -218,9 +219,9 @@ and one for <a target="_blank" href="https://tools.owenrumney.co.uk/azure/index.
                 <a href="/tags/#yum">yum</a>
                 
             </div>
-<a href="#" data-scroll role="button" id="back-to-top" class="back-to-top" style="display: inline;">Top</a>
+            <a href="#" data-scroll role="button" id="back-to-top" class="back-to-top" style="display: inline;">Top</a>
         </article>
-                                    
+
         <section class="share">
     <h3>Share</h3>
     <a aria-label="Share on Twitter" href="https://twitter.com/intent/tweet?text=&quot;&quot;%20https://www.owenrumney.co.uk/using-yum-history/%20via%20&#64;owenrum&hashtags=linux,yum,"
@@ -285,15 +286,15 @@ and one for <a target="_blank" href="https://tools.owenrumney.co.uk/azure/index.
 </body>
 <script>
     $(function () {
-        if (window.location.href.indexOf('#')  == -1) {
+        if (window.location.href.indexOf('#') == -1) {
             setTimeout(function () {
-                
-                if (window.scrollY== 0) {
+
+                if (window.scrollY == 0) {
                     $('#scrolllink').click();
                 }
             }, 1200);
         }
-        
+
     });
 </script>
 

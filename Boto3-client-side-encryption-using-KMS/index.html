@@ -207,33 +207,33 @@ bin/pip install pycrypto
 <span class="kn">from</span> <span class="nn">Crypto.Cipher</span> <span class="kn">import</span> <span class="n">AES</span>
 
 <span class="k">def</span> <span class="nf">pad</span><span class="p">(</span><span class="n">s</span><span class="p">):</span>
-    <span class="k">return</span> <span class="n">s</span> <span class="o">+</span> <span class="n">b</span><span class="s">"/0"</span> <span class="o">*</span><span class="p">(</span><span class="n">AES</span><span class="o">.</span><span class="n">block_size</span> <span class="o">-</span> <span class="nb">len</span><span class="p">(</span><span class="n">s</span><span class="p">)</span> <span class="o">%</span> <span class="n">AES</span><span class="o">.</span><span class="n">block_size</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">s</span> <span class="o">+</span> <span class="s">b"/0"</span> <span class="o">*</span><span class="p">(</span><span class="n">AES</span><span class="p">.</span><span class="n">block_size</span> <span class="o">-</span> <span class="nb">len</span><span class="p">(</span><span class="n">s</span><span class="p">)</span> <span class="o">%</span> <span class="n">AES</span><span class="p">.</span><span class="n">block_size</span><span class="p">)</span>
 
 <span class="k">def</span> <span class="nf">encrypt</span><span class="p">(</span><span class="n">message</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">key_size</span><span class="o">=</span><span class="mi">256</span><span class="p">):</span>
     <span class="n">message</span> <span class="o">=</span> <span class="n">pad</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
-    <span class="n">iv</span> <span class="o">=</span> <span class="n">Random</span><span class="o">.</span><span class="n">new</span><span class="p">()</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">AES</span><span class="o">.</span><span class="n">block_size</span><span class="p">)</span>
-    <span class="n">cipher</span> <span class="o">=</span> <span class="n">AES</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">AES</span><span class="o">.</span><span class="n">MODE_CBC</span><span class="p">,</span> <span class="n">iv</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">iv</span> <span class="o">+</span> <span class="n">cipher</span><span class="o">.</span><span class="n">encrypt</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
+    <span class="n">iv</span> <span class="o">=</span> <span class="n">Random</span><span class="p">.</span><span class="n">new</span><span class="p">().</span><span class="n">read</span><span class="p">(</span><span class="n">AES</span><span class="p">.</span><span class="n">block_size</span><span class="p">)</span>
+    <span class="n">cipher</span> <span class="o">=</span> <span class="n">AES</span><span class="p">.</span><span class="n">new</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">AES</span><span class="p">.</span><span class="n">MODE_CBC</span><span class="p">,</span> <span class="n">iv</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">iv</span> <span class="o">+</span> <span class="n">cipher</span><span class="p">.</span><span class="n">encrypt</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
 
 <span class="k">def</span> <span class="nf">decrypt</span><span class="p">(</span><span class="n">ciphertext</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
-    <span class="n">iv</span> <span class="o">=</span> <span class="n">ciphertext</span><span class="p">[:</span><span class="n">AES</span><span class="o">.</span><span class="n">block_size</span><span class="p">]</span>
-    <span class="n">cipher</span> <span class="o">=</span> <span class="n">AES</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">AES</span><span class="o">.</span><span class="n">MODE_CBC</span><span class="p">,</span> <span class="n">iv</span><span class="p">)</span>
-    <span class="n">plaintext</span> <span class="o">=</span> <span class="n">cipher</span><span class="o">.</span><span class="n">decrypt</span><span class="p">(</span><span class="n">ciphertext</span><span class="p">[</span><span class="n">AES</span><span class="o">.</span><span class="n">block_size</span><span class="p">:])</span>
-    <span class="k">return</span> <span class="n">plaintext</span><span class="o">.</span><span class="n">rstrip</span><span class="p">(</span><span class="n">b</span><span class="s">"</span><span class="se">\0</span><span class="s">"</span><span class="p">)</span>
+    <span class="n">iv</span> <span class="o">=</span> <span class="n">ciphertext</span><span class="p">[:</span><span class="n">AES</span><span class="p">.</span><span class="n">block_size</span><span class="p">]</span>
+    <span class="n">cipher</span> <span class="o">=</span> <span class="n">AES</span><span class="p">.</span><span class="n">new</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">AES</span><span class="p">.</span><span class="n">MODE_CBC</span><span class="p">,</span> <span class="n">iv</span><span class="p">)</span>
+    <span class="n">plaintext</span> <span class="o">=</span> <span class="n">cipher</span><span class="p">.</span><span class="n">decrypt</span><span class="p">(</span><span class="n">ciphertext</span><span class="p">[</span><span class="n">AES</span><span class="p">.</span><span class="n">block_size</span><span class="p">:])</span>
+    <span class="k">return</span> <span class="n">plaintext</span><span class="p">.</span><span class="n">rstrip</span><span class="p">(</span><span class="s">b"</span><span class="se">\0</span><span class="s">"</span><span class="p">)</span>
 
 <span class="k">def</span> <span class="nf">encrypt_file</span><span class="p">(</span><span class="n">file_name</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
     <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">file_name</span><span class="p">,</span> <span class="s">'rb'</span><span class="p">)</span> <span class="k">as</span> <span class="n">fo</span><span class="p">:</span>
-        <span class="n">plaintext</span> <span class="o">=</span> <span class="n">fo</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+        <span class="n">plaintext</span> <span class="o">=</span> <span class="n">fo</span><span class="p">.</span><span class="n">read</span><span class="p">()</span>
     <span class="n">enc</span> <span class="o">=</span> <span class="n">encrypt</span><span class="p">(</span><span class="n">plaintext</span><span class="p">,</span> <span class="n">key</span><span class="p">)</span>
     <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">file_name</span> <span class="o">+</span> <span class="s">".enc"</span><span class="p">,</span> <span class="s">'wb'</span><span class="p">)</span> <span class="k">as</span> <span class="n">fo</span><span class="p">:</span>
-        <span class="n">fo</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">enc</span><span class="p">)</span>
+        <span class="n">fo</span><span class="p">.</span><span class="n">write</span><span class="p">(</span><span class="n">enc</span><span class="p">)</span>
 
 <span class="k">def</span> <span class="nf">decrypt_file</span><span class="p">(</span><span class="n">file_name</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
     <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">file_name</span><span class="p">,</span> <span class="s">'rb'</span><span class="p">)</span> <span class="k">as</span> <span class="n">fo</span><span class="p">:</span>
-        <span class="n">ciphertext</span> <span class="o">=</span> <span class="n">fo</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+        <span class="n">ciphertext</span> <span class="o">=</span> <span class="n">fo</span><span class="p">.</span><span class="n">read</span><span class="p">()</span>
     <span class="n">dec</span> <span class="o">=</span> <span class="n">decrypt</span><span class="p">(</span><span class="n">ciphertext</span><span class="p">,</span> <span class="n">key</span><span class="p">)</span>
     <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">file_name</span><span class="p">[:</span><span class="o">-</span><span class="mi">4</span><span class="p">],</span> <span class="s">'wb'</span><span class="p">)</span> <span class="k">as</span> <span class="n">fo</span><span class="p">:</span>
-        <span class="n">fo</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">dec</span><span class="p">)</span>
+        <span class="n">fo</span><span class="p">.</span><span class="n">write</span><span class="p">(</span><span class="n">dec</span><span class="p">)</span>
 </code></pre></div></div>
 
 <p>##Creating the data key to encrypt</p>
@@ -246,8 +246,8 @@ bin/pip install pycrypto
 
 <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">boto3</span>
 
-<span class="n">kms</span> <span class="o">=</span> <span class="n">boto3</span><span class="o">.</span><span class="n">client</span><span class="p">(</span><span class="s">'kms'</span><span class="p">)</span>
-<span class="n">data_key_req</span> <span class="o">=</span> <span class="n">kms</span><span class="o">.</span><span class="n">generate_data_key</span><span class="p">(</span><span class="n">KeyId</span><span class="o">=</span><span class="n">customer_key</span><span class="p">,</span> <span class="n">KeySpec</span><span class="o">=</span><span class="s">'AES_256'</span><span class="p">)</span>
+<span class="n">kms</span> <span class="o">=</span> <span class="n">boto3</span><span class="p">.</span><span class="n">client</span><span class="p">(</span><span class="s">'kms'</span><span class="p">)</span>
+<span class="n">data_key_req</span> <span class="o">=</span> <span class="n">kms</span><span class="p">.</span><span class="n">generate_data_key</span><span class="p">(</span><span class="n">KeyId</span><span class="o">=</span><span class="n">customer_key</span><span class="p">,</span> <span class="n">KeySpec</span><span class="o">=</span><span class="s">'AES_256'</span><span class="p">)</span>
 <span class="n">data_key</span> <span class="o">=</span> <span class="n">data_key_req</span><span class="p">[</span><span class="s">'Plaintext'</span><span class="p">]</span>
 <span class="n">data_key_ciphered</span> <span class="o">=</span> <span class="n">data_key_req</span><span class="p">[</span><span class="s">'CiphertextBlob'</span><span class="p">]</span>
 
@@ -255,24 +255,25 @@ bin/pip install pycrypto
 
 </code></pre></div></div>
 
-<p>This will create a new encrypted file for file <code class="highlighter-rouge">test.txt</code> it would create a new file <code class="highlighter-rouge">test.txt.enc</code></p>
+<p>This will create a new encrypted file for file <code class="language-plaintext highlighter-rouge">test.txt</code> it would create a new file <code class="language-plaintext highlighter-rouge">test.txt.enc</code></p>
 
 <p>if you were going to upload to s3, you might use something like;</p>
 
 <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">base64</span>
 
-<span class="n">s3</span> <span class="o">=</span> <span class="n">boto3</span><span class="o">.</span><span class="n">client</span><span class="p">(</span><span class="s">'s3'</span><span class="p">)</span>
-<span class="n">s3</span><span class="o">.</span><span class="n">put_object</span><span class="p">(</span><span class="n">Bucket</span><span class="o">=</span><span class="s">'mybucketname'</span><span class="p">,</span> <span class="n">Body</span><span class="o">=</span><span class="nb">open</span><span class="p">(</span><span class="s">'test.txt.enc'</span><span class="p">,</span> <span class="s">'r'</span><span class="p">),</span>
-<span class="n">Key</span><span class="o">=</span><span class="s">'test.txt'</span><span class="p">,</span> <span class="n">Metadata</span><span class="o">=</span><span class="p">{</span><span class="s">'encryption-key'</span><span class="p">:</span> <span class="n">base64</span><span class="o">.</span><span class="n">b64encode</span><span class="p">(</span><span class="n">data_key_ciphered</span><span class="p">)})</span>
+<span class="n">s3</span> <span class="o">=</span> <span class="n">boto3</span><span class="p">.</span><span class="n">client</span><span class="p">(</span><span class="s">'s3'</span><span class="p">)</span>
+<span class="n">s3</span><span class="p">.</span><span class="n">put_object</span><span class="p">(</span><span class="n">Bucket</span><span class="o">=</span><span class="s">'mybucketname'</span><span class="p">,</span> <span class="n">Body</span><span class="o">=</span><span class="nb">open</span><span class="p">(</span><span class="s">'test.txt.enc'</span><span class="p">,</span> <span class="s">'r'</span><span class="p">),</span>
+<span class="n">Key</span><span class="o">=</span><span class="s">'test.txt'</span><span class="p">,</span> <span class="n">Metadata</span><span class="o">=</span><span class="p">{</span><span class="s">'encryption-key'</span><span class="p">:</span> <span class="n">base64</span><span class="p">.</span><span class="n">b64encode</span><span class="p">(</span><span class="n">data_key_ciphered</span><span class="p">)})</span>
 
 </code></pre></div></div>
 
 
             <div class="post-content bs-callout bs-callout-info">
-Are you confused about the ever growing number of services in AWS and Azure? Why not checkout these super useful glossaries that are always up to date!
-<br />There is one for <a target="_blank" href="https://aws.servicelist.cloud">AWS</a>
-and one for <a target="_blank" href="https://tools.owenrumney.co.uk/azure/index.html">Azure</a>
-</div>
+                Are you confused about the ever growing number of services in AWS and Azure? Why not checkout these
+                super useful glossaries that are always up to date!
+                <br />There is one for <a target="_blank" href="https://aws.servicelist.cloud/">AWS</a>
+                and one for <a target="_blank" href="https://azure.servicelist.cloud">Azure</a>
+            </div>
 
             <div class="tags">
                 
@@ -283,9 +284,9 @@ and one for <a target="_blank" href="https://tools.owenrumney.co.uk/azure/index.
                 <a href="/tags/#encryption">encryption</a>
                 
             </div>
-<a href="#" data-scroll role="button" id="back-to-top" class="back-to-top" style="display: inline;">Top</a>
+            <a href="#" data-scroll role="button" id="back-to-top" class="back-to-top" style="display: inline;">Top</a>
         </article>
-                                    
+
         <section class="share">
     <h3>Share</h3>
     <a aria-label="Share on Twitter" href="https://twitter.com/intent/tweet?text=&quot;&quot;%20https://www.owenrumney.co.uk/Boto3-client-side-encryption-using-KMS/%20via%20&#64;owenrum&hashtags=aws,boto3,encryption,"
@@ -350,15 +351,15 @@ and one for <a target="_blank" href="https://tools.owenrumney.co.uk/azure/index.
 </body>
 <script>
     $(function () {
-        if (window.location.href.indexOf('#')  == -1) {
+        if (window.location.href.indexOf('#') == -1) {
             setTimeout(function () {
-                
-                if (window.scrollY== 0) {
+
+                if (window.scrollY == 0) {
                     $('#scrolllink').click();
                 }
             }, 1200);
         }
-        
+
     });
 </script>
 

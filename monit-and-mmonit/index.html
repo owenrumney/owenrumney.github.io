@@ -192,9 +192,9 @@
 
 <h2 id="installing-monit">Installing Monit</h2>
 
-<p>Our servers are Red Hat so we’re not using <code class="highlighter-rouge">yum install monit</code> which will get you stated on on a Fedora machine. Equally the downloads page on the monit site will give you the quick and easy installation for other common platforms.</p>
+<p>Our servers are Red Hat so we’re not using <code class="language-plaintext highlighter-rouge">yum install monit</code> which will get you stated on on a Fedora machine. Equally the downloads page on the monit site will give you the quick and easy installation for other common platforms.</p>
 
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code># create the install folder
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code># create the install folder
 sudo mkdir /opt/monit
 cd /opt/monit
 
@@ -214,11 +214,11 @@ sudo ln -s /opt/monit/5.21.0/bin/monit /usr/bin/monit
 
 <h3 id="configuring-monit">Configuring Monit</h3>
 
-<p>Now the links are in we can configure the monit config file <code class="highlighter-rouge">monitrc</code>. The actually file has huge amounts of documentation; I’m going to limit this to the key points to get up and running</p>
+<p>Now the links are in we can configure the monit config file <code class="language-plaintext highlighter-rouge">monitrc</code>. The actually file has huge amounts of documentation; I’m going to limit this to the key points to get up and running</p>
 
-<p><code class="highlighter-rouge">sudo vi /etc/monitrc</code></p>
+<p><code class="language-plaintext highlighter-rouge">sudo vi /etc/monitrc</code></p>
 
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>######################
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>######################
 ## Monit control file
 ######################
 
@@ -279,17 +279,18 @@ check network eth0 with interface eth0
 
 <p>To start monit user</p>
 
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>sudo monit start
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>sudo monit start
 </code></pre></div></div>
 
-<p>If you make changes to <code class="highlighter-rouge">/etc/monitrc</code> then you can reload it with <code class="highlighter-rouge">sudo monit reload</code></p>
+<p>If you make changes to <code class="language-plaintext highlighter-rouge">/etc/monitrc</code> then you can reload it with <code class="language-plaintext highlighter-rouge">sudo monit reload</code></p>
 
 
             <div class="post-content bs-callout bs-callout-info">
-Are you confused about the ever growing number of services in AWS and Azure? Why not checkout these super useful glossaries that are always up to date!
-<br />There is one for <a target="_blank" href="https://aws.servicelist.cloud">AWS</a>
-and one for <a target="_blank" href="https://tools.owenrumney.co.uk/azure/index.html">Azure</a>
-</div>
+                Are you confused about the ever growing number of services in AWS and Azure? Why not checkout these
+                super useful glossaries that are always up to date!
+                <br />There is one for <a target="_blank" href="https://aws.servicelist.cloud/">AWS</a>
+                and one for <a target="_blank" href="https://azure.servicelist.cloud">Azure</a>
+            </div>
 
             <div class="tags">
                 
@@ -300,9 +301,9 @@ and one for <a target="_blank" href="https://tools.owenrumney.co.uk/azure/index.
                 <a href="/tags/#linux">linux</a>
                 
             </div>
-<a href="#" data-scroll role="button" id="back-to-top" class="back-to-top" style="display: inline;">Top</a>
+            <a href="#" data-scroll role="button" id="back-to-top" class="back-to-top" style="display: inline;">Top</a>
         </article>
-                                    
+
         <section class="share">
     <h3>Share</h3>
     <a aria-label="Share on Twitter" href="https://twitter.com/intent/tweet?text=&quot;&quot;%20https://www.owenrumney.co.uk/monit-and-mmonit/%20via%20&#64;owenrum&hashtags=monitoring,alerting,linux,"
@@ -367,15 +368,15 @@ and one for <a target="_blank" href="https://tools.owenrumney.co.uk/azure/index.
 </body>
 <script>
     $(function () {
-        if (window.location.href.indexOf('#')  == -1) {
+        if (window.location.href.indexOf('#') == -1) {
             setTimeout(function () {
-                
-                if (window.scrollY== 0) {
+
+                if (window.scrollY == 0) {
                     $('#scrolllink').click();
                 }
             }, 1200);
         }
-        
+
     });
 </script>
 

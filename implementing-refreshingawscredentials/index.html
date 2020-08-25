@@ -194,7 +194,7 @@
 
 <p>Behind the scenes, there is a PowerShell in the background running as a scheduled task to go through Single Sign On and get new tokens to write in the credential file. I won’t go into any more detail than that as its very company specific.</p>
 
-<p>As the 3rd party application creates the client on startup it uses the latest credentials but they don’t get refreshed from the credential file. I found an abstract class in the .NET SDK called <code class="highlighter-rouge">RefreshingAWSCredentials</code> which looked promising.</p>
+<p>As the 3rd party application creates the client on startup it uses the latest credentials but they don’t get refreshed from the credential file. I found an abstract class in the .NET SDK called <code class="language-plaintext highlighter-rouge">RefreshingAWSCredentials</code> which looked promising.</p>
 
 <p>With this class, you can set an expiration for the Credential object such that any AWS SDK client that is using it for the API calls - for example;</p>
 
@@ -278,22 +278,23 @@
 <p>There are three configurations to be used with this. These should be added as AppSettings in the app.config</p>
 
 <ol>
-  <li><code class="highlighter-rouge">CredentialFileLocation</code> - The location of the credential file that is being updated externally (in this case by PowerShell)</li>
-  <li><code class="highlighter-rouge">CredentialFileProfile</code> - The profile from the credential file to use</li>
-  <li><code class="highlighter-rouge">ClientRefreshIntervalMinutes</code> - How long to keep the credentials before expiring them (defaults to 45 minutes)</li>
+  <li><code class="language-plaintext highlighter-rouge">CredentialFileLocation</code> - The location of the credential file that is being updated externally (in this case by PowerShell)</li>
+  <li><code class="language-plaintext highlighter-rouge">CredentialFileProfile</code> - The profile from the credential file to use</li>
+  <li><code class="language-plaintext highlighter-rouge">ClientRefreshIntervalMinutes</code> - How long to keep the credentials before expiring them (defaults to 45 minutes)</li>
 </ol>
 
-<p>As suggested before, you can now create your AWS clients passing in the <code class="highlighter-rouge">Credentials</code> property in place of any of the normally used <code class="highlighter-rouge">Credentials</code> objects.</p>
+<p>As suggested before, you can now create your AWS clients passing in the <code class="language-plaintext highlighter-rouge">Credentials</code> property in place of any of the normally used <code class="language-plaintext highlighter-rouge">Credentials</code> objects.</p>
 
 <div class="language-csharp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kt">var</span> <span class="n">s3Client</span> <span class="p">=</span> <span class="k">new</span> <span class="nf">AmazonS3Client</span><span class="p">(</span><span class="n">ExternalRefreshingAWSCredentials</span><span class="p">.</span><span class="n">Credentials</span><span class="p">);</span>
 </code></pre></div></div>
 
 
             <div class="post-content bs-callout bs-callout-info">
-Are you confused about the ever growing number of services in AWS and Azure? Why not checkout these super useful glossaries that are always up to date!
-<br />There is one for <a target="_blank" href="https://aws.servicelist.cloud">AWS</a>
-and one for <a target="_blank" href="https://tools.owenrumney.co.uk/azure/index.html">Azure</a>
-</div>
+                Are you confused about the ever growing number of services in AWS and Azure? Why not checkout these
+                super useful glossaries that are always up to date!
+                <br />There is one for <a target="_blank" href="https://aws.servicelist.cloud/">AWS</a>
+                and one for <a target="_blank" href="https://azure.servicelist.cloud">Azure</a>
+            </div>
 
             <div class="tags">
                 
@@ -306,9 +307,9 @@ and one for <a target="_blank" href="https://tools.owenrumney.co.uk/azure/index.
                 <a href="/tags/#net-aws-sdk">.net aws sdk</a>
                 
             </div>
-<a href="#" data-scroll role="button" id="back-to-top" class="back-to-top" style="display: inline;">Top</a>
+            <a href="#" data-scroll role="button" id="back-to-top" class="back-to-top" style="display: inline;">Top</a>
         </article>
-                                    
+
         <section class="share">
     <h3>Share</h3>
     <a aria-label="Share on Twitter" href="https://twitter.com/intent/tweet?text=&quot;&quot;%20https://www.owenrumney.co.uk/implementing-refreshingawscredentials/%20via%20&#64;owenrum&hashtags=aws,c#,csharp,.net aws sdk,"
@@ -373,15 +374,15 @@ and one for <a target="_blank" href="https://tools.owenrumney.co.uk/azure/index.
 </body>
 <script>
     $(function () {
-        if (window.location.href.indexOf('#')  == -1) {
+        if (window.location.href.indexOf('#') == -1) {
             setTimeout(function () {
-                
-                if (window.scrollY== 0) {
+
+                if (window.scrollY == 0) {
                     $('#scrolllink').click();
                 }
             }, 1200);
         }
-        
+
     });
 </script>
 

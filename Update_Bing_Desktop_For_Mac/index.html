@@ -186,36 +186,37 @@
 
 <p>I do like Bing wallpapers, and I use Bing Desktop on my Windows laptop to update my desktop to Bings daily wallpaper.</p>
 
-<p>Now that I’ve moved to a Mac I still want to get the picture, but the application is Windows only - so the script below will do the job for you. I’ve set it to download to the users picture folder <code class="highlighter-rouge">~/Pictures/bing-wallpapers</code> just using the current date for the filename.</p>
+<p>Now that I’ve moved to a Mac I still want to get the picture, but the application is Windows only - so the script below will do the job for you. I’ve set it to download to the users picture folder <code class="language-plaintext highlighter-rouge">~/Pictures/bing-wallpapers</code> just using the current date for the filename.</p>
 
 <figure class="highlight"><pre><code class="language-python" data-lang="python"><span class="kn">import</span> <span class="nn">urllib2</span>
 <span class="kn">import</span> <span class="nn">json</span>
 <span class="kn">from</span> <span class="nn">os.path</span> <span class="kn">import</span> <span class="n">expanduser</span>
 
-<span class="n">response</span> <span class="o">=</span> <span class="n">urllib2</span><span class="o">.</span><span class="n">urlopen</span><span class="p">(</span><span class="s">"http://www.bing.com/HPImageArchive.aspx?format=js&amp;idx=0&amp;n=1&amp;mkt=en-US"</span><span class="p">)</span>
-<span class="n">obj</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">response</span><span class="p">)</span>
+<span class="n">response</span> <span class="o">=</span> <span class="n">urllib2</span><span class="p">.</span><span class="n">urlopen</span><span class="p">(</span><span class="s">"http://www.bing.com/HPImageArchive.aspx?format=js&amp;idx=0&amp;n=1&amp;mkt=en-US"</span><span class="p">)</span>
+<span class="n">obj</span> <span class="o">=</span> <span class="n">json</span><span class="p">.</span><span class="n">load</span><span class="p">(</span><span class="n">response</span><span class="p">)</span>
 
 <span class="n">url</span> <span class="o">=</span> <span class="p">(</span><span class="n">obj</span><span class="p">[</span><span class="s">'images'</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="s">'urlbase'</span><span class="p">])</span>
 <span class="n">name</span> <span class="o">=</span> <span class="p">(</span><span class="n">obj</span><span class="p">[</span><span class="s">'images'</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="s">'fullstartdate'</span><span class="p">])</span>
-<span class="n">url</span> <span class="o">=</span> <span class="s">'http://www.bing.com'</span> <span class="o">+</span> <span class="n">url</span> <span class="o">+</span> <span class="s">'</span><span class="err">\</span><span class="s">_1920x1080.jpg'</span>
+<span class="n">url</span> <span class="o">=</span> <span class="s">'http://www.bing.com'</span> <span class="o">+</span> <span class="n">url</span> <span class="o">+</span> <span class="s">'\_1920x1080.jpg'</span>
 <span class="n">home</span> <span class="o">=</span> <span class="n">expanduser</span><span class="p">(</span><span class="s">'~'</span><span class="p">)</span>
 <span class="n">path</span> <span class="o">=</span> <span class="n">home</span> <span class="o">+</span><span class="s">'/Pictures/bing-wallpapers/'</span><span class="o">+</span><span class="n">name</span><span class="o">+</span><span class="s">'.jpg'</span>
-<span class="k">print</span> <span class="p">(</span><span class="s">"Downloading </span><span class="si">%</span><span class="s">s to </span><span class="si">%</span><span class="s">s"</span> <span class="o">%</span> <span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">path</span><span class="p">))</span>
+<span class="k">print</span> <span class="p">(</span><span class="s">"Downloading %s to %s"</span> <span class="o">%</span> <span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">path</span><span class="p">))</span>
 <span class="n">f</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s">'w'</span><span class="p">)</span>
-<span class="n">pic</span> <span class="o">=</span> <span class="n">urllib2</span><span class="o">.</span><span class="n">urlopen</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
-<span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">pic</span><span class="o">.</span><span class="n">read</span><span class="p">())</span></code></pre></figure>
+<span class="n">pic</span> <span class="o">=</span> <span class="n">urllib2</span><span class="p">.</span><span class="n">urlopen</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
+<span class="n">f</span><span class="p">.</span><span class="n">write</span><span class="p">(</span><span class="n">pic</span><span class="p">.</span><span class="n">read</span><span class="p">())</span></code></pre></figure>
 
-<p>To run on a schedule, set up a cron job to run the script at 10am using <code class="highlighter-rouge">crontab -e</code> and add the line</p>
+<p>To run on a schedule, set up a cron job to run the script at 10am using <code class="language-plaintext highlighter-rouge">crontab -e</code> and add the line</p>
 
 <figure class="highlight"><pre><code class="language-sh" data-lang="sh">0 10 <span class="se">\*</span> <span class="se">\*</span> <span class="se">\*</span> python ~/Pictures/wallpaper.py</code></pre></figure>
 
 
 
             <div class="post-content bs-callout bs-callout-info">
-Are you confused about the ever growing number of services in AWS and Azure? Why not checkout these super useful glossaries that are always up to date!
-<br />There is one for <a target="_blank" href="https://aws.servicelist.cloud">AWS</a>
-and one for <a target="_blank" href="https://tools.owenrumney.co.uk/azure/index.html">Azure</a>
-</div>
+                Are you confused about the ever growing number of services in AWS and Azure? Why not checkout these
+                super useful glossaries that are always up to date!
+                <br />There is one for <a target="_blank" href="https://aws.servicelist.cloud/">AWS</a>
+                and one for <a target="_blank" href="https://azure.servicelist.cloud">Azure</a>
+            </div>
 
             <div class="tags">
                 
@@ -228,9 +229,9 @@ and one for <a target="_blank" href="https://tools.owenrumney.co.uk/azure/index.
                 <a href="/tags/#python">python</a>
                 
             </div>
-<a href="#" data-scroll role="button" id="back-to-top" class="back-to-top" style="display: inline;">Top</a>
+            <a href="#" data-scroll role="button" id="back-to-top" class="back-to-top" style="display: inline;">Top</a>
         </article>
-                                    
+
         <section class="share">
     <h3>Share</h3>
     <a aria-label="Share on Twitter" href="https://twitter.com/intent/tweet?text=&quot;&quot;%20https://www.owenrumney.co.uk/Update_Bing_Desktop_For_Mac/%20via%20&#64;owenrum&hashtags=bing,wallpaper,osx,python,"
@@ -295,15 +296,15 @@ and one for <a target="_blank" href="https://tools.owenrumney.co.uk/azure/index.
 </body>
 <script>
     $(function () {
-        if (window.location.href.indexOf('#')  == -1) {
+        if (window.location.href.indexOf('#') == -1) {
             setTimeout(function () {
-                
-                if (window.scrollY== 0) {
+
+                if (window.scrollY == 0) {
                     $('#scrolllink').click();
                 }
             }, 1200);
         }
-        
+
     });
 </script>
 

@@ -195,7 +195,7 @@
 <h2 id="steps">Steps</h2>
 
 <h3 id="creating-the-s3-bucket-for-your-images">Creating the S3 Bucket for your images</h3>
-<p>First thing you’re going to need is somewhere to store the images. I’m going to create a new bucket in S3 called <code class="highlighter-rouge">owensbingoftheday</code>. As per S3 requirements, you’re going to need to come up with your own unique bucket name.</p>
+<p>First thing you’re going to need is somewhere to store the images. I’m going to create a new bucket in S3 called <code class="language-plaintext highlighter-rouge">owensbingoftheday</code>. As per S3 requirements, you’re going to need to come up with your own unique bucket name.</p>
 
 <p>In the AWS management console, go to the S3 service and create the new bucket, the create page should look like this;</p>
 
@@ -207,7 +207,7 @@
 
 <h4 id="creating-the-policy">Creating the policy</h4>
 
-<p>In the IAM service of the AWS Management console, create a new policy and switch to the JSON tab then add the following JSON. You need to change the bucket name in the <code class="highlighter-rouge">Resource</code> section to match the name of the bucket you specified in the previous step.</p>
+<p>In the IAM service of the AWS Management console, create a new policy and switch to the JSON tab then add the following JSON. You need to change the bucket name in the <code class="language-plaintext highlighter-rouge">Resource</code> section to match the name of the bucket you specified in the previous step.</p>
 
 <div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">{</span><span class="w">
     </span><span class="nl">"Version"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2012-10-17"</span><span class="p">,</span><span class="w">
@@ -253,7 +253,7 @@
 
 <p>Specify the new role that you’ve just created, it will allow the function to PUT our images into the specified bucket.</p>
 
-<p>On the next screen, paste the code below into the code box and <code class="highlighter-rouge">Save</code>.</p>
+<p>On the next screen, paste the code below into the code box and <code class="language-plaintext highlighter-rouge">Save</code>.</p>
 
 <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">boto3</span>
 <span class="kn">import</span> <span class="nn">json</span>
@@ -263,51 +263,51 @@
 <span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span>
 
 <span class="n">IMAGE_ARCHIVE_URL</span> <span class="o">=</span> <span class="s">'http://www.bing.com/HPImageArchive.aspx?format=js&amp;idx=0&amp;n=1&amp;mkt=en-US'</span>
-<span class="n">http</span> <span class="o">=</span> <span class="n">urllib3</span><span class="o">.</span><span class="n">PoolManager</span><span class="p">()</span>
+<span class="n">http</span> <span class="o">=</span> <span class="n">urllib3</span><span class="p">.</span><span class="n">PoolManager</span><span class="p">()</span>
 
 <span class="k">def</span> <span class="nf">get_image_details</span><span class="p">(</span><span class="n">payload</span><span class="p">):</span>
-    <span class="n">image</span> <span class="o">=</span> <span class="n">payload</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">'images'</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
-    <span class="n">urlbase</span> <span class="o">=</span> <span class="n">image</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">'urlbase'</span><span class="p">)</span>
-    <span class="n">name</span> <span class="o">=</span> <span class="n">image</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">'fullstartdate'</span><span class="p">)</span>
+    <span class="n">image</span> <span class="o">=</span> <span class="n">payload</span><span class="p">.</span><span class="n">get</span><span class="p">(</span><span class="s">'images'</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">urlbase</span> <span class="o">=</span> <span class="n">image</span><span class="p">.</span><span class="n">get</span><span class="p">(</span><span class="s">'urlbase'</span><span class="p">)</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="n">image</span><span class="p">.</span><span class="n">get</span><span class="p">(</span><span class="s">'fullstartdate'</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">name</span><span class="p">,</span> <span class="s">'http://www.bing.com'</span><span class="o">+</span> <span class="n">urlbase</span> <span class="o">+</span> <span class="s">'_1920x1080.jpg'</span>
 
 
 <span class="k">def</span> <span class="nf">save_to_s3</span><span class="p">(</span><span class="n">name</span><span class="p">,</span>  <span class="n">path</span><span class="p">):</span>
-    <span class="n">s3</span> <span class="o">=</span> <span class="n">boto3</span><span class="o">.</span><span class="n">client</span><span class="p">(</span><span class="s">'s3'</span><span class="p">)</span>
-    <span class="n">year</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span><span class="o">.</span><span class="n">year</span>
-    <span class="n">bucket_name</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s">'BUCKET_NAME'</span><span class="p">]</span>
-    <span class="n">object_name</span> <span class="o">=</span> <span class="s">'</span><span class="si">%</span><span class="s">s/</span><span class="si">%</span><span class="s">s.jpg'</span> <span class="o">%</span> <span class="p">(</span><span class="n">year</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
-    <span class="k">print</span> <span class="p">(</span><span class="s">"uploading {}"</span><span class="o">.</span><span class="nb">format</span><span class="p">(</span><span class="n">object_name</span><span class="p">))</span>
-    <span class="n">s3</span><span class="o">.</span><span class="n">upload_file</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">bucket_name</span><span class="p">,</span> <span class="n">object_name</span><span class="p">)</span>
+    <span class="n">s3</span> <span class="o">=</span> <span class="n">boto3</span><span class="p">.</span><span class="n">client</span><span class="p">(</span><span class="s">'s3'</span><span class="p">)</span>
+    <span class="n">year</span> <span class="o">=</span> <span class="n">datetime</span><span class="p">.</span><span class="n">now</span><span class="p">().</span><span class="n">year</span>
+    <span class="n">bucket_name</span> <span class="o">=</span> <span class="n">os</span><span class="p">.</span><span class="n">environ</span><span class="p">[</span><span class="s">'BUCKET_NAME'</span><span class="p">]</span>
+    <span class="n">object_name</span> <span class="o">=</span> <span class="s">'%s/%s.jpg'</span> <span class="o">%</span> <span class="p">(</span><span class="n">year</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
+    <span class="k">print</span> <span class="p">(</span><span class="s">"uploading {}"</span><span class="p">.</span><span class="nb">format</span><span class="p">(</span><span class="n">object_name</span><span class="p">))</span>
+    <span class="n">s3</span><span class="p">.</span><span class="n">upload_file</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">bucket_name</span><span class="p">,</span> <span class="n">object_name</span><span class="p">)</span>
 
 
 <span class="k">def</span> <span class="nf">get_image</span><span class="p">(</span><span class="n">payload</span><span class="p">):</span>
     <span class="n">name</span><span class="p">,</span> <span class="n">image_url</span> <span class="o">=</span> <span class="n">get_image_details</span><span class="p">(</span><span class="n">payload</span><span class="p">)</span>
-    <span class="n">path</span> <span class="o">=</span> <span class="s">'/tmp/</span><span class="si">%</span><span class="s">s.jpg'</span> <span class="o">%</span> <span class="n">name</span>
+    <span class="n">path</span> <span class="o">=</span> <span class="s">'/tmp/%s.jpg'</span> <span class="o">%</span> <span class="n">name</span>
     <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s">'wb'</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
-        <span class="n">pic</span> <span class="o">=</span> <span class="n">http</span><span class="o">.</span><span class="n">request</span><span class="p">(</span><span class="s">'GET'</span><span class="p">,</span> <span class="n">image_url</span><span class="p">)</span>
-        <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">pic</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
+        <span class="n">pic</span> <span class="o">=</span> <span class="n">http</span><span class="p">.</span><span class="n">request</span><span class="p">(</span><span class="s">'GET'</span><span class="p">,</span> <span class="n">image_url</span><span class="p">)</span>
+        <span class="n">f</span><span class="p">.</span><span class="n">write</span><span class="p">(</span><span class="n">pic</span><span class="p">.</span><span class="n">data</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">name</span><span class="p">,</span> <span class="n">path</span>
 
 
 <span class="k">def</span> <span class="nf">lambda_handler</span><span class="p">(</span><span class="n">event</span><span class="p">,</span> <span class="n">context</span><span class="p">):</span>
-    <span class="n">req</span> <span class="o">=</span> <span class="n">http</span><span class="o">.</span><span class="n">request</span><span class="p">(</span><span class="s">'GET'</span><span class="p">,</span> <span class="n">IMAGE_ARCHIVE_URL</span><span class="p">)</span>
-    <span class="k">if</span> <span class="n">req</span><span class="o">.</span><span class="n">status</span> <span class="o">!=</span> <span class="mi">200</span><span class="p">:</span>
+    <span class="n">req</span> <span class="o">=</span> <span class="n">http</span><span class="p">.</span><span class="n">request</span><span class="p">(</span><span class="s">'GET'</span><span class="p">,</span> <span class="n">IMAGE_ARCHIVE_URL</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">req</span><span class="p">.</span><span class="n">status</span> <span class="o">!=</span> <span class="mi">200</span><span class="p">:</span>
         <span class="k">print</span><span class="p">(</span><span class="s">"Could not get the image archive data"</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="n">payload</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">req</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s">'utf-8'</span><span class="p">))</span>
+        <span class="n">payload</span> <span class="o">=</span> <span class="n">json</span><span class="p">.</span><span class="n">loads</span><span class="p">(</span><span class="n">req</span><span class="p">.</span><span class="n">data</span><span class="p">.</span><span class="n">decode</span><span class="p">(</span><span class="s">'utf-8'</span><span class="p">))</span>
         <span class="n">name</span><span class="p">,</span> <span class="n">path</span> <span class="o">=</span> <span class="n">get_image</span><span class="p">(</span><span class="n">image_url</span><span class="p">,</span> <span class="n">path</span><span class="p">)</span>
         <span class="n">save_to_s3</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">path</span><span class="p">)</span>
         
 </code></pre></div></div>
 
-<p>The lambda function can now be tested. We’ll need an event to send so using the drop down next to the <code class="highlighter-rouge">Test</code> button, create a new test event.</p>
+<p>The lambda function can now be tested. We’ll need an event to send so using the drop down next to the <code class="language-plaintext highlighter-rouge">Test</code> button, create a new test event.</p>
 
 <p>Fill out the details for an empty event so it looks like this;</p>
 
 <p><img src="/images/bing_test_event.png" alt="Create the test event" /></p>
 
-<p>Now, when you press the <code class="highlighter-rouge">Test</code> button, it will send the empty event to trigger the lambda function, all being well, you’ll find today’s image in the specified S3 bucket.</p>
+<p>Now, when you press the <code class="language-plaintext highlighter-rouge">Test</code> button, it will send the empty event to trigger the lambda function, all being well, you’ll find today’s image in the specified S3 bucket.</p>
 
 <h3 id="scheduling-the-function">Scheduling the function</h3>
 
@@ -327,10 +327,11 @@
 
 
             <div class="post-content bs-callout bs-callout-info">
-Are you confused about the ever growing number of services in AWS and Azure? Why not checkout these super useful glossaries that are always up to date!
-<br />There is one for <a target="_blank" href="https://aws.servicelist.cloud">AWS</a>
-and one for <a target="_blank" href="https://tools.owenrumney.co.uk/azure/index.html">Azure</a>
-</div>
+                Are you confused about the ever growing number of services in AWS and Azure? Why not checkout these
+                super useful glossaries that are always up to date!
+                <br />There is one for <a target="_blank" href="https://aws.servicelist.cloud/">AWS</a>
+                and one for <a target="_blank" href="https://azure.servicelist.cloud">Azure</a>
+            </div>
 
             <div class="tags">
                 
@@ -341,9 +342,9 @@ and one for <a target="_blank" href="https://tools.owenrumney.co.uk/azure/index.
                 <a href="/tags/#python">python</a>
                 
             </div>
-<a href="#" data-scroll role="button" id="back-to-top" class="back-to-top" style="display: inline;">Top</a>
+            <a href="#" data-scroll role="button" id="back-to-top" class="back-to-top" style="display: inline;">Top</a>
         </article>
-                                    
+
         <section class="share">
     <h3>Share</h3>
     <a aria-label="Share on Twitter" href="https://twitter.com/intent/tweet?text=&quot;&quot;%20https://www.owenrumney.co.uk/bing-of-the-day-revisited/%20via%20&#64;owenrum&hashtags=aws,bing,python,"
@@ -408,15 +409,15 @@ and one for <a target="_blank" href="https://tools.owenrumney.co.uk/azure/index.
 </body>
 <script>
     $(function () {
-        if (window.location.href.indexOf('#')  == -1) {
+        if (window.location.href.indexOf('#') == -1) {
             setTimeout(function () {
-                
-                if (window.scrollY== 0) {
+
+                if (window.scrollY == 0) {
                     $('#scrolllink').click();
                 }
             }, 1200);
         }
-        
+
     });
 </script>
 

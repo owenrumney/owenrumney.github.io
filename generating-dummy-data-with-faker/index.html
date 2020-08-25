@@ -203,8 +203,8 @@
 
 <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">from</span> <span class="nn">faker</span> <span class="kn">import</span> <span class="n">Factory</span>
 
-<span class="n">fake</span> <span class="o">=</span> <span class="n">Factory</span><span class="o">.</span><span class="n">create</span><span class="p">()</span>
-<span class="n">fake</span><span class="o">.</span><span class="n">first_name</span><span class="p">(),</span> <span class="n">fake</span><span class="o">.</span><span class="n">last_name</span><span class="p">(),</span> <span class="n">fake</span><span class="o">.</span><span class="n">email</span><span class="p">()</span>
+<span class="n">fake</span> <span class="o">=</span> <span class="n">Factory</span><span class="p">.</span><span class="n">create</span><span class="p">()</span>
+<span class="n">fake</span><span class="p">.</span><span class="n">first_name</span><span class="p">(),</span> <span class="n">fake</span><span class="p">.</span><span class="n">last_name</span><span class="p">(),</span> <span class="n">fake</span><span class="p">.</span><span class="n">email</span><span class="p">()</span>
 </code></pre></div></div>
 
 <p>This will give you a tuple with a random name and email;</p>
@@ -217,9 +217,9 @@
 
 <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">from</span> <span class="nn">faker</span> <span class="kn">import</span> <span class="n">Factory</span>
 
-<span class="n">fake</span> <span class="o">=</span> <span class="n">Factory</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="s">'en_GB'</span><span class="p">)</span>
+<span class="n">fake</span> <span class="o">=</span> <span class="n">Factory</span><span class="p">.</span><span class="n">create</span><span class="p">(</span><span class="s">'en_GB'</span><span class="p">)</span>
 
-<span class="n">fake</span><span class="o">.</span><span class="n">street_address</span><span class="p">(),</span> <span class="n">fake</span><span class="o">.</span><span class="n">postcode</span><span class="p">()</span>
+<span class="n">fake</span><span class="p">.</span><span class="n">street_address</span><span class="p">(),</span> <span class="n">fake</span><span class="p">.</span><span class="n">postcode</span><span class="p">()</span>
 </code></pre></div></div>
 
 <p>which will yield;</p>
@@ -229,23 +229,23 @@
 
 <h3 id="synchronising-multiple-fakes">Synchronising Multiple Fakes</h3>
 
-<p>Everytime you call a method on the <code class="highlighter-rouge">fake</code> object you get a new value. If you wanted to synchronise two <code class="highlighter-rouge">fake</code> objects you can use the seed. This will mean that the each consecutive call from each <code class="highlighter-rouge">fake</code> will return the same value.</p>
+<p>Everytime you call a method on the <code class="language-plaintext highlighter-rouge">fake</code> object you get a new value. If you wanted to synchronise two <code class="language-plaintext highlighter-rouge">fake</code> objects you can use the seed. This will mean that the each consecutive call from each <code class="language-plaintext highlighter-rouge">fake</code> will return the same value.</p>
 
 <p>This is probably more easily demonstrated in code;</p>
 
 <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">from</span> <span class="nn">faker</span> <span class="kn">import</span> <span class="n">Factory</span>
 
-<span class="n">fake1</span> <span class="o">=</span> <span class="n">Factory</span><span class="o">.</span><span class="n">create</span><span class="p">()</span>
-<span class="n">fake2</span> <span class="o">=</span> <span class="n">Factory</span><span class="o">.</span><span class="n">create</span><span class="p">()</span>
+<span class="n">fake1</span> <span class="o">=</span> <span class="n">Factory</span><span class="p">.</span><span class="n">create</span><span class="p">()</span>
+<span class="n">fake2</span> <span class="o">=</span> <span class="n">Factory</span><span class="p">.</span><span class="n">create</span><span class="p">()</span>
 
-<span class="n">fake1</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">12345</span><span class="p">)</span>
-<span class="n">fake2</span><span class="o">.</span><span class="n">seed_instance</span><span class="p">(</span><span class="mi">12345</span><span class="p">)</span>
+<span class="n">fake1</span><span class="p">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">12345</span><span class="p">)</span>
+<span class="n">fake2</span><span class="p">.</span><span class="n">seed_instance</span><span class="p">(</span><span class="mi">12345</span><span class="p">)</span>
 
-<span class="n">fake1</span><span class="o">.</span><span class="n">name</span><span class="p">(),</span> <span class="n">fake2</span><span class="o">.</span><span class="n">name</span><span class="p">()</span>
-<span class="n">fake1</span><span class="o">.</span><span class="n">name</span><span class="p">(),</span> <span class="n">fake2</span><span class="o">.</span><span class="n">name</span><span class="p">()</span>
+<span class="n">fake1</span><span class="p">.</span><span class="n">name</span><span class="p">(),</span> <span class="n">fake2</span><span class="p">.</span><span class="n">name</span><span class="p">()</span>
+<span class="n">fake1</span><span class="p">.</span><span class="n">name</span><span class="p">(),</span> <span class="n">fake2</span><span class="p">.</span><span class="n">name</span><span class="p">()</span>
 </code></pre></div></div>
 
-<p>This will result in a tuple containing the same name across synchronised <code class="highlighter-rouge">fake</code> objects.</p>
+<p>This will result in a tuple containing the same name across synchronised <code class="language-plaintext highlighter-rouge">fake</code> objects.</p>
 
 <div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">(</span><span class="s1">'Adam Bryan'</span>, <span class="s1">'Adam Bryan'</span><span class="o">)</span>
 <span class="o">(</span><span class="s1">'Jacob Lee'</span>, <span class="s1">'Jacob Lee'</span><span class="o">)</span>
@@ -265,30 +265,30 @@
 <p>Some helper methods, these are just to keep things clean</p>
 
 <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">get_transaction_amount</span><span class="p">():</span>
-    <span class="k">return</span> <span class="nb">round</span><span class="p">(</span><span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1000</span><span class="p">)</span> <span class="o">*</span> <span class="n">random</span><span class="o">.</span><span class="n">random</span><span class="p">(),</span> <span class="mi">2</span><span class="p">)</span>
+    <span class="k">return</span> <span class="nb">round</span><span class="p">(</span><span class="n">random</span><span class="p">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1000</span><span class="p">)</span> <span class="o">*</span> <span class="n">random</span><span class="p">.</span><span class="n">random</span><span class="p">(),</span> <span class="mi">2</span><span class="p">)</span>
 
 <span class="k">def</span> <span class="nf">get_transaction_date</span><span class="p">(</span><span class="n">fake</span><span class="p">):</span>
-    <span class="k">return</span> <span class="n">fake</span><span class="o">.</span><span class="n">date_time_between</span><span class="p">(</span><span class="n">start_date</span><span class="o">=</span><span class="s">'-30y'</span><span class="p">,</span> <span class="n">end_date</span><span class="o">=</span><span class="s">'now'</span><span class="p">)</span><span class="o">.</span><span class="n">isoformat</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">fake</span><span class="p">.</span><span class="n">date_time_between</span><span class="p">(</span><span class="n">start_date</span><span class="o">=</span><span class="s">'-30y'</span><span class="p">,</span> <span class="n">end_date</span><span class="o">=</span><span class="s">'now'</span><span class="p">).</span><span class="n">isoformat</span><span class="p">()</span>
 </code></pre></div></div>
 
 <p>Some more helpers for the creation of records for our customer and transaction</p>
 
 <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">create_customer_record</span><span class="p">(</span><span class="n">customer_id</span><span class="p">):</span>
-    <span class="n">fake</span> <span class="o">=</span> <span class="n">Factory</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="s">'en_GB'</span><span class="p">)</span>
-    <span class="k">return</span> <span class="p">[</span><span class="n">customer_id</span><span class="p">,</span> <span class="n">fake</span><span class="o">.</span><span class="n">first_name</span><span class="p">(),</span> <span class="n">fake</span><span class="o">.</span><span class="n">last_name</span><span class="p">(),</span> <span class="n">fake</span><span class="o">.</span><span class="n">street_address</span><span class="p">()</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s">'</span><span class="se">\n</span><span class="s">'</span><span class="p">,</span> <span class="s">', '</span><span class="p">),</span> <span class="n">fake</span><span class="o">.</span><span class="n">city</span><span class="p">(),</span> <span class="n">fake</span><span class="o">.</span><span class="n">postcode</span><span class="p">(),</span> <span class="n">fake</span><span class="o">.</span><span class="n">email</span><span class="p">()]</span>
+    <span class="n">fake</span> <span class="o">=</span> <span class="n">Factory</span><span class="p">.</span><span class="n">create</span><span class="p">(</span><span class="s">'en_GB'</span><span class="p">)</span>
+    <span class="k">return</span> <span class="p">[</span><span class="n">customer_id</span><span class="p">,</span> <span class="n">fake</span><span class="p">.</span><span class="n">first_name</span><span class="p">(),</span> <span class="n">fake</span><span class="p">.</span><span class="n">last_name</span><span class="p">(),</span> <span class="n">fake</span><span class="p">.</span><span class="n">street_address</span><span class="p">().</span><span class="n">replace</span><span class="p">(</span><span class="s">'</span><span class="se">\n</span><span class="s">'</span><span class="p">,</span> <span class="s">', '</span><span class="p">),</span> <span class="n">fake</span><span class="p">.</span><span class="n">city</span><span class="p">(),</span> <span class="n">fake</span><span class="p">.</span><span class="n">postcode</span><span class="p">(),</span> <span class="n">fake</span><span class="p">.</span><span class="n">email</span><span class="p">()]</span>
 
 <span class="k">def</span> <span class="nf">create_financials_record</span><span class="p">(</span><span class="n">customer_id</span><span class="p">):</span>
-    <span class="n">fake</span> <span class="o">=</span> <span class="n">Factory</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="s">'en_GB'</span><span class="p">)</span>
-    <span class="k">return</span> <span class="p">[</span><span class="n">customer_id</span><span class="p">,</span> <span class="n">fake</span><span class="o">.</span><span class="n">credit_card_number</span><span class="p">(),</span> <span class="n">get_transaction_amount</span><span class="p">(),</span> <span class="n">get_transaction_date</span><span class="p">(</span><span class="n">fake</span><span class="p">)]</span>
+    <span class="n">fake</span> <span class="o">=</span> <span class="n">Factory</span><span class="p">.</span><span class="n">create</span><span class="p">(</span><span class="s">'en_GB'</span><span class="p">)</span>
+    <span class="k">return</span> <span class="p">[</span><span class="n">customer_id</span><span class="p">,</span> <span class="n">fake</span><span class="p">.</span><span class="n">credit_card_number</span><span class="p">(),</span> <span class="n">get_transaction_amount</span><span class="p">(),</span> <span class="n">get_transaction_date</span><span class="p">(</span><span class="n">fake</span><span class="p">)]</span>
 </code></pre></div></div>
 
 <p>A helper function to save the records to file</p>
 <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">flush_records</span><span class="p">(</span><span class="n">records</span><span class="p">,</span> <span class="n">filename</span><span class="p">):</span>
     <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s">'a'</span><span class="p">)</span> <span class="k">as</span> <span class="nb">file</span><span class="p">:</span>
-        <span class="n">csv_writer</span><span class="o">=</span><span class="n">csv</span><span class="o">.</span><span class="n">writer</span><span class="p">(</span><span class="nb">file</span><span class="p">,</span> <span class="n">delimiter</span> <span class="o">=</span> <span class="s">','</span><span class="p">,</span> <span class="n">quotechar</span> <span class="o">=</span> <span class="s">'"'</span><span class="p">,</span> <span class="n">quoting</span> <span class="o">=</span> <span class="n">csv</span><span class="o">.</span><span class="n">QUOTE_MINIMAL</span><span class="p">)</span>
+        <span class="n">csv_writer</span><span class="o">=</span><span class="n">csv</span><span class="p">.</span><span class="n">writer</span><span class="p">(</span><span class="nb">file</span><span class="p">,</span> <span class="n">delimiter</span> <span class="o">=</span> <span class="s">','</span><span class="p">,</span> <span class="n">quotechar</span> <span class="o">=</span> <span class="s">'"'</span><span class="p">,</span> <span class="n">quoting</span> <span class="o">=</span> <span class="n">csv</span><span class="p">.</span><span class="n">QUOTE_MINIMAL</span><span class="p">)</span>
         <span class="k">for</span> <span class="n">record</span> <span class="ow">in</span> <span class="n">records</span><span class="p">:</span>
-            <span class="n">csv_writer</span><span class="o">.</span><span class="n">writerow</span><span class="p">(</span><span class="n">record</span><span class="p">)</span>
-    <span class="n">records</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+            <span class="n">csv_writer</span><span class="p">.</span><span class="n">writerow</span><span class="p">(</span><span class="n">record</span><span class="p">)</span>
+    <span class="n">records</span><span class="p">.</span><span class="n">clear</span><span class="p">()</span>
 </code></pre></div></div>
 
 <p>Finally the main calling block to create the records</p>
@@ -296,9 +296,9 @@
     <span class="n">customer_records</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="n">financial_records</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="k">for</span> <span class="nb">id</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">customer_count</span><span class="p">):</span>
-        <span class="n">customer_id</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="nb">id</span><span class="p">)</span><span class="o">.</span><span class="n">zfill</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
-        <span class="n">customer_records</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">create_customer_record</span><span class="p">(</span><span class="n">customer_id</span><span class="p">))</span>
-        <span class="n">financial_records</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">create_financials_record</span><span class="p">(</span><span class="n">customer_id</span><span class="p">))</span>
+        <span class="n">customer_id</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="nb">id</span><span class="p">).</span><span class="n">zfill</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
+        <span class="n">customer_records</span><span class="p">.</span><span class="n">append</span><span class="p">(</span><span class="n">create_customer_record</span><span class="p">(</span><span class="n">customer_id</span><span class="p">))</span>
+        <span class="n">financial_records</span><span class="p">.</span><span class="n">append</span><span class="p">(</span><span class="n">create_financials_record</span><span class="p">(</span><span class="n">customer_id</span><span class="p">))</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">customer_records</span><span class="p">)</span> <span class="o">==</span> <span class="mi">100</span><span class="p">:</span>
             <span class="n">flush_records</span><span class="p">(</span><span class="n">customer_records</span><span class="p">,</span> <span class="s">'customer.csv'</span><span class="p">)</span>
             <span class="n">flush_records</span><span class="p">(</span><span class="n">financial_records</span><span class="p">,</span> <span class="s">'financials.csv'</span><span class="p">)</span>
@@ -324,16 +324,17 @@
 
 <p>By sharing the customer ID across both files we have some semblence of referential integrity.</p>
 
-<p>This code only creates a single transaction per customer, it can be easily modified to create multiple transactions by adjusting the <code class="highlighter-rouge">create_financial_records</code> to take an optional argument of <code class="highlighter-rouge">transaction_count=1</code> and updating the <code class="highlighter-rouge">append</code> to handle an array of arrays
+<p>This code only creates a single transaction per customer, it can be easily modified to create multiple transactions by adjusting the <code class="language-plaintext highlighter-rouge">create_financial_records</code> to take an optional argument of <code class="language-plaintext highlighter-rouge">transaction_count=1</code> and updating the <code class="language-plaintext highlighter-rouge">append</code> to handle an array of arrays
 ```</p>
 
 
 
             <div class="post-content bs-callout bs-callout-info">
-Are you confused about the ever growing number of services in AWS and Azure? Why not checkout these super useful glossaries that are always up to date!
-<br />There is one for <a target="_blank" href="https://aws.servicelist.cloud">AWS</a>
-and one for <a target="_blank" href="https://tools.owenrumney.co.uk/azure/index.html">Azure</a>
-</div>
+                Are you confused about the ever growing number of services in AWS and Azure? Why not checkout these
+                super useful glossaries that are always up to date!
+                <br />There is one for <a target="_blank" href="https://aws.servicelist.cloud/">AWS</a>
+                and one for <a target="_blank" href="https://azure.servicelist.cloud">Azure</a>
+            </div>
 
             <div class="tags">
                 
@@ -346,9 +347,9 @@ and one for <a target="_blank" href="https://tools.owenrumney.co.uk/azure/index.
                 <a href="/tags/#generator">generator</a>
                 
             </div>
-<a href="#" data-scroll role="button" id="back-to-top" class="back-to-top" style="display: inline;">Top</a>
+            <a href="#" data-scroll role="button" id="back-to-top" class="back-to-top" style="display: inline;">Top</a>
         </article>
-                                    
+
         <section class="share">
     <h3>Share</h3>
     <a aria-label="Share on Twitter" href="https://twitter.com/intent/tweet?text=&quot;&quot;%20https://www.owenrumney.co.uk/generating-dummy-data-with-faker/%20via%20&#64;owenrum&hashtags=python,faker,test data,generator,"
@@ -413,15 +414,15 @@ and one for <a target="_blank" href="https://tools.owenrumney.co.uk/azure/index.
 </body>
 <script>
     $(function () {
-        if (window.location.href.indexOf('#')  == -1) {
+        if (window.location.href.indexOf('#') == -1) {
             setTimeout(function () {
-                
-                if (window.scrollY== 0) {
+
+                if (window.scrollY == 0) {
                     $('#scrolllink').click();
                 }
             }, 1200);
         }
-        
+
     });
 </script>
 

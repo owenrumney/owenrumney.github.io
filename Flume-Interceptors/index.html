@@ -190,7 +190,7 @@
 
 <p>There are two key requirements for this piece, one that the file name be preserved somehow and that the content be converted to JSON inflight - for this post I’m going to focus only on the former.</p>
 
-<p>When setting up the configuration for the Flume agent, the Spooling Directory Source can be configured to with <code class="highlighter-rouge">fileHeader = true</code> which will add the full path of the originating file into the header where it can be used by the interceptor. This can be appended to the destination path in HDFS, but as it contains the complete originating path it will go into a similar structure to source - in our case that isn’t desirable.</p>
+<p>When setting up the configuration for the Flume agent, the Spooling Directory Source can be configured to with <code class="language-plaintext highlighter-rouge">fileHeader = true</code> which will add the full path of the originating file into the header where it can be used by the interceptor. This can be appended to the destination path in HDFS, but as it contains the complete originating path it will go into a similar structure to source - in our case that isn’t desirable.</p>
 
 <p>To solve this, I’m writing and interceptor which will mutate the path to just have the filename with no extension.</p>
 
@@ -231,7 +231,7 @@
 <span class="o">}</span>
 </code></pre></div></div>
 
-<p>Now we have this class which wraps up the logic of handling a list of Events we need to create the concrete class called <code class="highlighter-rouge">FilenameInterceptor</code></p>
+<p>Now we have this class which wraps up the logic of handling a list of Events we need to create the concrete class called <code class="language-plaintext highlighter-rouge">FilenameInterceptor</code></p>
 
 <div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nd">@Override</span>
 <span class="kd">public</span> <span class="nc">Event</span> <span class="nf">intercept</span><span class="o">(</span><span class="nc">Event</span> <span class="n">event</span><span class="o">)</span> <span class="o">{</span>
@@ -264,7 +264,7 @@
 <span class="o">}</span>
 </code></pre></div></div>
 
-<p>Now we have all this we can <code class="highlighter-rouge">mvn clean package</code> and copy the jar to the lib folder - in my case we’re using Cloudera so its in the parcels folder <code class="highlighter-rouge">/opt/cloudera/parcels/CDHxxx/flume-ng/lib</code>, from here it will be picked up with <code class="highlighter-rouge">flume-ng</code> starts.</p>
+<p>Now we have all this we can <code class="language-plaintext highlighter-rouge">mvn clean package</code> and copy the jar to the lib folder - in my case we’re using Cloudera so its in the parcels folder <code class="language-plaintext highlighter-rouge">/opt/cloudera/parcels/CDHxxx/flume-ng/lib</code>, from here it will be picked up with <code class="language-plaintext highlighter-rouge">flume-ng</code> starts.</p>
 
 <p>The new additions to the conf file are;</p>
 
@@ -278,10 +278,11 @@
 
 
             <div class="post-content bs-callout bs-callout-info">
-Are you confused about the ever growing number of services in AWS and Azure? Why not checkout these super useful glossaries that are always up to date!
-<br />There is one for <a target="_blank" href="https://aws.servicelist.cloud">AWS</a>
-and one for <a target="_blank" href="https://tools.owenrumney.co.uk/azure/index.html">Azure</a>
-</div>
+                Are you confused about the ever growing number of services in AWS and Azure? Why not checkout these
+                super useful glossaries that are always up to date!
+                <br />There is one for <a target="_blank" href="https://aws.servicelist.cloud/">AWS</a>
+                and one for <a target="_blank" href="https://azure.servicelist.cloud">Azure</a>
+            </div>
 
             <div class="tags">
                 
@@ -292,9 +293,9 @@ and one for <a target="_blank" href="https://tools.owenrumney.co.uk/azure/index.
                 <a href="/tags/#java">java</a>
                 
             </div>
-<a href="#" data-scroll role="button" id="back-to-top" class="back-to-top" style="display: inline;">Top</a>
+            <a href="#" data-scroll role="button" id="back-to-top" class="back-to-top" style="display: inline;">Top</a>
         </article>
-                                    
+
         <section class="share">
     <h3>Share</h3>
     <a aria-label="Share on Twitter" href="https://twitter.com/intent/tweet?text=&quot;&quot;%20https://www.owenrumney.co.uk/Flume-Interceptors/%20via%20&#64;owenrum&hashtags=hadoop,flume,java,"
@@ -359,15 +360,15 @@ and one for <a target="_blank" href="https://tools.owenrumney.co.uk/azure/index.
 </body>
 <script>
     $(function () {
-        if (window.location.href.indexOf('#')  == -1) {
+        if (window.location.href.indexOf('#') == -1) {
             setTimeout(function () {
-                
-                if (window.scrollY== 0) {
+
+                if (window.scrollY == 0) {
                     $('#scrolllink').click();
                 }
             }, 1200);
         }
-        
+
     });
 </script>
 

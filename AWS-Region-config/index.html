@@ -182,30 +182,31 @@
     <section class="post" itemscope itemtype="http://schema.org/BlogPosting">
 
         <article role="article" id="scroll" class="post-content" itemprop="articleBody">
-            <p>I’m working with a new AWS account and I am moving to testing Boto3 to use the KMS service. I needed to make sure that the AWS account and secret keys were updated so ran <code class="highlighter-rouge">aws configure</code> to quickly update them.</p>
+            <p>I’m working with a new AWS account and I am moving to testing Boto3 to use the KMS service. I needed to make sure that the AWS account and secret keys were updated so ran <code class="language-plaintext highlighter-rouge">aws configure</code> to quickly update them.</p>
 
-<p>I added the new keys and saw that default region was set to <code class="highlighter-rouge">[Ireland]</code> so accepted default and ran the following code</p>
+<p>I added the new keys and saw that default region was set to <code class="language-plaintext highlighter-rouge">[Ireland]</code> so accepted default and ran the following code</p>
 
 <figure class="highlight"><pre><code class="language-python" data-lang="python"><span class="kn">import</span> <span class="nn">boto3</span>
 
-<span class="n">s3</span> <span class="o">=</span> <span class="n">boto3</span><span class="o">.</span><span class="n">resource</span><span class="p">(</span><span class="s">'s3'</span><span class="p">)</span>
-<span class="k">for</span> <span class="n">bucket</span> <span class="ow">in</span> <span class="n">s3</span><span class="o">.</span><span class="n">buckets</span><span class="o">.</span><span class="nb">all</span><span class="p">():</span>
-<span class="k">print</span><span class="p">(</span><span class="n">bucket</span><span class="o">.</span><span class="n">name</span><span class="p">)</span></code></pre></figure>
+<span class="n">s3</span> <span class="o">=</span> <span class="n">boto3</span><span class="p">.</span><span class="n">resource</span><span class="p">(</span><span class="s">'s3'</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">bucket</span> <span class="ow">in</span> <span class="n">s3</span><span class="p">.</span><span class="n">buckets</span><span class="p">.</span><span class="nb">all</span><span class="p">():</span>
+<span class="k">print</span><span class="p">(</span><span class="n">bucket</span><span class="p">.</span><span class="n">name</span><span class="p">)</span></code></pre></figure>
 
 <p>I was puzzled to get the following error;</p>
 
-<figure class="highlight"><pre><code class="language-python" data-lang="python"><span class="n">botocore</span><span class="o">.</span><span class="n">vendored</span><span class="o">.</span><span class="n">requests</span><span class="o">.</span><span class="n">exceptions</span><span class="o">.</span><span class="nb">ConnectionError</span><span class="p">:</span> <span class="n">HTTPSConnectionPool</span><span class="p">(</span><span class="n">host</span><span class="o">=</span><span class="s">'s3.ireland.amazonaws.com'</span><span class="p">,</span> <span class="n">port</span><span class="o">=</span><span class="mi">443</span><span class="p">):</span> <span class="n">Max</span> <span class="n">retries</span> <span class="n">exceeded</span> <span class="k">with</span> <span class="n">url</span><span class="p">:</span> <span class="o">/</span> <span class="p">(</span><span class="n">Caused</span> <span class="n">by</span> <span class="o">&lt;</span><span class="k">class</span> <span class="err">'</span><span class="nc">socket</span><span class="o">.</span><span class="n">gaierror</span><span class="s">'&gt;: [Errno 8] nodename nor servname provided, or not known)</span></code></pre></figure>
+<figure class="highlight"><pre><code class="language-python" data-lang="python"><span class="n">botocore</span><span class="p">.</span><span class="n">vendored</span><span class="p">.</span><span class="n">requests</span><span class="p">.</span><span class="n">exceptions</span><span class="p">.</span><span class="nb">ConnectionError</span><span class="p">:</span> <span class="n">HTTPSConnectionPool</span><span class="p">(</span><span class="n">host</span><span class="o">=</span><span class="s">'s3.ireland.amazonaws.com'</span><span class="p">,</span> <span class="n">port</span><span class="o">=</span><span class="mi">443</span><span class="p">):</span> <span class="n">Max</span> <span class="n">retries</span> <span class="n">exceeded</span> <span class="k">with</span> <span class="n">url</span><span class="p">:</span> <span class="o">/</span> <span class="p">(</span><span class="n">Caused</span> <span class="n">by</span> <span class="o">&lt;</span><span class="k">class</span> <span class="err">'</span><span class="nc">socket</span><span class="p">.</span><span class="n">gaierror</span><span class="s">'&gt;: [Errno 8] nodename nor servname provided, or not known)</span></code></pre></figure>
 
-<p>It didn’t sit right that the url had ireland in it explicitly when its generally the region code that is used with AWS so I went back the <code class="highlighter-rouge">aws configure</code> and set <code class="highlighter-rouge">eu-west-1</code> as the default region.</p>
+<p>It didn’t sit right that the url had ireland in it explicitly when its generally the region code that is used with AWS so I went back the <code class="language-plaintext highlighter-rouge">aws configure</code> and set <code class="language-plaintext highlighter-rouge">eu-west-1</code> as the default region.</p>
 
 <p>On rerunning the code it all worked, so worth noting if this error comes up.</p>
 
 
             <div class="post-content bs-callout bs-callout-info">
-Are you confused about the ever growing number of services in AWS and Azure? Why not checkout these super useful glossaries that are always up to date!
-<br />There is one for <a target="_blank" href="https://aws.servicelist.cloud">AWS</a>
-and one for <a target="_blank" href="https://tools.owenrumney.co.uk/azure/index.html">Azure</a>
-</div>
+                Are you confused about the ever growing number of services in AWS and Azure? Why not checkout these
+                super useful glossaries that are always up to date!
+                <br />There is one for <a target="_blank" href="https://aws.servicelist.cloud/">AWS</a>
+                and one for <a target="_blank" href="https://azure.servicelist.cloud">Azure</a>
+            </div>
 
             <div class="tags">
                 
@@ -214,9 +215,9 @@ and one for <a target="_blank" href="https://tools.owenrumney.co.uk/azure/index.
                 <a href="/tags/#awscli">awscli</a>
                 
             </div>
-<a href="#" data-scroll role="button" id="back-to-top" class="back-to-top" style="display: inline;">Top</a>
+            <a href="#" data-scroll role="button" id="back-to-top" class="back-to-top" style="display: inline;">Top</a>
         </article>
-                                    
+
         <section class="share">
     <h3>Share</h3>
     <a aria-label="Share on Twitter" href="https://twitter.com/intent/tweet?text=&quot;&quot;%20https://www.owenrumney.co.uk/AWS-Region-config/%20via%20&#64;owenrum&hashtags=aws,awscli,"
@@ -281,15 +282,15 @@ and one for <a target="_blank" href="https://tools.owenrumney.co.uk/azure/index.
 </body>
 <script>
     $(function () {
-        if (window.location.href.indexOf('#')  == -1) {
+        if (window.location.href.indexOf('#') == -1) {
             setTimeout(function () {
-                
-                if (window.scrollY== 0) {
+
+                if (window.scrollY == 0) {
                     $('#scrolllink').click();
                 }
             }, 1200);
         }
-        
+
     });
 </script>
 

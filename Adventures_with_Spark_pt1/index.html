@@ -197,23 +197,24 @@
 <figure class="highlight"><pre><code class="language-sh" data-lang="sh"><span class="se">\$</span> <span class="nb">cd</span> ~/Downloads/spark-1.0.2-bin-hadoop2/bin
 ./spark-shell</code></pre></figure>
 
-<p>One of the key parts to Spark is the <code class="highlighter-rouge">SparkContext</code> which if you’ve done mapreduce seems to be similar to the <code class="highlighter-rouge">JobConf</code>. The SparkContext has all the required information about where to run the work and application details for view in the Spark UI web page.</p>
+<p>One of the key parts to Spark is the <code class="language-plaintext highlighter-rouge">SparkContext</code> which if you’ve done mapreduce seems to be similar to the <code class="language-plaintext highlighter-rouge">JobConf</code>. The SparkContext has all the required information about where to run the work and application details for view in the Spark UI web page.</p>
 
-<p>In the spark shell you can use the SparkContext <code class="highlighter-rouge">sc</code></p>
+<p>In the spark shell you can use the SparkContext <code class="language-plaintext highlighter-rouge">sc</code></p>
 
 <figure class="highlight"><pre><code class="language-scala" data-lang="scala"><span class="n">scala</span><span class="o">&gt;</span> <span class="k">val</span> <span class="nv">sentence</span> <span class="k">=</span> <span class="s">"The quick brown fox jumps over the lazy dog"</span>
 <span class="n">scala</span><span class="o">&gt;</span> <span class="k">val</span> <span class="nv">words</span> <span class="k">=</span> <span class="nv">sc</span><span class="o">.</span><span class="py">parallelize</span><span class="o">(</span><span class="n">sentence</span><span class="o">)</span>
 <span class="n">scala</span><span class="o">&gt;</span> <span class="nv">words</span><span class="o">.</span><span class="py">count</span><span class="o">()</span> <span class="c1">// should return 9  </span>
 <span class="n">scala</span><span class="o">&gt;</span> <span class="nv">words</span><span class="o">.</span><span class="py">filter</span><span class="o">(\</span><span class="nv">_</span><span class="o">.</span><span class="py">toLowerCase</span><span class="o">()</span> <span class="o">==</span> <span class="s">"the"</span><span class="o">).</span><span class="py">count</span><span class="o">()</span> <span class="c1">// should return 2</span></code></pre></figure>
 
-<p>All this is doing is creating a string, splitting it into words and creating a Spark RDD with it. We can use the <code class="highlighter-rouge">Action</code> count() to find out how many words there are and we can use the filter() to create a new RDD with filtered results (in this case, filter to the word ‘the’)</p>
+<p>All this is doing is creating a string, splitting it into words and creating a Spark RDD with it. We can use the <code class="language-plaintext highlighter-rouge">Action</code> count() to find out how many words there are and we can use the filter() to create a new RDD with filtered results (in this case, filter to the word ‘the’)</p>
 
 
             <div class="post-content bs-callout bs-callout-info">
-Are you confused about the ever growing number of services in AWS and Azure? Why not checkout these super useful glossaries that are always up to date!
-<br />There is one for <a target="_blank" href="https://aws.servicelist.cloud">AWS</a>
-and one for <a target="_blank" href="https://tools.owenrumney.co.uk/azure/index.html">Azure</a>
-</div>
+                Are you confused about the ever growing number of services in AWS and Azure? Why not checkout these
+                super useful glossaries that are always up to date!
+                <br />There is one for <a target="_blank" href="https://aws.servicelist.cloud/">AWS</a>
+                and one for <a target="_blank" href="https://azure.servicelist.cloud">Azure</a>
+            </div>
 
             <div class="tags">
                 
@@ -222,9 +223,9 @@ and one for <a target="_blank" href="https://tools.owenrumney.co.uk/azure/index.
                 <a href="/tags/#scala">scala</a>
                 
             </div>
-<a href="#" data-scroll role="button" id="back-to-top" class="back-to-top" style="display: inline;">Top</a>
+            <a href="#" data-scroll role="button" id="back-to-top" class="back-to-top" style="display: inline;">Top</a>
         </article>
-                                    
+
         <section class="share">
     <h3>Share</h3>
     <a aria-label="Share on Twitter" href="https://twitter.com/intent/tweet?text=&quot;&quot;%20https://www.owenrumney.co.uk/Adventures_with_Spark_pt1/%20via%20&#64;owenrum&hashtags=spark,scala,"
@@ -289,15 +290,15 @@ and one for <a target="_blank" href="https://tools.owenrumney.co.uk/azure/index.
 </body>
 <script>
     $(function () {
-        if (window.location.href.indexOf('#')  == -1) {
+        if (window.location.href.indexOf('#') == -1) {
             setTimeout(function () {
-                
-                if (window.scrollY== 0) {
+
+                if (window.scrollY == 0) {
                     $('#scrolllink').click();
                 }
             }, 1200);
         }
-        
+
     });
 </script>
 

@@ -189,25 +189,25 @@ NOTE: Creating a keytab is easy this is just to remind me.
 
 <h2 id="assumptions">Assumptions</h2>
 
-<p>I’m assuming for anyone who is doing this that you have your <code class="highlighter-rouge">/etc/krb5.conf</code> in order and that isn’t going to get in your way.</p>
+<p>I’m assuming for anyone who is doing this that you have your <code class="language-plaintext highlighter-rouge">/etc/krb5.conf</code> in order and that isn’t going to get in your way.</p>
 
-<p>One thing you’re going to want to know is what your permitted and default <code class="highlighter-rouge">enctypes</code> and the realm are from this file. In my case I’m going to use <code class="highlighter-rouge">aes128-cts-hmac-sha1-96</code> and my realm is <code class="highlighter-rouge">DPE.INTERNAL</code>.</p>
+<p>One thing you’re going to want to know is what your permitted and default <code class="language-plaintext highlighter-rouge">enctypes</code> and the realm are from this file. In my case I’m going to use <code class="language-plaintext highlighter-rouge">aes128-cts-hmac-sha1-96</code> and my realm is <code class="language-plaintext highlighter-rouge">DPE.INTERNAL</code>.</p>
 
 <h2 id="creating-the-keytab-file">Creating the keytab file</h2>
 
-<p>To create the keytab file you’re going to need <code class="highlighter-rouge">ktutil</code> (and a number of other <code class="highlighter-rouge">kxxxxxx</code> commands)</p>
+<p>To create the keytab file you’re going to need <code class="language-plaintext highlighter-rouge">ktutil</code> (and a number of other <code class="language-plaintext highlighter-rouge">kxxxxxx</code> commands)</p>
 
 <p><strong>RHEL/Centos</strong></p>
 
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>sudo yum install krb5-workstation
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>sudo yum install krb5-workstation
 </code></pre></div></div>
 
 <p><strong>Ubuntu</strong></p>
 
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>sudo apt-get install krb5-user
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>sudo apt-get install krb5-user
 </code></pre></div></div>
 
-<p>Now you have the required programs installed, you can create your keytab file using <code class="highlighter-rouge">ktutil</code>.</p>
+<p>Now you have the required programs installed, you can create your keytab file using <code class="language-plaintext highlighter-rouge">ktutil</code>.</p>
 
 <div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>ktutil
 </code></pre></div></div>
@@ -223,15 +223,15 @@ quit
 
 <p>Breaking this down, we are saying that we want to add an entry to the keytab using a password for authentication.</p>
 
-<p>The <code class="highlighter-rouge">-p</code> is the principal that we will be logging in as using the end file.</p>
+<p>The <code class="language-plaintext highlighter-rouge">-p</code> is the principal that we will be logging in as using the end file.</p>
 
-<p>The <code class="highlighter-rouge">-k</code> refers to the Key Version Number which in some situations isn’t really needed and is ignored (in Windows environment for example). You can get the current Key version number (kvno) by using the <code class="highlighter-rouge">kvno</code> command</p>
+<p>The <code class="language-plaintext highlighter-rouge">-k</code> refers to the Key Version Number which in some situations isn’t really needed and is ignored (in Windows environment for example). You can get the current Key version number (kvno) by using the <code class="language-plaintext highlighter-rouge">kvno</code> command</p>
 
 <div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>kvno user@DPE.INTERNAL
 user@DPE.INTERNAL: kvno <span class="o">=</span> 1
 </code></pre></div></div>
 
-<p>The <code class="highlighter-rouge">-e</code> refers to the enctype mentioned earlier. This needs to be one of those that are permitted in your <code class="highlighter-rouge">krb5.conf</code> file so you’re using an accepted and appropriate encryption.</p>
+<p>The <code class="language-plaintext highlighter-rouge">-e</code> refers to the enctype mentioned earlier. This needs to be one of those that are permitted in your <code class="language-plaintext highlighter-rouge">krb5.conf</code> file so you’re using an accepted and appropriate encryption.</p>
 
 <h2 id="testing-the-key">Testing the Key</h2>
 
@@ -240,7 +240,7 @@ user@DPE.INTERNAL: kvno <span class="o">=</span> 1
 <div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>kinit <span class="nt">-kt</span> user.keytab user@DPE.INTERNAL
 </code></pre></div></div>
 
-<p>This should exit normally, then we can check we’ve got a ticket using <code class="highlighter-rouge">klist</code></p>
+<p>This should exit normally, then we can check we’ve got a ticket using <code class="language-plaintext highlighter-rouge">klist</code></p>
 
 <div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>klist
 
@@ -251,14 +251,15 @@ Valid Starting           Expires                Service principal
 01/23/2019 14:27:28      01/24/2019 00:27:28    user@DPE.INTERNAL
 </code></pre></div></div>
 
-<p>To clear out the ticket, you can use <code class="highlighter-rouge">kdestroy</code>. This will remove all current authentications.</p>
+<p>To clear out the ticket, you can use <code class="language-plaintext highlighter-rouge">kdestroy</code>. This will remove all current authentications.</p>
 
 
             <div class="post-content bs-callout bs-callout-info">
-Are you confused about the ever growing number of services in AWS and Azure? Why not checkout these super useful glossaries that are always up to date!
-<br />There is one for <a target="_blank" href="https://aws.servicelist.cloud">AWS</a>
-and one for <a target="_blank" href="https://tools.owenrumney.co.uk/azure/index.html">Azure</a>
-</div>
+                Are you confused about the ever growing number of services in AWS and Azure? Why not checkout these
+                super useful glossaries that are always up to date!
+                <br />There is one for <a target="_blank" href="https://aws.servicelist.cloud/">AWS</a>
+                and one for <a target="_blank" href="https://azure.servicelist.cloud">Azure</a>
+            </div>
 
             <div class="tags">
                 
@@ -271,9 +272,9 @@ and one for <a target="_blank" href="https://tools.owenrumney.co.uk/azure/index.
                 <a href="/tags/#ktutil">ktutil</a>
                 
             </div>
-<a href="#" data-scroll role="button" id="back-to-top" class="back-to-top" style="display: inline;">Top</a>
+            <a href="#" data-scroll role="button" id="back-to-top" class="back-to-top" style="display: inline;">Top</a>
         </article>
-                                    
+
         <section class="share">
     <h3>Share</h3>
     <a aria-label="Share on Twitter" href="https://twitter.com/intent/tweet?text=&quot;&quot;%20https://www.owenrumney.co.uk/creating-a-keytab-file/%20via%20&#64;owenrum&hashtags=security,kerberos,keytab,ktutil,"
@@ -338,15 +339,15 @@ and one for <a target="_blank" href="https://tools.owenrumney.co.uk/azure/index.
 </body>
 <script>
     $(function () {
-        if (window.location.href.indexOf('#')  == -1) {
+        if (window.location.href.indexOf('#') == -1) {
             setTimeout(function () {
-                
-                if (window.scrollY== 0) {
+
+                if (window.scrollY == 0) {
                     $('#scrolllink').click();
                 }
             }, 1200);
         }
-        
+
     });
 </script>
 

@@ -182,18 +182,18 @@
     <section class="post" itemscope itemtype="http://schema.org/BlogPosting">
 
         <article role="article" id="scroll" class="post-content" itemprop="articleBody">
-            <p>Its reasonably easy to run a Spark job against HBase using the <code class="highlighter-rouge">newAPIHadoopRDD</code> available on the <code class="highlighter-rouge">SparkContext</code>.</p>
+            <p>Its reasonably easy to run a Spark job against HBase using the <code class="language-plaintext highlighter-rouge">newAPIHadoopRDD</code> available on the <code class="language-plaintext highlighter-rouge">SparkContext</code>.</p>
 
 <p>The general steps are,</p>
 
 <ol>
-  <li>create an <code class="highlighter-rouge">HBaseConfiguration</code></li>
-  <li>create a <code class="highlighter-rouge">SparkContext</code></li>
-  <li>create a <code class="highlighter-rouge">newAPIHadoopRDD</code></li>
+  <li>create an <code class="language-plaintext highlighter-rouge">HBaseConfiguration</code></li>
+  <li>create a <code class="language-plaintext highlighter-rouge">SparkContext</code></li>
+  <li>create a <code class="language-plaintext highlighter-rouge">newAPIHadoopRDD</code></li>
   <li>perform job action</li>
 </ol>
 
-<p>To get this working, you’re going to need the HBase libraries in your <code class="highlighter-rouge">build.sbt</code> file. I’m using HBase <code class="highlighter-rouge">1.1.2</code> at the moment so thats the version I’m pulling in.</p>
+<p>To get this working, you’re going to need the HBase libraries in your <code class="language-plaintext highlighter-rouge">build.sbt</code> file. I’m using HBase <code class="language-plaintext highlighter-rouge">1.1.2</code> at the moment so thats the version I’m pulling in.</p>
 
 <div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="s">"org.apache.hbase"</span> <span class="o">%</span> <span class="s">"hbase-shaded-client"</span> <span class="o">%</span> <span class="s">"1.1.2"</span>
 <span class="s">"org.apache.hbase"</span> <span class="o">%</span> <span class="s">"hbase-server"</span> <span class="o">%</span> <span class="s">"1.1.2"</span>
@@ -201,7 +201,7 @@
 
 <h3 id="creating-the-hbaseconfiguration">Creating the HBaseConfiguration</h3>
 
-<p>This requires, at a minimum, the zookeeper URI. In my environment the test and the production have different <code class="highlighter-rouge">ZOOKEEPER_ZNODE_PARENT</code> so I’m passing that in to override the default.</p>
+<p>This requires, at a minimum, the zookeeper URI. In my environment the test and the production have different <code class="language-plaintext highlighter-rouge">ZOOKEEPER_ZNODE_PARENT</code> so I’m passing that in to override the default.</p>
 
 <div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">def</span> <span class="nf">createConfig</span><span class="o">(</span><span class="nl">zookeeper:</span> <span class="nc">String</span><span class="o">,</span> <span class="nl">hbaseParentNode:</span> <span class="nc">String</span><span class="o">,</span> <span class="nl">tableName:</span> <span class="nc">String</span><span class="o">):</span> <span class="nc">Configuration</span> <span class="o">=</span> <span class="o">{</span>
   <span class="n">val</span> <span class="n">config</span> <span class="o">=</span> <span class="nc">HBaseConfiguration</span><span class="o">.</span><span class="na">create</span><span class="o">()</span>
@@ -214,7 +214,7 @@
 
 <h3 id="creating-the-sparkcontext">Creating the SparkContext</h3>
 
-<p>The <code class="highlighter-rouge">SparkContext</code> is going to be the main engine of the job. At a minimum we just need to have the <code class="highlighter-rouge">SparkConf</code> with the job name.</p>
+<p>The <code class="language-plaintext highlighter-rouge">SparkContext</code> is going to be the main engine of the job. At a minimum we just need to have the <code class="language-plaintext highlighter-rouge">SparkConf</code> with the job name.</p>
 
 <div class="language-csharp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">val</span> <span class="n">conf</span> <span class="p">=</span> <span class="k">new</span> <span class="nf">SparkConf</span><span class="p">().</span><span class="nf">setAppName</span><span class="p">(</span><span class="n">jobname</span><span class="p">)</span>
 <span class="n">val</span> <span class="n">spark</span> <span class="p">=</span> <span class="k">new</span> <span class="nf">SparkContext</span><span class="p">(</span><span class="n">conf</span><span class="p">)</span>
@@ -222,7 +222,7 @@
 
 <h3 id="creating-the-newapihadooprdd">Creating the newAPIHadoopRDD</h3>
 
-<p>We have a <code class="highlighter-rouge">HBaseConfiguration</code> and a <code class="highlighter-rouge">SparkContext</code> so now we can create the <code class="highlighter-rouge">newAPIHadoopRDD</code>. The <code class="highlighter-rouge">newAPIHadoopRDD</code> needs the config with the table name and namespace and needs to know to use a <code class="highlighter-rouge">TableInputFormat</code> for the <code class="highlighter-rouge">InputFormat</code>. We’re expecting the class of the keys to be <code class="highlighter-rouge">ImmutableBytesWritable</code> and for the values a <code class="highlighter-rouge">Result</code>.</p>
+<p>We have a <code class="language-plaintext highlighter-rouge">HBaseConfiguration</code> and a <code class="language-plaintext highlighter-rouge">SparkContext</code> so now we can create the <code class="language-plaintext highlighter-rouge">newAPIHadoopRDD</code>. The <code class="language-plaintext highlighter-rouge">newAPIHadoopRDD</code> needs the config with the table name and namespace and needs to know to use a <code class="language-plaintext highlighter-rouge">TableInputFormat</code> for the <code class="language-plaintext highlighter-rouge">InputFormat</code>. We’re expecting the class of the keys to be <code class="language-plaintext highlighter-rouge">ImmutableBytesWritable</code> and for the values a <code class="language-plaintext highlighter-rouge">Result</code>.</p>
 
 <div class="language-csharp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">val</span> <span class="n">zookeeper</span> <span class="p">=</span> <span class="s">"hbase-box1:2181,hbase-box2:2181"</span>
 <span class="n">val</span> <span class="n">hbaseParentNode</span> <span class="p">=</span> <span class="s">"/hbase"</span>
@@ -268,7 +268,7 @@
   </tbody>
 </table>
 
-<p>In our table, we have a key with the credit card number and a <code class="highlighter-rouge">ColumnFamily</code> of <code class="highlighter-rouge">d:</code> which holds the <code class="highlighter-rouge">column_qualifiers</code> <code class="highlighter-rouge">cl (credit limit)</code> and <code class="highlighter-rouge">cb (current balance)</code>.</p>
+<p>In our table, we have a key with the credit card number and a <code class="language-plaintext highlighter-rouge">ColumnFamily</code> of <code class="language-plaintext highlighter-rouge">d:</code> which holds the <code class="language-plaintext highlighter-rouge">column_qualifiers</code> <code class="language-plaintext highlighter-rouge">cl (credit limit)</code> and <code class="language-plaintext highlighter-rouge">cb (current balance)</code>.</p>
 
 <p>For this job, I want to know all the accounts which are at &gt;90% of their available credit.</p>
 
@@ -297,18 +297,19 @@
 <span class="p">}).</span><span class="nf">saveAsTextFile</span><span class="p">(</span><span class="s">"/save/location"</span><span class="p">)</span>
 </code></pre></div></div>
 
-<p>The save location will now be a folder with the created <code class="highlighter-rouge">part-xxxxx</code> files containing the results. In our case…</p>
+<p>The save location will now be a folder with the created <code class="language-plaintext highlighter-rouge">part-xxxxx</code> files containing the results. In our case…</p>
 
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>9842897418374027
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>9842897418374027
 7880927412346013
 </code></pre></div></div>
 
 
             <div class="post-content bs-callout bs-callout-info">
-Are you confused about the ever growing number of services in AWS and Azure? Why not checkout these super useful glossaries that are always up to date!
-<br />There is one for <a target="_blank" href="https://aws.servicelist.cloud">AWS</a>
-and one for <a target="_blank" href="https://tools.owenrumney.co.uk/azure/index.html">Azure</a>
-</div>
+                Are you confused about the ever growing number of services in AWS and Azure? Why not checkout these
+                super useful glossaries that are always up to date!
+                <br />There is one for <a target="_blank" href="https://aws.servicelist.cloud/">AWS</a>
+                and one for <a target="_blank" href="https://azure.servicelist.cloud">Azure</a>
+            </div>
 
             <div class="tags">
                 
@@ -321,9 +322,9 @@ and one for <a target="_blank" href="https://tools.owenrumney.co.uk/azure/index.
                 <a href="/tags/#scala">scala</a>
                 
             </div>
-<a href="#" data-scroll role="button" id="back-to-top" class="back-to-top" style="display: inline;">Top</a>
+            <a href="#" data-scroll role="button" id="back-to-top" class="back-to-top" style="display: inline;">Top</a>
         </article>
-                                    
+
         <section class="share">
     <h3>Share</h3>
     <a aria-label="Share on Twitter" href="https://twitter.com/intent/tweet?text=&quot;&quot;%20https://www.owenrumney.co.uk/spark-against-hbase/%20via%20&#64;owenrum&hashtags=programming,spark,hbase,scala,"
@@ -388,15 +389,15 @@ and one for <a target="_blank" href="https://tools.owenrumney.co.uk/azure/index.
 </body>
 <script>
     $(function () {
-        if (window.location.href.indexOf('#')  == -1) {
+        if (window.location.href.indexOf('#') == -1) {
             setTimeout(function () {
-                
-                if (window.scrollY== 0) {
+
+                if (window.scrollY == 0) {
                     $('#scrolllink').click();
                 }
             }, 1200);
         }
-        
+
     });
 </script>
 

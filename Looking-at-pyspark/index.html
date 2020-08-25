@@ -186,7 +186,7 @@
 
 <p>One of the intentions is to limit bandwidth when transferring data to S3 the idea is to send periodic snapshots then daily deltas to merge and form a <strong><em>latest</em></strong> folder so a diff mechanism is needed - I originally implemented this in Scala as a Spark process but in an effort to settle on one language I’m looking to redo in Python using <a href="https://spark.apache.org/docs/0.9.0/python-programming-guide.html">pyspark</a></p>
 
-<p>I’m using my Macbook and to keep things quick and easy I’m going to download a package with Hadoop and Spark then dump it in <code class="highlighter-rouge">/usr/share</code></p>
+<p>I’m using my Macbook and to keep things quick and easy I’m going to download a package with Hadoop and Spark then dump it in <code class="language-plaintext highlighter-rouge">/usr/share</code></p>
 
 <div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>wget http://archive.apache.org/dist/spark/spark-1.0.2/spark-1.0.2-bin-hadoop2.tgz
 tar -xvf spark-1.0.2-bin-hadoop2.tgz
@@ -210,19 +210,20 @@ cd pyspark
 
 <p>Finally, a quick and dirty demo with word count</p>
 
-<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">file</span> <span class="o">=</span> <span class="n">sc</span><span class="o">.</span><span class="n">textFile</span><span class="p">(</span><span class="s">"/data/bigtextfile.txt"</span><span class="p">)</span>
-<span class="n">counts</span> <span class="o">=</span> <span class="nb">file</span><span class="o">.</span><span class="n">flatMap</span><span class="p">(</span><span class="k">lambda</span> <span class="n">line</span><span class="p">:</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">" "</span><span class="p">))</span> \
-             <span class="o">.</span><span class="nb">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">word</span><span class="p">:</span> <span class="p">(</span><span class="n">word</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span> \
-             <span class="o">.</span><span class="n">reduceByKey</span><span class="p">(</span><span class="k">lambda</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">:</span> <span class="n">a</span> <span class="o">+</span> <span class="n">b</span><span class="p">)</span>
-<span class="n">counts</span><span class="o">.</span><span class="n">saveAsTextFile</span><span class="p">(</span><span class="s">"/data/bigtextfile.txt"</span><span class="p">)</span>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">file</span> <span class="o">=</span> <span class="n">sc</span><span class="p">.</span><span class="n">textFile</span><span class="p">(</span><span class="s">"/data/bigtextfile.txt"</span><span class="p">)</span>
+<span class="n">counts</span> <span class="o">=</span> <span class="nb">file</span><span class="p">.</span><span class="n">flatMap</span><span class="p">(</span><span class="k">lambda</span> <span class="n">line</span><span class="p">:</span> <span class="n">line</span><span class="p">.</span><span class="n">split</span><span class="p">(</span><span class="s">" "</span><span class="p">))</span> \
+             <span class="p">.</span><span class="nb">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">word</span><span class="p">:</span> <span class="p">(</span><span class="n">word</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span> \
+             <span class="p">.</span><span class="n">reduceByKey</span><span class="p">(</span><span class="k">lambda</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">:</span> <span class="n">a</span> <span class="o">+</span> <span class="n">b</span><span class="p">)</span>
+<span class="n">counts</span><span class="p">.</span><span class="n">saveAsTextFile</span><span class="p">(</span><span class="s">"/data/bigtextfile.txt"</span><span class="p">)</span>
 </code></pre></div></div>
 
 
             <div class="post-content bs-callout bs-callout-info">
-Are you confused about the ever growing number of services in AWS and Azure? Why not checkout these super useful glossaries that are always up to date!
-<br />There is one for <a target="_blank" href="https://aws.servicelist.cloud">AWS</a>
-and one for <a target="_blank" href="https://tools.owenrumney.co.uk/azure/index.html">Azure</a>
-</div>
+                Are you confused about the ever growing number of services in AWS and Azure? Why not checkout these
+                super useful glossaries that are always up to date!
+                <br />There is one for <a target="_blank" href="https://aws.servicelist.cloud/">AWS</a>
+                and one for <a target="_blank" href="https://azure.servicelist.cloud">Azure</a>
+            </div>
 
             <div class="tags">
                 
@@ -233,9 +234,9 @@ and one for <a target="_blank" href="https://tools.owenrumney.co.uk/azure/index.
                 <a href="/tags/#spark">spark</a>
                 
             </div>
-<a href="#" data-scroll role="button" id="back-to-top" class="back-to-top" style="display: inline;">Top</a>
+            <a href="#" data-scroll role="button" id="back-to-top" class="back-to-top" style="display: inline;">Top</a>
         </article>
-                                    
+
         <section class="share">
     <h3>Share</h3>
     <a aria-label="Share on Twitter" href="https://twitter.com/intent/tweet?text=&quot;&quot;%20https://www.owenrumney.co.uk/Looking-at-pyspark/%20via%20&#64;owenrum&hashtags=pyspark,python,spark,"
@@ -300,15 +301,15 @@ and one for <a target="_blank" href="https://tools.owenrumney.co.uk/azure/index.
 </body>
 <script>
     $(function () {
-        if (window.location.href.indexOf('#')  == -1) {
+        if (window.location.href.indexOf('#') == -1) {
             setTimeout(function () {
-                
-                if (window.scrollY== 0) {
+
+                if (window.scrollY == 0) {
                     $('#scrolllink').click();
                 }
             }, 1200);
         }
-        
+
     });
 </script>
 

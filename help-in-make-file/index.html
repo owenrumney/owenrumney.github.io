@@ -182,13 +182,13 @@
     <section class="post" itemscope itemtype="http://schema.org/BlogPosting">
 
         <article role="article" id="scroll" class="post-content" itemprop="articleBody">
-            <p>Sometimes you inherit or even create a huge <code class="highlighter-rouge">Makefile</code> which is unwieldly and difficult to understand. The longer it is, the more complicated it can be to find out which targets are available and what they do.</p>
+            <p>Sometimes you inherit or even create a huge <code class="language-plaintext highlighter-rouge">Makefile</code> which is unwieldly and difficult to understand. The longer it is, the more complicated it can be to find out which targets are available and what they do.</p>
 
-<p>This post covers an effective way to add a help target to a <code class="highlighter-rouge">Makefile</code> which will give an overview of what targets are available.</p>
+<p>This post covers an effective way to add a help target to a <code class="language-plaintext highlighter-rouge">Makefile</code> which will give an overview of what targets are available.</p>
 
 <h2 id="basic-makefile">Basic Makefile</h2>
 
-<p>I’m going to use a really basic but real <code class="highlighter-rouge">Makefile</code> as a starting example. It runs a suite of tests, creates a dockerised environment for testing against or can stop the env.</p>
+<p>I’m going to use a really basic but real <code class="language-plaintext highlighter-rouge">Makefile</code> as a starting example. It runs a suite of tests, creates a dockerised environment for testing against or can stop the env.</p>
 
 <div class="language-make highlighter-rouge"><div class="highlight"><pre class="highlight"><code> <span class="nl">test</span><span class="o">:</span>
  <span class="c">## test: Run the test suite then shut down
@@ -207,7 +207,7 @@
 
 <h2 id="adding-help">Adding Help</h2>
 
-<p>To add a <code class="highlighter-rouge">help</code> section, we can put a comment under each of the targets with details of the action, then use a simple hand full of commands including <code class="highlighter-rouge">sed</code> and <code class="highlighter-rouge">column</code> in the <code class="highlighter-rouge">help</code> target.</p>
+<p>To add a <code class="language-plaintext highlighter-rouge">help</code> section, we can put a comment under each of the targets with details of the action, then use a simple hand full of commands including <code class="language-plaintext highlighter-rouge">sed</code> and <code class="language-plaintext highlighter-rouge">column</code> in the <code class="language-plaintext highlighter-rouge">help</code> target.</p>
 
 <div class="language-make highlighter-rouge"><div class="highlight"><pre class="highlight"><code> <span class="nl">test</span><span class="o">:</span>
  <span class="c">## test: Run the test suite then shut down
@@ -227,17 +227,17 @@
    <span class="nl">@sed -n 's/^##//p' ${MAKEFILE_LIST} | column -t -s '</span><span class="o">:</span><span class="nf">' | sed -e 's/^/-/'</span>
 </code></pre></div></div>
 
-<p>What this target does is find all of the entries starting <code class="highlighter-rouge">##</code> in all of the Makefiles that have been loaded (this is stored in the <code class="highlighter-rouge">MAKEFILE_LIST</code> env var). 
-Once the comment lines have been gathered, they are piped to column to format into a table, splitting on the colon <code class="highlighter-rouge">:</code>.
+<p>What this target does is find all of the entries starting <code class="language-plaintext highlighter-rouge">##</code> in all of the Makefiles that have been loaded (this is stored in the <code class="language-plaintext highlighter-rouge">MAKEFILE_LIST</code> env var). 
+Once the comment lines have been gathered, they are piped to column to format into a table, splitting on the colon <code class="language-plaintext highlighter-rouge">:</code>.
 Finally, the front of the line is replaces with a dash, to get the breakdown of comments.</p>
 
 <h2 id="running-make-with-help">Running Make with help</h2>
 
-<p>Now we can run <code class="highlighter-rouge">make help</code> to get more information about the available targets.</p>
+<p>Now we can run <code class="language-plaintext highlighter-rouge">make help</code> to get more information about the available targets.</p>
 
 <p>This will give us the result;</p>
 
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>$ make help
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>$ make help
 Usage:
 
 - test   Run the test suite then shut down
@@ -250,10 +250,11 @@ Usage:
 
 
             <div class="post-content bs-callout bs-callout-info">
-Are you confused about the ever growing number of services in AWS and Azure? Why not checkout these super useful glossaries that are always up to date!
-<br />There is one for <a target="_blank" href="https://aws.servicelist.cloud">AWS</a>
-and one for <a target="_blank" href="https://tools.owenrumney.co.uk/azure/index.html">Azure</a>
-</div>
+                Are you confused about the ever growing number of services in AWS and Azure? Why not checkout these
+                super useful glossaries that are always up to date!
+                <br />There is one for <a target="_blank" href="https://aws.servicelist.cloud/">AWS</a>
+                and one for <a target="_blank" href="https://azure.servicelist.cloud">Azure</a>
+            </div>
 
             <div class="tags">
                 
@@ -262,9 +263,9 @@ and one for <a target="_blank" href="https://tools.owenrumney.co.uk/azure/index.
                 <a href="/tags/#documentation">documentation</a>
                 
             </div>
-<a href="#" data-scroll role="button" id="back-to-top" class="back-to-top" style="display: inline;">Top</a>
+            <a href="#" data-scroll role="button" id="back-to-top" class="back-to-top" style="display: inline;">Top</a>
         </article>
-                                    
+
         <section class="share">
     <h3>Share</h3>
     <a aria-label="Share on Twitter" href="https://twitter.com/intent/tweet?text=&quot;&quot;%20https://www.owenrumney.co.uk/help-in-make-file/%20via%20&#64;owenrum&hashtags=make,documentation,"
@@ -329,15 +330,15 @@ and one for <a target="_blank" href="https://tools.owenrumney.co.uk/azure/index.
 </body>
 <script>
     $(function () {
-        if (window.location.href.indexOf('#')  == -1) {
+        if (window.location.href.indexOf('#') == -1) {
             setTimeout(function () {
-                
-                if (window.scrollY== 0) {
+
+                if (window.scrollY == 0) {
                     $('#scrolllink').click();
                 }
             }, 1200);
         }
-        
+
     });
 </script>
 

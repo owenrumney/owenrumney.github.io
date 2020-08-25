@@ -184,7 +184,7 @@
         <article role="article" id="scroll" class="post-content" itemprop="articleBody">
             <p>I’m having a bit of a dabble with Go, as a by product of working with Elastic Search beats.</p>
 
-<p>One thing I’ve been looking at today is the channels to allow two <code class="highlighter-rouge">go</code> routines to communicate with each other and I came up with a fairly cheesy way to play with implementing them.</p>
+<p>One thing I’ve been looking at today is the channels to allow two <code class="language-plaintext highlighter-rouge">go</code> routines to communicate with each other and I came up with a fairly cheesy way to play with implementing them.</p>
 
 <div class="language-go highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">package</span> <span class="n">main</span>
 
@@ -223,11 +223,11 @@
 
 </code></pre></div></div>
 
-<p>Using the <code class="highlighter-rouge">go</code> keyword to essentially start the <code class="highlighter-rouge">ping</code> and <code class="highlighter-rouge">pong</code> in the <code class="highlighter-rouge">logical processor</code> and run concurrently. They both get passed a special <code class="highlighter-rouge">chan</code> string that acts as a shared channel for them to synchronise against.</p>
+<p>Using the <code class="language-plaintext highlighter-rouge">go</code> keyword to essentially start the <code class="language-plaintext highlighter-rouge">ping</code> and <code class="language-plaintext highlighter-rouge">pong</code> in the <code class="language-plaintext highlighter-rouge">logical processor</code> and run concurrently. They both get passed a special <code class="language-plaintext highlighter-rouge">chan</code> string that acts as a shared channel for them to synchronise against.</p>
 
 <p>The code results in an endless game of ping pong.</p>
 
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>ping .... pong
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>ping .... pong
 ping .... pong
 ping .... pong
 ping .... pong
@@ -239,10 +239,11 @@ ping .... pong
 
 
             <div class="post-content bs-callout bs-callout-info">
-Are you confused about the ever growing number of services in AWS and Azure? Why not checkout these super useful glossaries that are always up to date!
-<br />There is one for <a target="_blank" href="https://aws.servicelist.cloud">AWS</a>
-and one for <a target="_blank" href="https://tools.owenrumney.co.uk/azure/index.html">Azure</a>
-</div>
+                Are you confused about the ever growing number of services in AWS and Azure? Why not checkout these
+                super useful glossaries that are always up to date!
+                <br />There is one for <a target="_blank" href="https://aws.servicelist.cloud/">AWS</a>
+                and one for <a target="_blank" href="https://azure.servicelist.cloud">Azure</a>
+            </div>
 
             <div class="tags">
                 
@@ -253,9 +254,9 @@ and one for <a target="_blank" href="https://tools.owenrumney.co.uk/azure/index.
                 <a href="/tags/#coding">coding</a>
                 
             </div>
-<a href="#" data-scroll role="button" id="back-to-top" class="back-to-top" style="display: inline;">Top</a>
+            <a href="#" data-scroll role="button" id="back-to-top" class="back-to-top" style="display: inline;">Top</a>
         </article>
-                                    
+
         <section class="share">
     <h3>Share</h3>
     <a aria-label="Share on Twitter" href="https://twitter.com/intent/tweet?text=&quot;&quot;%20https://www.owenrumney.co.uk/using-go-channels/%20via%20&#64;owenrum&hashtags=go,golang,coding,"
@@ -320,15 +321,15 @@ and one for <a target="_blank" href="https://tools.owenrumney.co.uk/azure/index.
 </body>
 <script>
     $(function () {
-        if (window.location.href.indexOf('#')  == -1) {
+        if (window.location.href.indexOf('#') == -1) {
             setTimeout(function () {
-                
-                if (window.scrollY== 0) {
+
+                if (window.scrollY == 0) {
                     $('#scrolllink').click();
                 }
             }, 1200);
         }
-        
+
     });
 </script>
 

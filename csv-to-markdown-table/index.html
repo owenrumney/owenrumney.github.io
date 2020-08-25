@@ -198,7 +198,7 @@
 
 <h2 id="creating-the-plugin">Creating the Plugin</h2>
 
-<p>Creating a new Plugin with Sublime Text 3 is a case of <code class="highlighter-rouge">Tools -&gt; Developer -&gt; New Plugin</code></p>
+<p>Creating a new Plugin with Sublime Text 3 is a case of <code class="language-plaintext highlighter-rouge">Tools -&gt; Developer -&gt; New Plugin</code></p>
 
 <p>This will create a new templated file in the User section.</p>
 
@@ -206,43 +206,44 @@
 <span class="kn">import</span> <span class="nn">sublime_plugin</span>
 
 
-<span class="k">class</span> <span class="nc">CsvToMdCommand</span><span class="p">(</span><span class="n">sublime_plugin</span><span class="o">.</span><span class="n">TextCommand</span><span class="p">):</span>
+<span class="k">class</span> <span class="nc">CsvToMdCommand</span><span class="p">(</span><span class="n">sublime_plugin</span><span class="p">.</span><span class="n">TextCommand</span><span class="p">):</span>
 
 	<span class="n">content</span> <span class="o">=</span> <span class="s">""</span>
 
 	<span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">edit</span><span class="p">):</span>
-		<span class="k">for</span> <span class="n">region</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">view</span><span class="o">.</span><span class="n">sel</span><span class="p">():</span>
-			<span class="k">if</span> <span class="ow">not</span> <span class="n">region</span><span class="o">.</span><span class="n">empty</span><span class="p">():</span>
-					<span class="n">s</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">view</span><span class="o">.</span><span class="n">substr</span><span class="p">(</span><span class="n">region</span><span class="p">)</span>
-					<span class="bp">self</span><span class="o">.</span><span class="n">process</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
-					<span class="bp">self</span><span class="o">.</span><span class="n">view</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">edit</span><span class="p">,</span> <span class="n">region</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">content</span><span class="p">)</span>
-					<span class="bp">self</span><span class="o">.</span><span class="n">content</span> <span class="o">=</span> <span class="s">""</span>
+		<span class="k">for</span> <span class="n">region</span> <span class="ow">in</span> <span class="bp">self</span><span class="p">.</span><span class="n">view</span><span class="p">.</span><span class="n">sel</span><span class="p">():</span>
+			<span class="k">if</span> <span class="ow">not</span> <span class="n">region</span><span class="p">.</span><span class="n">empty</span><span class="p">():</span>
+					<span class="n">s</span> <span class="o">=</span> <span class="bp">self</span><span class="p">.</span><span class="n">view</span><span class="p">.</span><span class="n">substr</span><span class="p">(</span><span class="n">region</span><span class="p">)</span>
+					<span class="bp">self</span><span class="p">.</span><span class="n">process</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
+					<span class="bp">self</span><span class="p">.</span><span class="n">view</span><span class="p">.</span><span class="n">replace</span><span class="p">(</span><span class="n">edit</span><span class="p">,</span> <span class="n">region</span><span class="p">,</span> <span class="bp">self</span><span class="p">.</span><span class="n">content</span><span class="p">)</span>
+					<span class="bp">self</span><span class="p">.</span><span class="n">content</span> <span class="o">=</span> <span class="s">""</span>
 
 	<span class="k">def</span> <span class="nf">process_row</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">row</span><span class="p">,</span> <span class="n">isHeader</span> <span class="o">=</span> <span class="bp">False</span><span class="p">):</span>
-		<span class="bp">self</span><span class="o">.</span><span class="n">content</span> <span class="o">+=</span> <span class="p">(</span><span class="s">'|'</span> <span class="o">+</span> <span class="n">row</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s">','</span><span class="p">,</span> <span class="s">'|'</span><span class="p">)</span> <span class="o">+</span> <span class="s">'|'</span> <span class="o">+</span> <span class="s">'</span><span class="se">\n</span><span class="s">'</span><span class="p">)</span>
+		<span class="bp">self</span><span class="p">.</span><span class="n">content</span> <span class="o">+=</span> <span class="p">(</span><span class="s">'|'</span> <span class="o">+</span> <span class="n">row</span><span class="p">.</span><span class="n">replace</span><span class="p">(</span><span class="s">','</span><span class="p">,</span> <span class="s">'|'</span><span class="p">)</span> <span class="o">+</span> <span class="s">'|'</span> <span class="o">+</span> <span class="s">'</span><span class="se">\n</span><span class="s">'</span><span class="p">)</span>
 		<span class="k">if</span> <span class="n">isHeader</span><span class="p">:</span>
-			<span class="bp">self</span><span class="o">.</span><span class="n">content</span> <span class="o">+=</span>  <span class="s">'|'</span> <span class="o">+</span> <span class="p">(</span><span class="s">'-|'</span> <span class="o">*</span> <span class="p">(</span><span class="n">row</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="s">','</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">+</span> <span class="s">'</span><span class="se">\n</span><span class="s">'</span><span class="p">)</span>
+			<span class="bp">self</span><span class="p">.</span><span class="n">content</span> <span class="o">+=</span>  <span class="s">'|'</span> <span class="o">+</span> <span class="p">(</span><span class="s">'-|'</span> <span class="o">*</span> <span class="p">(</span><span class="n">row</span><span class="p">.</span><span class="n">count</span><span class="p">(</span><span class="s">','</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">+</span> <span class="s">'</span><span class="se">\n</span><span class="s">'</span><span class="p">)</span>
 
 
 	<span class="k">def</span> <span class="nf">process</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rows</span><span class="p">):</span>
 	    <span class="n">first</span> <span class="o">=</span> <span class="bp">True</span>
-	    <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">rows</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">"</span><span class="se">\n</span><span class="s">"</span><span class="p">):</span>
-	        <span class="bp">self</span><span class="o">.</span><span class="n">process_row</span><span class="p">(</span><span class="n">row</span><span class="o">.</span><span class="n">strip</span><span class="p">(),</span> <span class="n">first</span><span class="p">)</span>
+	    <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">rows</span><span class="p">.</span><span class="n">split</span><span class="p">(</span><span class="s">"</span><span class="se">\n</span><span class="s">"</span><span class="p">):</span>
+	        <span class="bp">self</span><span class="p">.</span><span class="n">process_row</span><span class="p">(</span><span class="n">row</span><span class="p">.</span><span class="n">strip</span><span class="p">(),</span> <span class="n">first</span><span class="p">)</span>
 	        <span class="k">if</span> <span class="n">first</span><span class="p">:</span>
 	            <span class="n">first</span> <span class="o">=</span> <span class="bp">False</span>
 </code></pre></div></div>
 
-<p>To add the <code class="highlighter-rouge">Command Palette</code> command, use a file with the extension <code class="highlighter-rouge">.sublime-commands</code> in the <code class="highlighter-rouge">Packages/User</code> folder</p>
+<p>To add the <code class="language-plaintext highlighter-rouge">Command Palette</code> command, use a file with the extension <code class="language-plaintext highlighter-rouge">.sublime-commands</code> in the <code class="language-plaintext highlighter-rouge">Packages/User</code> folder</p>
 
 <div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">[{</span><span class="w"> </span><span class="nl">"caption"</span><span class="p">:</span><span class="w"> </span><span class="s2">"CSV to MD: Convert"</span><span class="p">,</span><span class="w"> </span><span class="nl">"command"</span><span class="p">:</span><span class="w"> </span><span class="s2">"csv_to_md"</span><span class="w"> </span><span class="p">}]</span><span class="w">
 </span></code></pre></div></div>
 
 
             <div class="post-content bs-callout bs-callout-info">
-Are you confused about the ever growing number of services in AWS and Azure? Why not checkout these super useful glossaries that are always up to date!
-<br />There is one for <a target="_blank" href="https://aws.servicelist.cloud">AWS</a>
-and one for <a target="_blank" href="https://tools.owenrumney.co.uk/azure/index.html">Azure</a>
-</div>
+                Are you confused about the ever growing number of services in AWS and Azure? Why not checkout these
+                super useful glossaries that are always up to date!
+                <br />There is one for <a target="_blank" href="https://aws.servicelist.cloud/">AWS</a>
+                and one for <a target="_blank" href="https://azure.servicelist.cloud">Azure</a>
+            </div>
 
             <div class="tags">
                 
@@ -253,9 +254,9 @@ and one for <a target="_blank" href="https://tools.owenrumney.co.uk/azure/index.
                 <a href="/tags/#sublime-text">sublime text</a>
                 
             </div>
-<a href="#" data-scroll role="button" id="back-to-top" class="back-to-top" style="display: inline;">Top</a>
+            <a href="#" data-scroll role="button" id="back-to-top" class="back-to-top" style="display: inline;">Top</a>
         </article>
-                                    
+
         <section class="share">
     <h3>Share</h3>
     <a aria-label="Share on Twitter" href="https://twitter.com/intent/tweet?text=&quot;&quot;%20https://www.owenrumney.co.uk/csv-to-markdown-table/%20via%20&#64;owenrum&hashtags=python,programming,sublime text,"
@@ -320,15 +321,15 @@ and one for <a target="_blank" href="https://tools.owenrumney.co.uk/azure/index.
 </body>
 <script>
     $(function () {
-        if (window.location.href.indexOf('#')  == -1) {
+        if (window.location.href.indexOf('#') == -1) {
             setTimeout(function () {
-                
-                if (window.scrollY== 0) {
+
+                if (window.scrollY == 0) {
                     $('#scrolllink').click();
                 }
             }, 1200);
         }
-        
+
     });
 </script>
 

@@ -187,13 +187,13 @@
 <h2 id="the-app">The App</h2>
 <p>Rather than go with the obvious “Hello, World!” type example, I decided I’d try and do something just a touch more interesting and create a REST(ish) resource that will return a response with the status code that was passed in the path of the request. This might be useful for test frameworks where you want to validate some codes reaction to a given response status code or similar.</p>
 
-<p>I’m using Flask to create a quick an dirty solution, mostly to keep it simple. Firstly, the <code class="highlighter-rouge">requirements.txt</code> file is simple, just one requirement;</p>
+<p>I’m using Flask to create a quick an dirty solution, mostly to keep it simple. Firstly, the <code class="language-plaintext highlighter-rouge">requirements.txt</code> file is simple, just one requirement;</p>
 
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>flask
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>flask
 </code></pre></div></div>
 <p><em>requirements.txt</em></p>
 
-<p>This will get us the Flask package to use in our simple REST(ish) service, which is essentially this; (forgive the inline <code class="highlighter-rouge">status_codes</code> dict)</p>
+<p>This will get us the Flask package to use in our simple REST(ish) service, which is essentially this; (forgive the inline <code class="language-plaintext highlighter-rouge">status_codes</code> dict)</p>
 
 <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">json</span>
 <span class="kn">from</span> <span class="nn">flask</span> <span class="kn">import</span> <span class="n">Flask</span><span class="p">,</span> <span class="n">Response</span> 
@@ -264,26 +264,26 @@
 
 <span class="n">app</span> <span class="o">=</span> <span class="n">Flask</span><span class="p">(</span><span class="n">__name__</span><span class="p">)</span>
 
-<span class="o">@</span><span class="n">app</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s">'/&lt;code&gt;'</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s">'GET'</span><span class="p">,</span> <span class="s">'POST'</span><span class="p">,</span> <span class="s">'HEAD'</span><span class="p">,</span> <span class="s">'PUT'</span><span class="p">])</span>
+<span class="o">@</span><span class="n">app</span><span class="p">.</span><span class="n">route</span><span class="p">(</span><span class="s">'/&lt;code&gt;'</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s">'GET'</span><span class="p">,</span> <span class="s">'POST'</span><span class="p">,</span> <span class="s">'HEAD'</span><span class="p">,</span> <span class="s">'PUT'</span><span class="p">])</span>
 <span class="k">def</span> <span class="nf">status_code</span><span class="p">(</span><span class="n">code</span><span class="p">):</span>
-    <span class="n">message</span> <span class="o">=</span> <span class="n">status_codes</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">code</span><span class="p">,</span> <span class="s">"Unknown Status Code"</span><span class="p">)</span>
+    <span class="n">message</span> <span class="o">=</span> <span class="n">status_codes</span><span class="p">.</span><span class="n">get</span><span class="p">(</span><span class="n">code</span><span class="p">,</span> <span class="s">"Unknown Status Code"</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">Response</span><span class="p">(</span><span class="n">status</span><span class="o">=</span><span class="nb">int</span><span class="p">(</span><span class="n">code</span><span class="p">),</span> <span class="n">response</span><span class="o">=</span><span class="n">message</span><span class="p">)</span>
 
 
 <span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">'__main__'</span><span class="p">:</span>
-    <span class="n">app</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">debug</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">host</span><span class="o">=</span><span class="s">'0.0.0.0'</span><span class="p">)</span>
+    <span class="n">app</span><span class="p">.</span><span class="n">run</span><span class="p">(</span><span class="n">debug</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">host</span><span class="o">=</span><span class="s">'0.0.0.0'</span><span class="p">)</span>
 
 </code></pre></div></div>
 <p><em>app.py</em></p>
 
-<p>You can test the code by running <code class="highlighter-rouge">python app.py</code> which will launch the app on port 5000. Quick test might be;</p>
+<p>You can test the code by running <code class="language-plaintext highlighter-rouge">python app.py</code> which will launch the app on port 5000. Quick test might be;</p>
 
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>curl -v http://localhost:5000/405
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>curl -v http://localhost:5000/405
 </code></pre></div></div>
 
 <p>All being well, this will give you a response of</p>
 
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>*   Trying ::1...
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>*   Trying ::1...
 * TCP_NODELAY set
 * Connection failed
 * connect to ::1 port 80 failed: Connection refused
@@ -306,7 +306,7 @@
 Method Not Allowed%
 </code></pre></div></div>
 
-<p>NOTE, the response status is the code that we’ve passed <code class="highlighter-rouge">HTTP/1.0 405 METHOD NOT ALLOWED</code></p>
+<p>NOTE, the response status is the code that we’ve passed <code class="language-plaintext highlighter-rouge">HTTP/1.0 405 METHOD NOT ALLOWED</code></p>
 
 <h2 id="running-it-as-a-docker-container">Running it as a Docker container</h2>
 
@@ -320,7 +320,7 @@ Method Not Allowed%
 
 <p>The Dockerfile below is all that we’re going to need. It assumes the basic file structure of the project is similar to the tree below;</p>
 
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>.
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>.
 ├── Dockerfile
 ├── app
 │   ├── __init__.py
@@ -328,9 +328,9 @@ Method Not Allowed%
 └── requirements.txt
 </code></pre></div></div>
 
-<p>We’ve covered <code class="highlighter-rouge">app.py</code>, <code class="highlighter-rouge">requirements.txt</code> and <code class="highlighter-rouge">__init__.py</code> is an empty file. All thats left is the Dockerfile</p>
+<p>We’ve covered <code class="language-plaintext highlighter-rouge">app.py</code>, <code class="language-plaintext highlighter-rouge">requirements.txt</code> and <code class="language-plaintext highlighter-rouge">__init__.py</code> is an empty file. All thats left is the Dockerfile</p>
 
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>FROM python:alpine
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>FROM python:alpine
 
 EXPOSE 5000
 
@@ -347,27 +347,27 @@ CMD ["python3", "app/app.py"]
 
 <p>Breaking this down we’re saying that our image is</p>
 <ul>
-  <li>going to be based on the <code class="highlighter-rouge">python:alpine</code> image.</li>
+  <li>going to be based on the <code class="language-plaintext highlighter-rouge">python:alpine</code> image.</li>
   <li>going to expose something on port 5000 (in this case the app)</li>
   <li>going to use /app as its working directory</li>
-  <li>going to copy the contents of <code class="highlighter-rouge">app</code> to the <code class="highlighter-rouge">/app</code> folder on the image</li>
-  <li>going to install the requirements as specified in <code class="highlighter-rouge">requirements.txt</code></li>
+  <li>going to copy the contents of <code class="language-plaintext highlighter-rouge">app</code> to the <code class="language-plaintext highlighter-rouge">/app</code> folder on the image</li>
+  <li>going to install the requirements as specified in <code class="language-plaintext highlighter-rouge">requirements.txt</code></li>
 </ul>
 
-<p>Finally, we end with the <code class="highlighter-rouge">CMD</code> which specifies what will happen when the container starts. In this case, we’re going to be starting the Flask app.</p>
+<p>Finally, we end with the <code class="language-plaintext highlighter-rouge">CMD</code> which specifies what will happen when the container starts. In this case, we’re going to be starting the Flask app.</p>
 
 <h3 id="building-the-docker-file">Building the docker file</h3>
 
 <p>We need to build the image to be able to use it. This is assuming you’ve installed and started Docker on your machine.</p>
 
-<p>To build the image we used the <code class="highlighter-rouge">docker build</code> command.</p>
+<p>To build the image we used the <code class="language-plaintext highlighter-rouge">docker build</code> command.</p>
 
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>docker build . -t httpcodes:latest
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>docker build . -t httpcodes:latest
 </code></pre></div></div>
 
 <p>This will give an output with the steps that are performed while building the image</p>
 
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Sending build context to Docker daemon  11.78kB
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Sending build context to Docker daemon  11.78kB
 Step 1/7 : FROM python:alpine
  ---&gt; 1a8edcb29ce4
 Step 2/7 : LABEL Name=docker Version=0.0.1
@@ -394,7 +394,7 @@ Successfully tagged httpcodes:latest
 
 <p>We can now run the image</p>
 
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>docker run -d -p 80:5000 httpcodes
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>docker run -d -p 80:5000 httpcodes
 </code></pre></div></div>
 
 <p>This command is telling Docker to start a container based on the httpcodes (infering latest because no version was specified) and to do a port forward from the host (your machine) to port 5000 on the container. In this case, we’re saying route all traffic that comes to http://localhost:80 to 5000 on the container.</p>
@@ -403,12 +403,12 @@ Successfully tagged httpcodes:latest
 
 <p>As before, we can test the endpoint to make sure it does as we expected.</p>
 
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>curl -v http://localhost/405
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>curl -v http://localhost/405
 </code></pre></div></div>
 
 <p>All being well, this will give you a response of</p>
 
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>*   Trying ::1...
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>*   Trying ::1...
 * TCP_NODELAY set
 * Connection failed
 * connect to ::1 port 80 failed: Connection refused
@@ -433,10 +433,11 @@ Method Not Allowed%
 
 
             <div class="post-content bs-callout bs-callout-info">
-Are you confused about the ever growing number of services in AWS and Azure? Why not checkout these super useful glossaries that are always up to date!
-<br />There is one for <a target="_blank" href="https://aws.servicelist.cloud">AWS</a>
-and one for <a target="_blank" href="https://tools.owenrumney.co.uk/azure/index.html">Azure</a>
-</div>
+                Are you confused about the ever growing number of services in AWS and Azure? Why not checkout these
+                super useful glossaries that are always up to date!
+                <br />There is one for <a target="_blank" href="https://aws.servicelist.cloud/">AWS</a>
+                and one for <a target="_blank" href="https://azure.servicelist.cloud">Azure</a>
+            </div>
 
             <div class="tags">
                 
@@ -449,9 +450,9 @@ and one for <a target="_blank" href="https://tools.owenrumney.co.uk/azure/index.
                 <a href="/tags/#tutorial">tutorial</a>
                 
             </div>
-<a href="#" data-scroll role="button" id="back-to-top" class="back-to-top" style="display: inline;">Top</a>
+            <a href="#" data-scroll role="button" id="back-to-top" class="back-to-top" style="display: inline;">Top</a>
         </article>
-                                    
+
         <section class="share">
     <h3>Share</h3>
     <a aria-label="Share on Twitter" href="https://twitter.com/intent/tweet?text=&quot;&quot;%20https://www.owenrumney.co.uk/creating-dockerised-flask-app/%20via%20&#64;owenrum&hashtags=docker,flask,python,tutorial,"
@@ -516,15 +517,15 @@ and one for <a target="_blank" href="https://tools.owenrumney.co.uk/azure/index.
 </body>
 <script>
     $(function () {
-        if (window.location.href.indexOf('#')  == -1) {
+        if (window.location.href.indexOf('#') == -1) {
             setTimeout(function () {
-                
-                if (window.scrollY== 0) {
+
+                if (window.scrollY == 0) {
                     $('#scrolllink').click();
                 }
             }, 1200);
         }
-        
+
     });
 </script>
 

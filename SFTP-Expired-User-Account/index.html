@@ -184,26 +184,26 @@
         <article role="article" id="scroll" class="post-content" itemprop="articleBody">
             <p>I’ve just had an interesting problem with an SFTP account that suddenly stopped working from a cron job. When the account was used directly from the bash prompt the response was simply Connection closed immediately.</p>
 
-<p>Every thing was set up correctly as far as <code class="highlighter-rouge">authorized_keys</code> and <code class="highlighter-rouge">/etc/ssh/sshd_config</code> looked fine but the account wouldn’t connect.</p>
+<p>Every thing was set up correctly as far as <code class="language-plaintext highlighter-rouge">authorized_keys</code> and <code class="language-plaintext highlighter-rouge">/etc/ssh/sshd_config</code> looked fine but the account wouldn’t connect.</p>
 
-<p>As I don’t have the private key for the user that was connecting to the server, I created a new key pair and added the public key to the <code class="highlighter-rouge">authorized_keys</code> file in the users .ssh folder. Using the following command I got a response that was no more helpful;</p>
+<p>As I don’t have the private key for the user that was connecting to the server, I created a new key pair and added the public key to the <code class="language-plaintext highlighter-rouge">authorized_keys</code> file in the users .ssh folder. Using the following command I got a response that was no more helpful;</p>
 
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>psftp logdrop@10.0.0.1 -i logdrop_pk.ppk
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>psftp logdrop@10.0.0.1 -i logdrop_pk.ppk
 </code></pre></div></div>
 
 <p>This gave the response;</p>
 
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>FATAL: Recieved unexpected end-of-file from SFTP Server
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>FATAL: Recieved unexpected end-of-file from SFTP Server
 </code></pre></div></div>
 
 <p>After a couple more checks on the server and no success I decided to try</p>
 
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>putty logdrop@10.0.0.1 -i logdrop_pk.ppk
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>putty logdrop@10.0.0.1 -i logdrop_pk.ppk
 </code></pre></div></div>
 
 <p>This opened putty which connected but reported that the password for the user had expired and needed a new one. From here I was able to reset the password then go on the server and set</p>
 
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>passwd -x 0 logdrop
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>passwd -x 0 logdrop
 </code></pre></div></div>
 
 <p>to ensure that the aging was deactivated.</p>
@@ -212,10 +212,11 @@
 
 
             <div class="post-content bs-callout bs-callout-info">
-Are you confused about the ever growing number of services in AWS and Azure? Why not checkout these super useful glossaries that are always up to date!
-<br />There is one for <a target="_blank" href="https://aws.servicelist.cloud">AWS</a>
-and one for <a target="_blank" href="https://tools.owenrumney.co.uk/azure/index.html">Azure</a>
-</div>
+                Are you confused about the ever growing number of services in AWS and Azure? Why not checkout these
+                super useful glossaries that are always up to date!
+                <br />There is one for <a target="_blank" href="https://aws.servicelist.cloud/">AWS</a>
+                and one for <a target="_blank" href="https://azure.servicelist.cloud">Azure</a>
+            </div>
 
             <div class="tags">
                 
@@ -226,9 +227,9 @@ and one for <a target="_blank" href="https://tools.owenrumney.co.uk/azure/index.
                 <a href="/tags/#users">users</a>
                 
             </div>
-<a href="#" data-scroll role="button" id="back-to-top" class="back-to-top" style="display: inline;">Top</a>
+            <a href="#" data-scroll role="button" id="back-to-top" class="back-to-top" style="display: inline;">Top</a>
         </article>
-                                    
+
         <section class="share">
     <h3>Share</h3>
     <a aria-label="Share on Twitter" href="https://twitter.com/intent/tweet?text=&quot;&quot;%20https://www.owenrumney.co.uk/SFTP-Expired-User-Account/%20via%20&#64;owenrum&hashtags=linux,sftp,users,"
@@ -293,15 +294,15 @@ and one for <a target="_blank" href="https://tools.owenrumney.co.uk/azure/index.
 </body>
 <script>
     $(function () {
-        if (window.location.href.indexOf('#')  == -1) {
+        if (window.location.href.indexOf('#') == -1) {
             setTimeout(function () {
-                
-                if (window.scrollY== 0) {
+
+                if (window.scrollY == 0) {
                     $('#scrolllink').click();
                 }
             }, 1200);
         }
-        
+
     });
 </script>
 
