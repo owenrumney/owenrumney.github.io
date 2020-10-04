@@ -5,9 +5,25 @@
     <description>Bits of blogging by Owen Rumney</description>
     <link>https://www.owenrumney.co.uk/</link>
     <atom:link href="https://www.owenrumney.co.uk/feed.xml" rel="self" type="application/rss+xml"/>
-    <pubDate>Sun, 04 Oct 2020 13:24:52 +0000</pubDate>
-    <lastBuildDate>Sun, 04 Oct 2020 13:24:52 +0000</lastBuildDate>
+    <pubDate>Sun, 04 Oct 2020 15:13:13 +0000</pubDate>
+    <lastBuildDate>Sun, 04 Oct 2020 15:13:13 +0000</lastBuildDate>
     <generator>Jekyll v4.1.1</generator>
+    
+      <item>
+        <title>Building Jekyll Websites with Travis</title>
+        <description>&lt;p&gt;This website is generated using &lt;a href=&quot;https://jekyllrb.com/&quot;&gt;Jekyll&lt;/a&gt;, a static site generator. Basically, I write the posts as Markdown files, run it through Jekyll and out pops this website, &lt;a href=&quot;'https://www.owenrumney.co.uk'&quot;&gt;owenrumney.co.uk&lt;/a&gt;.&lt;/p&gt; &lt;p&gt;For as long as I have been building the site in this way I’ve built the site locally and commited the contents in to my &lt;a href=&quot;https://github.com/owenrumney/owenrumney.github.io&quot;&gt;Github Pages Project&lt;/a&gt;. This step has always been a bit tedious, ensuring that I build the site to the correct folder with the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;.git&lt;/code&gt; references setup and up to date isn’t difficult, just a pain.&lt;/p&gt; &lt;p&gt;At work we use Travis extensively for...</description>
+        <pubDate>Sun, 04 Oct 2020 00:00:00 +0000</pubDate>
+        <link>https://www.owenrumney.co.uk/building-jekyll-websites-with-travis/</link>
+        <guid isPermaLink="true">https://www.owenrumney.co.uk/building-jekyll-websites-with-travis/</guid>
+        
+        <category>travis</category>
+        
+        <category>jekyll</category>
+        
+        <category>blogging</category>
+        
+        
+      </item>
     
       <item>
         <title>Using the AWS waiter</title>
@@ -172,24 +188,6 @@
         
         
         <category>Git</category>
-        
-      </item>
-    
-      <item>
-        <title>How it works - www.aws-glossary.info</title>
-        <description>&lt;p&gt;I recently posted an entry &lt;a href=&quot;/aws-glossary-info/&quot;&gt;announcing www.aws-glossary.info&lt;/a&gt;. In this post I want to cover how it actually works.&lt;/p&gt; &lt;h2 id=&quot;basic-architecture&quot;&gt;Basic Architecture&lt;/h2&gt; &lt;p&gt;The logical diagram below details the basic structure of the application. The core components are;&lt;/p&gt; &lt;table&gt; &lt;thead&gt; &lt;tr&gt; &lt;th style=&quot;text-align: left&quot;&gt;Component&lt;/th&gt; &lt;th style=&quot;text-align: left&quot;&gt;Purpose&lt;/th&gt; &lt;/tr&gt; &lt;/thead&gt; &lt;tbody&gt; &lt;tr&gt; &lt;td style=&quot;text-align: left&quot;&gt;Github&lt;/td&gt; &lt;td style=&quot;text-align: left&quot;&gt;Static content stored in github&lt;/td&gt; &lt;/tr&gt; &lt;tr&gt; &lt;td style=&quot;text-align: left&quot;&gt;CodePipeline&lt;/td&gt; &lt;td style=&quot;text-align: left&quot;&gt;On commit to the master branch of the github repo - UI components deployed to S3&lt;/td&gt; &lt;/tr&gt; &lt;tr&gt; &lt;td style=&quot;text-align: left&quot;&gt;S3&lt;/td&gt; &lt;td style=&quot;text-align: left&quot;&gt;Static content for the application is stored in an S3...</description>
-        <pubDate>Wed, 27 Feb 2019 00:00:00 +0000</pubDate>
-        <link>https://www.owenrumney.co.uk/aws-glossary-architecture/</link>
-        <guid isPermaLink="true">https://www.owenrumney.co.uk/aws-glossary-architecture/</guid>
-        
-        <category>aws</category>
-        
-        <category>architecture</category>
-        
-        <category>glossary</category>
-        
-        
-        <category>Amazon Web Services</category>
         
       </item>
     

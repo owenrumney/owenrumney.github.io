@@ -1,6 +1,14 @@
 [
   
     {
+      "title"    : "Building Jekyll Websites with Travis",
+      "category" : "",
+      "tags"     : "travis, jekyll, and blogging",
+      "url"      : "/building-jekyll-websites-with-travis/",
+      "date"     : "04 Oct 2020"
+    } ,
+  
+    {
       "title"    : "Using the AWS waiter",
       "category" : "",
       "tags"     : "aws, python, and lambda",
