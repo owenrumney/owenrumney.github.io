@@ -3,6 +3,7 @@
 set -e
 
 DEPLOY_REPO="https://${GITHUB_TOKEN}@github.com/owenrumney/owenrumney.github.io.git"
+MESSAGE=$(git log -1 HEAD --pretty=format:%s)
 
 function main {
 	clean
@@ -44,7 +45,7 @@ function deploy {
     git config --global user.email travis@owenrumney.co.uk
 	git add -A
 	git status
-	git commit -m "Built by Travis CI $TRAVIS_BUILD_NUMBER"
+	git commit -m "Travis Build: $TRAVIS_BUILD_NUMBER. ${MESSAGE}"
 	git push $DEPLOY_REPO master:master
 }
 
