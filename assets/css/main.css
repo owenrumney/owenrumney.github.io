@@ -1414,17 +1414,17 @@ table td {
 pre {
   background: #222;
   width: 100%;
-  padding: 1.25rem 0;
+  /* padding: 1.25rem 0; */
   color: #fff;
-  margin: 1.875rem 0;
+  /* margin: 1.875rem 0; */
   font-size: 0.875rem;
 }
 
 @media only screen and (min-width: 37.5rem) {
   pre {
     font-size: 1rem;
-    padding: 2.5rem 0;
-    margin: 3.125rem 0;
+    /* padding: 2.5rem 0; */
+    /* margin: 3.125rem 0; */
   }
 }
 
