@@ -189,13 +189,13 @@
 <p>At work we use Travis extensively for our build pipeline, I already have a Travis account personally so it occurred to me that I should be generating the site directly off commits to the blog base project, where I write my Markdown.</p>
 
 <h2 id="what-i-will-need">What I will need</h2>
-<ul class="task-list">
-  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" checked="checked" />Travis Account</li>
-  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" checked="checked" /><code class="language-plaintext highlighter-rouge">GITHUB_TOKEN</code> with permissions to update repositories</li>
-  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" checked="checked" />Travis gem</li>
-  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" checked="checked" />Build Scripts</li>
-  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" checked="checked" /><code class="language-plaintext highlighter-rouge">Makefile</code></li>
-  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" checked="checked" /><code class="language-plaintext highlighter-rouge">.travis.yml</code> file</li>
+<ul>
+  <li>Travis Account</li>
+  <li><code class="language-plaintext highlighter-rouge">GITHUB_TOKEN</code> with permissions to update repositories</li>
+  <li>Travis gem</li>
+  <li>Build Scripts</li>
+  <li><code class="language-plaintext highlighter-rouge">Makefile</code></li>
+  <li><code class="language-plaintext highlighter-rouge">.travis.yml</code> file</li>
 </ul>
 
 <h3 id="the-travis-account">The Travis Account</h3>
@@ -343,22 +343,24 @@ script:
 <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Installing SSH key from: default repository key
 Using /home/travis/.netrc to clone repository.
 git.checkout
-1.10s$ git clone --depth=50 --branch=master https://github.com/owenrumney/blogbase.git owenrumney/blogbase
-0.01s
+$ git clone --depth=50 --branch=master https://github.com/owenrumney/blogbase.git owenrumney/blogbase
+
 Setting environment variables from .travis.yml
 $ export GITHUB_TOKEN=[secure]
 rvm
-0.64s$ rvm use default
+$ rvm use default
 $ export BUNDLE_GEMFILE=$PWD/Gemfile
 cache.1
 Setting up build cache
 cache.bundler
-0.00s0.95sadding /home/travis/build/owenrumney/blogbase/vendor/bundle to cache
+adding /home/travis/build/owenrumney/blogbase/vendor/bundle to cache
 ruby.versions
 $ ruby --version
 install
-151.74s$ bundle install
-4.78s$ make deploy
+
+$ bundle install
+$ make deploy
+
 cleaning _site folder
 getting latest site
 Cloning into '_site'...
