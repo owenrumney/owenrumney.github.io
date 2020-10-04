@@ -265,16 +265,20 @@ function deploy {
 </code></pre></div></div>
 
 <h4 id="clean">clean</h4>
+
 <p>The <code class="language-plaintext highlighter-rouge">clean</code> function ensures that the location the static site is generated into is gone (in the default cause this is the <code class="language-plaintext highlighter-rouge">_site</code> folder)</p>
 
 <h4 id="clone_site">clone_site</h4>
+
 <p>When we do the build in travis, we need to have the destination <code class="language-plaintext highlighter-rouge">github pages</code> project cloned into <code class="language-plaintext highlighter-rouge">_site</code> for writing. THis function does that clone to get the latest.</p>
 
 <h4 id="build">build</h4>
+
 <p>The <code class="language-plaintext highlighter-rouge">build</code> function runs <code class="language-plaintext highlighter-rouge">jekyll build</code> which by default will generate the site into <code class="language-plaintext highlighter-rouge">_site</code> folder</p>
 
-<p>#### deploy
-The <code class="language-plaintext highlighter-rouge">deploy</code> function is the main section for commiting the updates in the <code class="language-plaintext highlighter-rouge">github pages</code> project. This function ensures that the Travis run isn’t a PR and that the branch is <code class="language-plaintext highlighter-rouge">master</code> if these conditions are satisfied it will commit the changes to <code class="language-plaintext highlighter-rouge">_site</code> and push to make them available.</p>
+<h4 id="deploy">deploy</h4>
+
+<p>The <code class="language-plaintext highlighter-rouge">deploy</code> function is the main section for commiting the updates in the <code class="language-plaintext highlighter-rouge">github pages</code> project. This function ensures that the Travis run isn’t a PR and that the branch is <code class="language-plaintext highlighter-rouge">master</code> if these conditions are satisfied it will commit the changes to <code class="language-plaintext highlighter-rouge">_site</code> and push to make them available.</p>
 
 <h3 id="the-makefile">The Makefile</h3>
 <p>To simplify the running of the commands - and to allow them to be used locally easily, there is a <code class="language-plaintext highlighter-rouge">Makefile</code></p>
