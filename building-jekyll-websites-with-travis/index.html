@@ -283,7 +283,7 @@ function deploy {
 <h3 id="the-makefile">The Makefile</h3>
 <p>To simplify the running of the commands - and to allow them to be used locally easily, there is a <code class="language-plaintext highlighter-rouge">Makefile</code></p>
 
-<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>.PHONEY: initpost clean clone_site build deploy
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>.PHONY: initpost clean clone_site build deploy
 
 initpost:
 	@bash -c "./scripts/initpost.sh"
