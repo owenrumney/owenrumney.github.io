@@ -309,7 +309,6 @@
     <span class="nx">description</span> <span class="p">=</span> <span class="s2">"The ACL for S3 buckets"</span>
     <span class="nx">default</span>     <span class="p">=</span> <span class="s2">"public-read"</span>
 <span class="p">}</span>
-
 </code></pre></div></div>
 
 <p>then we update the <code class="language-plaintext highlighter-rouge">main.tf</code> file to use this variable rather than the hard coded value;</p>
@@ -323,6 +322,13 @@
     <span class="nx">Environment</span> <span class="p">=</span> <span class="s2">"Production"</span>
   <span class="p">}</span>
 <span class="p">}</span>
+</code></pre></div></div>
+
+<p>Our folder structure now looks more like this;</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>.
+|_ tf/
+    |_ main.tf
+    |_ variables.tf
 </code></pre></div></div>
 
 <p>Now when we run <code class="language-plaintext highlighter-rouge">tfsec</code> against the <code class="language-plaintext highlighter-rouge">tf</code> folder it gives us a slightly different error;</p>
