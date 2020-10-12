@@ -188,15 +188,15 @@
 
 <p>As an example, say we wanted to create a new S3 bucket in our AWS account we might define something like;</p>
 
-<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>resource "aws_s3_bucket" "my-bucket-for-secret-things" {
-  bucket = "my-bucket-for-secret-things"
-  acl    = "public-read"
+<div class="language-terraform highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">resource</span> <span class="s2">"aws_s3_bucket"</span> <span class="s2">"my-bucket-for-secret-things"</span> <span class="p">{</span>
+  <span class="nx">bucket</span> <span class="p">=</span> <span class="s2">"my-bucket-for-secret-things"</span>
+  <span class="nx">acl</span>    <span class="p">=</span> <span class="s2">"public-read"</span>
 
-  tags = {
-    Name        = "Sensitive Storage Bucket"
-    Environment = "Production"
-  }
-}
+  <span class="nx">tags</span> <span class="p">=</span> <span class="p">{</span>
+    <span class="nx">Name</span>        <span class="p">=</span> <span class="s2">"Sensitive Storage Bucket"</span>
+    <span class="nx">Environment</span> <span class="p">=</span> <span class="s2">"Production"</span>
+  <span class="p">}</span>
+<span class="p">}</span>
 </code></pre></div></div>
 
 <p>Now, you might see straight away that there is a potential issue here - the bucket has an ACL allowing <code class="language-plaintext highlighter-rouge">public-read</code>. Checking the <a href="https://docs.aws.amazon.com/AmazonS3/latest/dev/acl-overview.html#canned-acl">AWS Documentation</a> on canned responses, shows us that public read has the following permissions;</p>
@@ -222,7 +222,7 @@
 
 <h3 id="linuxeverything-else">Linux/everything else</h3>
 <p>Alternatively, you can install using <code class="language-plaintext highlighter-rouge">go get</code></p>
-<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>go get -u github.com/tfsec/tfsec/cmd/tfsec
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>go get <span class="nt">-u</span> github.com/tfsec/tfsec/cmd/tfsec
 </code></pre></div></div>
 
 <p>We can use <code class="language-plaintext highlighter-rouge">tfsec</code> to test our Terraform by simply running the command against the folder with our terraform in it.</p>
@@ -238,62 +238,62 @@
 
 <p>This will give me a list of problems categorised into severities.</p>
 
-<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>3 potential problems detected:
+<div class="language-terraform highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="mi">3</span> <span class="nx">potential</span> <span class="nx">problems</span> <span class="nx">detected</span><span class="err">:</span>
 
-Problem 1
+<span class="nx">Problem</span> <span class="mi">1</span>
 
-  [AWS001][WARNING] Resource 'aws_s3_bucket.my-bucket-for-secret-things' has an ACL which allows public read access.
-  /tmp/tfsec/main.tf:5
+  <span class="p">[</span><span class="nx">AWS001</span><span class="p">][</span><span class="nx">WARNING</span><span class="p">]</span> <span class="nx">Resource</span> <span class="s1">'aws_s3_bucket.my-bucket-for-secret-things'</span> <span class="nx">has</span> <span class="nx">an</span> <span class="nx">ACL</span> <span class="nx">which</span> <span class="nx">allows</span> <span class="nx">public</span> <span class="nx">read</span> <span class="nx">access</span><span class="err">.</span>
+  <span class="err">/</span><span class="nx">tmp</span><span class="err">/</span><span class="nx">tfsec</span><span class="err">/</span><span class="nx">main</span><span class="err">.</span><span class="nx">tf</span><span class="err">:</span><span class="mi">5</span>
 
-       2 | 
-       3 | resource "aws_s3_bucket" "my-bucket-for-secret-things" {
-       4 |   bucket = "my-bucket-for-secret-things"
-       5 |   acl    = "public-read"
-       6 | 
-       7 |   tags = {
-       8 |     Name        = "Sensitive Storage Bucket"
+       <span class="mi">2</span> <span class="err">|</span> 
+       <span class="mi">3</span> <span class="err">|</span> <span class="k">resource</span> <span class="s2">"aws_s3_bucket"</span> <span class="s2">"my-bucket-for-secret-things"</span> <span class="p">{</span>
+       <span class="mi">4</span> <span class="err">|</span>   <span class="nx">bucket</span> <span class="p">=</span> <span class="s2">"my-bucket-for-secret-things"</span>
+       <span class="mi">5</span> <span class="err">|</span>   <span class="nx">acl</span>    <span class="p">=</span> <span class="s2">"public-read"</span>
+       <span class="mi">6</span> <span class="err">|</span> 
+       <span class="mi">7</span> <span class="err">|</span>   <span class="nx">tags</span> <span class="p">=</span> <span class="p">{</span>
+       <span class="mi">8</span> <span class="err">|</span>     <span class="nx">Name</span>        <span class="p">=</span> <span class="s2">"Sensitive Storage Bucket"</span>
 
-  See https://github.com/tfsec/tfsec/wiki/AWS001 for more information.
+  <span class="nx">See</span> <span class="nx">https</span><span class="err">:</span><span class="c1">//github.com/tfsec/tfsec/wiki/AWS001 for more information.</span>
 
-Problem 2
+<span class="nx">Problem</span> <span class="mi">2</span>
 
-  [AWS002][ERROR] Resource 'aws_s3_bucket.my-bucket-for-secret-things' does not have logging enabled.
-  /tmp/tfsec/main.tf:3-11
+  <span class="p">[</span><span class="nx">AWS002</span><span class="p">][</span><span class="nx">ERROR</span><span class="p">]</span> <span class="nx">Resource</span> <span class="s1">'aws_s3_bucket.my-bucket-for-secret-things'</span> <span class="nx">does</span> <span class="nx">not</span> <span class="nx">have</span> <span class="nx">logging</span> <span class="nx">enabled</span><span class="err">.</span>
+  <span class="err">/</span><span class="nx">tmp</span><span class="err">/</span><span class="nx">tfsec</span><span class="err">/</span><span class="nx">main</span><span class="p">.</span><span class="nx">tf</span><span class="err">:</span><span class="mi">3</span><span class="err">-</span><span class="mi">11</span>
 
-       1 | 
-       2 | 
-       3 | resource "aws_s3_bucket" "my-bucket-for-secret-things" {
-       4 |   bucket = "my-bucket-for-secret-things"
-       5 |   acl    = "public-read"
-       6 | 
-       7 |   tags = {
-       8 |     Name        = "Sensitive Storage Bucket"
-       9 |     Environment = "Production"
-      10 |   }
-      11 | }
-      12 | 
+       <span class="mi">1</span> <span class="err">|</span> 
+       <span class="mi">2</span> <span class="err">|</span> 
+       <span class="mi">3</span> <span class="err">|</span> <span class="k">resource</span> <span class="s2">"aws_s3_bucket"</span> <span class="s2">"my-bucket-for-secret-things"</span> <span class="p">{</span>
+       <span class="mi">4</span> <span class="err">|</span>   <span class="nx">bucket</span> <span class="p">=</span> <span class="s2">"my-bucket-for-secret-things"</span>
+       <span class="mi">5</span> <span class="err">|</span>   <span class="nx">acl</span>    <span class="p">=</span> <span class="s2">"public-read"</span>
+       <span class="mi">6</span> <span class="err">|</span> 
+       <span class="mi">7</span> <span class="err">|</span>   <span class="nx">tags</span> <span class="p">=</span> <span class="p">{</span>
+       <span class="mi">8</span> <span class="err">|</span>     <span class="nx">Name</span>        <span class="p">=</span> <span class="s2">"Sensitive Storage Bucket"</span>
+       <span class="mi">9</span> <span class="err">|</span>     <span class="nx">Environment</span> <span class="p">=</span> <span class="s2">"Production"</span>
+      <span class="mi">10</span> <span class="err">|</span>   <span class="p">}</span>
+      <span class="mi">11</span> <span class="err">|</span> <span class="p">}</span>
+      <span class="mi">12</span> <span class="err">|</span> 
 
-  See https://github.com/tfsec/tfsec/wiki/AWS002 for more information.
+  <span class="nx">See</span> <span class="nx">https</span><span class="err">:</span><span class="c1">//github.com/tfsec/tfsec/wiki/AWS002 for more information.</span>
 
-Problem 3
+<span class="nx">Problem</span> <span class="mi">3</span>
 
-  [AWS017][ERROR] Resource 'aws_s3_bucket.my-bucket-for-secret-things' defines an un-encrypted S3 bucket (missing server_side_encryption_configuration block).
-  /tmp/tfsec/main.tf:3-11
+  <span class="p">[</span><span class="nx">AWS017</span><span class="p">][</span><span class="nx">ERROR</span><span class="p">]</span> <span class="nx">Resource</span> <span class="s1">'aws_s3_bucket.my-bucket-for-secret-things'</span> <span class="nx">defines</span> <span class="nx">an</span> <span class="nx">un</span><span class="err">-</span><span class="nx">encrypted</span> <span class="nx">S3</span> <span class="nx">bucket</span> <span class="p">(</span><span class="nx">missing</span> <span class="nx">server_side_encryption_configuration</span> <span class="nx">block</span><span class="p">).</span>
+  <span class="err">/</span><span class="nx">tmp</span><span class="err">/</span><span class="nx">tfsec</span><span class="err">/</span><span class="nx">main</span><span class="p">.</span><span class="nx">tf</span><span class="err">:</span><span class="mi">3</span><span class="err">-</span><span class="mi">11</span>
 
-       1 | 
-       2 | 
-       3 | resource "aws_s3_bucket" "my-bucket-for-secret-things" {
-       4 |   bucket = "my-bucket-for-secret-things"
-       5 |   acl    = "public-read"
-       6 | 
-       7 |   tags = {
-       8 |     Name        = "Sensitive Storage Bucket"
-       9 |     Environment = "Production"
-      10 |   }
-      11 | }
-      12 | 
+       <span class="mi">1</span> <span class="err">|</span> 
+       <span class="mi">2</span> <span class="err">|</span> 
+       <span class="mi">3</span> <span class="err">|</span> <span class="k">resource</span> <span class="s2">"aws_s3_bucket"</span> <span class="s2">"my-bucket-for-secret-things"</span> <span class="p">{</span>
+       <span class="mi">4</span> <span class="err">|</span>   <span class="nx">bucket</span> <span class="p">=</span> <span class="s2">"my-bucket-for-secret-things"</span>
+       <span class="mi">5</span> <span class="err">|</span>   <span class="nx">acl</span>    <span class="p">=</span> <span class="s2">"public-read"</span>
+       <span class="mi">6</span> <span class="err">|</span> 
+       <span class="mi">7</span> <span class="err">|</span>   <span class="nx">tags</span> <span class="p">=</span> <span class="p">{</span>
+       <span class="mi">8</span> <span class="err">|</span>     <span class="nx">Name</span>        <span class="p">=</span> <span class="s2">"Sensitive Storage Bucket"</span>
+       <span class="mi">9</span> <span class="err">|</span>     <span class="nx">Environment</span> <span class="p">=</span> <span class="s2">"Production"</span>
+      <span class="mi">10</span> <span class="err">|</span>   <span class="p">}</span>
+      <span class="mi">11</span> <span class="err">|</span> <span class="p">}</span>
+      <span class="mi">12</span> <span class="err">|</span> 
 
-  See https://github.com/tfsec/tfsec/wiki/AWS017 for more information.
+  <span class="nx">See</span> <span class="nx">https</span><span class="err">:</span><span class="c1">//github.com/tfsec/tfsec/wiki/AWS017 for more information.</span>
 
 </code></pre></div></div>
 
@@ -305,41 +305,41 @@ Problem 3
 
 <p>One of the benefits of <code class="language-plaintext highlighter-rouge">tfsec</code> is the ability for it to process default variable values and report on them as well. For example if we had a variable for the acl.</p>
 
-<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>variable "bucket-acl" {
-    description = "The ACL for S3 buckets"
-    default     = "public-read"
-}
+<div class="language-terraform highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">variable</span> <span class="s2">"bucket-acl"</span> <span class="p">{</span>
+    <span class="nx">description</span> <span class="p">=</span> <span class="s2">"The ACL for S3 buckets"</span>
+    <span class="nx">default</span>     <span class="p">=</span> <span class="s2">"public-read"</span>
+<span class="p">}</span>
 
 </code></pre></div></div>
 
 <p>then we update the <code class="language-plaintext highlighter-rouge">main.tf</code> file to use this variable rather than the hard coded value;</p>
 
-<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>resource "aws_s3_bucket" "my-bucket-for-secret-things" {
-  bucket = "my-bucket-for-secret-things"
-  acl    = var.bucket-acl
+<div class="language-terraform highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">resource</span> <span class="s2">"aws_s3_bucket"</span> <span class="s2">"my-bucket-for-secret-things"</span> <span class="p">{</span>
+  <span class="nx">bucket</span> <span class="p">=</span> <span class="s2">"my-bucket-for-secret-things"</span>
+  <span class="nx">acl</span>    <span class="p">=</span> <span class="kd">var</span><span class="p">.</span><span class="nx">bucket</span><span class="err">-</span><span class="nx">acl</span>
 
-  tags = {
-    Name        = "Sensitive Storage Bucket"
-    Environment = "Production"
-  }
-}
+  <span class="nx">tags</span> <span class="p">=</span> <span class="p">{</span>
+    <span class="nx">Name</span>        <span class="p">=</span> <span class="s2">"Sensitive Storage Bucket"</span>
+    <span class="nx">Environment</span> <span class="p">=</span> <span class="s2">"Production"</span>
+  <span class="p">}</span>
+<span class="p">}</span>
 </code></pre></div></div>
 
 <p>Now when we run <code class="language-plaintext highlighter-rouge">tfsec</code> against the <code class="language-plaintext highlighter-rouge">tf</code> folder it gives us a slightly different error;</p>
-<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Problem 1
+<div class="language-terraform highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nx">Problem</span> <span class="mi">1</span>
 
-  [AWS001][] Resource 'aws_s3_bucket.my-bucket-for-secret-things' has an ACL which allows public read access.
-  /tmp/tfsec/main.tf:5
+  <span class="p">[</span><span class="nx">AWS001</span><span class="p">][]</span> <span class="nx">Resource</span> <span class="s1">'aws_s3_bucket.my-bucket-for-secret-things'</span> <span class="nx">has</span> <span class="nx">an</span> <span class="nx">ACL</span> <span class="nx">which</span> <span class="nx">allows</span> <span class="nx">public</span> <span class="nx">read</span> <span class="nx">access</span><span class="err">.</span>
+  <span class="err">/</span><span class="nx">tmp</span><span class="err">/</span><span class="nx">tfsec</span><span class="err">/</span><span class="nx">main</span><span class="err">.</span><span class="nx">tf</span><span class="err">:</span><span class="mi">5</span>
 
-       2 | 
-       3 | resource "aws_s3_bucket" "my-bucket-for-secret-things" {
-       4 |   bucket = "my-bucket-for-secret-things"
-       5 |   acl    = var.bucket-acl    [string] "public-read"
-       6 | 
-       7 |   tags = {
-       8 |     Name        = "Sensitive Storage Bucket"
+       <span class="mi">2</span> <span class="err">|</span> 
+       <span class="mi">3</span> <span class="err">|</span> <span class="k">resource</span> <span class="s2">"aws_s3_bucket"</span> <span class="s2">"my-bucket-for-secret-things"</span> <span class="p">{</span>
+       <span class="mi">4</span> <span class="err">|</span>   <span class="nx">bucket</span> <span class="p">=</span> <span class="s2">"my-bucket-for-secret-things"</span>
+       <span class="mi">5</span> <span class="err">|</span>   <span class="nx">acl</span>    <span class="p">=</span> <span class="kd">var</span><span class="p">.</span><span class="nx">bucket</span><span class="err">-</span><span class="nx">acl</span>    <span class="p">[</span><span class="nx">string</span><span class="p">]</span> <span class="s2">"public-read"</span>
+       <span class="mi">6</span> <span class="err">|</span> 
+       <span class="mi">7</span> <span class="err">|</span>   <span class="nx">tags</span> <span class="p">=</span> <span class="p">{</span>
+       <span class="mi">8</span> <span class="err">|</span>     <span class="nx">Name</span>        <span class="p">=</span> <span class="s2">"Sensitive Storage Bucket"</span>
 
-  See https://github.com/tfsec/tfsec/wiki/AWS001 for more information.
+  <span class="nx">See</span> <span class="nx">https</span><span class="err">:</span><span class="c1">//github.com/tfsec/tfsec/wiki/AWS001 for more information.</span>
 
 </code></pre></div></div>
 
@@ -349,16 +349,16 @@ Problem 3
 
 <p>Assuming that you did intend to ignore this error for this resource, that is fine, it can be done by adding an ignore declaration to the resource;</p>
 
-<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>resource "aws_s3_bucket" "my-bucket-for-secret-things" {
-  bucket = "my-bucket-for-secret-things"
-  #tfsec:ignore:AWS001
-  acl    = var.bucket-acl
+<div class="language-terraform highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">resource</span> <span class="s2">"aws_s3_bucket"</span> <span class="s2">"my-bucket-for-secret-things"</span> <span class="p">{</span>
+  <span class="nx">bucket</span> <span class="p">=</span> <span class="s2">"my-bucket-for-secret-things"</span>
+  <span class="c1">#tfsec:ignore:AWS001</span>
+  <span class="nx">acl</span>    <span class="p">=</span> <span class="kd">var</span><span class="p">.</span><span class="nx">bucket</span><span class="err">-</span><span class="nx">acl</span>
 
-  tags = {
-    Name        = "Sensitive Storage Bucket"
-    Environment = "Production"
-  }
-}
+  <span class="nx">tags</span> <span class="p">=</span> <span class="p">{</span>
+    <span class="nx">Name</span>        <span class="p">=</span> <span class="s2">"Sensitive Storage Bucket"</span>
+    <span class="nx">Environment</span> <span class="p">=</span> <span class="s2">"Production"</span>
+  <span class="p">}</span>
+<span class="p">}</span>
 
 </code></pre></div></div>
 

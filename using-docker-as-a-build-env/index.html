@@ -346,20 +346,20 @@
 
 <p>This should return a verbose message saying we got a <code class="language-plaintext highlighter-rouge">502</code></p>
 
-<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>*   Trying 127.0.0.1...
-* TCP_NODELAY set
-* Connected to localhost (127.0.0.1) port 8080 (#0)
-&gt; GET /502 HTTP/1.1
-&gt; Host: localhost:8080
-&gt; User-Agent: curl/7.64.1
-&gt; Accept: */*
-&gt;
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">*</span>   Trying 127.0.0.1...
+<span class="k">*</span> TCP_NODELAY <span class="nb">set</span>
+<span class="k">*</span> Connected to localhost <span class="o">(</span>127.0.0.1<span class="o">)</span> port 8080 <span class="o">(</span><span class="c">#0)</span>
+<span class="o">&gt;</span> GET /502 HTTP/1.1
+<span class="o">&gt;</span> Host: localhost:8080
+<span class="o">&gt;</span> User-Agent: curl/7.64.1
+<span class="o">&gt;</span> Accept: <span class="k">*</span>/<span class="k">*</span>
+<span class="o">&gt;</span>
 &lt; HTTP/1.1 502 Bad Gateway
 &lt; Date: Sat, 25 Jan 2020 13:02:31 GMT
 &lt; Content-Length: 0
 &lt;
-* Connection #0 to host localhost left intact
-* Closing connection 0
+<span class="k">*</span> Connection <span class="c">#0 to host localhost left intact</span>
+<span class="k">*</span> Closing connection 0
 </code></pre></div></div>
 
 

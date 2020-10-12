@@ -214,28 +214,28 @@
 
 <p>I am using Docker Compose to create the containers on the box so I need a docker compose file for nginx and lets encrypt companion.</p>
 
-<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>version: '2'
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="ss">version: </span><span class="s1">'2'</span>
 
-services:
-  nginx-proxy:
-    restart: always
-    image: jwilder/nginx-proxy
-    ports:
-      - "80:80"
-      - "443:443"
-    volumes:
-      - "/etc/nginx/vhost.d"
-      - "/usr/share/nginx/html"
-      - "/var/run/docker.sock:/tmp/docker.sock:ro"
-      - "/etc/nginx/certs"
+<span class="ss">services:
+  </span><span class="n">nginx</span><span class="o">-</span><span class="ss">proxy:
+    restart: </span><span class="n">always</span>
+    <span class="ss">image: </span><span class="n">jwilder</span><span class="o">/</span><span class="n">nginx</span><span class="o">-</span><span class="n">proxy</span>
+    <span class="ss">ports:
+      </span><span class="o">-</span> <span class="s2">"80:80"</span>
+      <span class="o">-</span> <span class="s2">"443:443"</span>
+    <span class="ss">volumes:
+      </span><span class="o">-</span> <span class="s2">"/etc/nginx/vhost.d"</span>
+      <span class="o">-</span> <span class="s2">"/usr/share/nginx/html"</span>
+      <span class="o">-</span> <span class="s2">"/var/run/docker.sock:/tmp/docker.sock:ro"</span>
+      <span class="o">-</span> <span class="s2">"/etc/nginx/certs"</span>
 
-  letsencrypt-nginx-proxy-companion:
-    restart: always
-    image: jrcs/letsencrypt-nginx-proxy-companion
-    volumes:
-      - "/var/run/docker.sock:/var/run/docker.sock:ro"
-    volumes_from:
-      - "nginx-proxy"
+  <span class="n">letsencrypt</span><span class="o">-</span><span class="n">nginx</span><span class="o">-</span><span class="n">proxy</span><span class="o">-</span><span class="ss">companion:
+    restart: </span><span class="n">always</span>
+    <span class="ss">image: </span><span class="n">jrcs</span><span class="o">/</span><span class="n">letsencrypt</span><span class="o">-</span><span class="n">nginx</span><span class="o">-</span><span class="n">proxy</span><span class="o">-</span><span class="n">companion</span>
+    <span class="ss">volumes:
+      </span><span class="o">-</span> <span class="s2">"/var/run/docker.sock:/var/run/docker.sock:ro"</span>
+    <span class="ss">volumes_from:
+      </span><span class="o">-</span> <span class="s2">"nginx-proxy"</span>
 </code></pre></div></div>
 
 <p>This creates the services for the reverse proxy and letsencrypt companion. The mounted Docker socket allows the instances to see new containers start and the shared volumes allow for the lets encrypt container to create files for the nginx-proxy to consume.</p>
@@ -246,18 +246,18 @@ services:
 
 <p>The solution is comprised of a <code class="language-plaintext highlighter-rouge">jar</code> and some html. The docker file is fairly basic too</p>
 
-<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>FROM amazoncorretto:8
-# copy WAR into image
-COPY www /editor
-COPY index.html /index.html
-COPY jars/mxPdf.jar /mxPdf.jar
-COPY backend/target/backend-1.0-SNAPSHOT-jar-with-dependencies.jar /backend.jar
+<div class="language-docker highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">FROM</span><span class="s"> amazoncorretto:8</span>
+<span class="c"># copy WAR into image</span>
+<span class="k">COPY</span><span class="s"> www /editor</span>
+<span class="k">COPY</span><span class="s"> index.html /index.html</span>
+<span class="k">COPY</span><span class="s"> jars/mxPdf.jar /mxPdf.jar</span>
+<span class="k">COPY</span><span class="s"> backend/target/backend-1.0-SNAPSHOT-jar-with-dependencies.jar /backend.jar</span>
 
-# expose port of the container
-EXPOSE 8080
+<span class="c"># expose port of the container</span>
+<span class="k">EXPOSE</span><span class="s"> 8080</span>
 
-# run application with this command line
-CMD ["/usr/bin/java", "-jar", "backend.jar", "-cp", "/*"]
+<span class="c"># run application with this command line</span>
+<span class="k">CMD</span><span class="s"> ["/usr/bin/java", "-jar", "backend.jar", "-cp", "/*"]</span>
 </code></pre></div></div>
 
 <p>To build this locally;</p>
@@ -266,35 +266,35 @@ CMD ["/usr/bin/java", "-jar", "backend.jar", "-cp", "/*"]
   <li>Login to Docker</li>
 </ol>
 
-<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>docker login -u owenrumney`
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>docker login <span class="nt">-u</span> owenrumney<span class="sb">`</span>
 </code></pre></div></div>
 
 <ol>
   <li>Build the image</li>
 </ol>
 
-<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>docker build -t owenrumney/awsbackend .
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>docker build <span class="nt">-t</span> owenrumney/awsbackend <span class="nb">.</span>
 </code></pre></div></div>
 
 <ol>
   <li>Push to <code class="language-plaintext highlighter-rouge">Dockerhub</code></li>
 </ol>
 
-<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>docker push owenrumney/awsbackend
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>docker push owenrumney/awsbackend
 </code></pre></div></div>
 
 <p>Now the image is available for use, I can add another compose file.</p>
 
-<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>version: '2'
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="ss">version: </span><span class="s1">'2'</span>
 
-services:
+<span class="ss">services:
   awsbackend:
-    restart: always
-    image: owenrumney/awsbackend:latest
-    environment:
-      - VIRTUAL_HOST=www.awsdiagrams.io
-      - VIRTUAL_PORT=8080
-      - LETSENCRYPT_HOST=www.awsdiagrams.io
+    restart: </span><span class="n">always</span>
+    <span class="ss">image: </span><span class="n">owenrumney</span><span class="o">/</span><span class="n">awsbackend</span><span class="ss">:latest</span>
+    <span class="ss">environment:
+      </span><span class="o">-</span> <span class="no">VIRTUAL_HOST</span><span class="o">=</span><span class="n">www</span><span class="p">.</span><span class="nf">awsdiagrams</span><span class="p">.</span><span class="nf">io</span>
+      <span class="o">-</span> <span class="no">VIRTUAL_PORT</span><span class="o">=</span><span class="mi">8080</span>
+      <span class="o">-</span> <span class="no">LETSENCRYPT_HOST</span><span class="o">=</span><span class="n">www</span><span class="p">.</span><span class="nf">awsdiagrams</span><span class="p">.</span><span class="nf">io</span>
 </code></pre></div></div>
 
 <p>The environment variables are uses by the proxy and the companion to create the certs and to configure the nginx routing.</p>

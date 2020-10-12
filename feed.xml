@@ -5,13 +5,13 @@
     <description>Bits of blogging by Owen Rumney</description>
     <link>https://www.owenrumney.co.uk/</link>
     <atom:link href="https://www.owenrumney.co.uk/feed.xml" rel="self" type="application/rss+xml"/>
-    <pubDate>Mon, 12 Oct 2020 12:39:44 +0000</pubDate>
-    <lastBuildDate>Mon, 12 Oct 2020 12:39:44 +0000</lastBuildDate>
+    <pubDate>Mon, 12 Oct 2020 13:55:43 +0000</pubDate>
+    <lastBuildDate>Mon, 12 Oct 2020 13:55:43 +0000</lastBuildDate>
     <generator>Jekyll v4.1.1</generator>
     
       <item>
         <title>Terraform Static Analysis with tfsec</title>
-        <description>&lt;p&gt;We use &lt;a href=&quot;https://www.terraform.io&quot;&gt;Terraform&lt;/a&gt; for all our deployment automation needs. Thanks to it’s fantastic extensibility, if there isn’t a provider available to do what we need, it’s very easy to create one.&lt;/p&gt; &lt;p&gt;Terraform, for those who haven’t used it before, lets you declaratively specify the resources that you want to deploy and then maintains a state of what has and hasn’t been deployed. For deployed resources, it tracks the characteristics or attributes, and updates accordingly with updates.&lt;/p&gt; &lt;p&gt;As an example, say we wanted to create a new S3 bucket in our AWS account we might define something like;&lt;/p&gt; &lt;div class=&quot;language-plaintext...</description>
+        <description>&lt;p&gt;We use &lt;a href=&quot;https://www.terraform.io&quot;&gt;Terraform&lt;/a&gt; for all our deployment automation needs. Thanks to it’s fantastic extensibility, if there isn’t a provider available to do what we need, it’s very easy to create one.&lt;/p&gt; &lt;p&gt;Terraform, for those who haven’t used it before, lets you declaratively specify the resources that you want to deploy and then maintains a state of what has and hasn’t been deployed. For deployed resources, it tracks the characteristics or attributes, and updates accordingly with updates.&lt;/p&gt; &lt;p&gt;As an example, say we wanted to create a new S3 bucket in our AWS account we might define something like;&lt;/p&gt; &lt;div class=&quot;language-terraform...</description>
         <pubDate>Sun, 11 Oct 2020 00:00:00 +0000</pubDate>
         <link>https://www.owenrumney.co.uk/terraform-static-analysis-with-tfsec/</link>
         <guid isPermaLink="true">https://www.owenrumney.co.uk/terraform-static-analysis-with-tfsec/</guid>

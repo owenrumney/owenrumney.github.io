@@ -220,48 +220,48 @@
 
 <p>Below is the build script I use; I’ll break down the sections.</p>
 
-<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>#! /bin/bash
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">#! /bin/bash</span>
 
-set -e
+<span class="nb">set</span> <span class="nt">-e</span>
 
-DEPLOY_REPO="https://${GITHUB_TOKEN}@github.com/owenrumney/owenrumney.github.io.git"
-MESSAGE=$(git log -1 HEAD --pretty=format:%s)
+<span class="nv">DEPLOY_REPO</span><span class="o">=</span><span class="s2">"https://</span><span class="k">${</span><span class="nv">GITHUB_TOKEN</span><span class="k">}</span><span class="s2">@github.com/owenrumney/owenrumney.github.io.git"</span>
+<span class="nv">MESSAGE</span><span class="o">=</span><span class="si">$(</span>git log <span class="nt">-1</span> HEAD <span class="nt">--pretty</span><span class="o">=</span>format:%s<span class="si">)</span>
 
-function clean { 
-	echo "cleaning _site folder"
-	if [ -d "_site" ]; then rm -Rf _site; fi 
-}
+<span class="k">function </span>clean <span class="o">{</span> 
+	<span class="nb">echo</span> <span class="s2">"cleaning _site folder"</span>
+	<span class="k">if</span> <span class="o">[</span> <span class="nt">-d</span> <span class="s2">"_site"</span> <span class="o">]</span><span class="p">;</span> <span class="k">then </span><span class="nb">rm</span> <span class="nt">-Rf</span> _site<span class="p">;</span> <span class="k">fi</span> 
+<span class="o">}</span>
 
-function clone_site { 
-	echo "getting latest site"
-	git clone --depth 1 $DEPLOY_REPO _site 
-}
+<span class="k">function </span>clone_site <span class="o">{</span> 
+	<span class="nb">echo</span> <span class="s2">"getting latest site"</span>
+	git clone <span class="nt">--depth</span> 1 <span class="nv">$DEPLOY_REPO</span> _site 
+<span class="o">}</span>
 
-function build { 
-	echo "building site"
-	bundle exec jekyll build --lsi
-}
+<span class="k">function </span>build <span class="o">{</span> 
+	<span class="nb">echo</span> <span class="s2">"building site"</span>
+	bundle <span class="nb">exec </span>jekyll build <span class="nt">--lsi</span>
+<span class="o">}</span>
 
-function deploy {
-	echo "deploying changes"
+<span class="k">function </span>deploy <span class="o">{</span>
+	<span class="nb">echo</span> <span class="s2">"deploying changes"</span>
 
-	if [ -z "$TRAVIS_PULL_REQUEST" ]; then
-	    echo "except don't publish site for pull requests"
-	    exit 0
-	fi  
+	<span class="k">if</span> <span class="o">[</span> <span class="nt">-z</span> <span class="s2">"</span><span class="nv">$TRAVIS_PULL_REQUEST</span><span class="s2">"</span> <span class="o">]</span><span class="p">;</span> <span class="k">then
+	    </span><span class="nb">echo</span> <span class="s2">"except don't publish site for pull requests"</span>
+	    <span class="nb">exit </span>0
+	<span class="k">fi  
 
-	if [ "$TRAVIS_BRANCH" != "master" ]; then
-	    echo "except we should only publish the master branch. stopping here"
-	    exit 0
-	fi
+	if</span> <span class="o">[</span> <span class="s2">"</span><span class="nv">$TRAVIS_BRANCH</span><span class="s2">"</span> <span class="o">!=</span> <span class="s2">"master"</span> <span class="o">]</span><span class="p">;</span> <span class="k">then
+	    </span><span class="nb">echo</span> <span class="s2">"except we should only publish the master branch. stopping here"</span>
+	    <span class="nb">exit </span>0
+	<span class="k">fi
 
-	cd _site
-	git config user.name "Travis Build"
+	</span><span class="nb">cd </span>_site
+	git config user.name <span class="s2">"Travis Build"</span>
     git config user.email travis@owenrumney.co.uk
-	git add -A
-	git commit -m "Travis Build: ${TRAVIS_BUILD_NUMBER}. ${MESSAGE}"
-	git push $DEPLOY_REPO master:master
-}
+	git add <span class="nt">-A</span>
+	git commit <span class="nt">-m</span> <span class="s2">"Travis Build: </span><span class="k">${</span><span class="nv">TRAVIS_BUILD_NUMBER</span><span class="k">}</span><span class="s2">. </span><span class="k">${</span><span class="nv">MESSAGE</span><span class="k">}</span><span class="s2">"</span>
+	git push <span class="nv">$DEPLOY_REPO</span> master:master
+<span class="o">}</span>
 </code></pre></div></div>
 
 <h4 id="clean">clean</h4>
@@ -283,22 +283,22 @@ function deploy {
 <h3 id="the-makefile">The Makefile</h3>
 <p>To simplify the running of the commands - and to allow them to be used locally easily, there is a <code class="language-plaintext highlighter-rouge">Makefile</code></p>
 
-<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>.PHONY: initpost clean clone_site build deploy
+<div class="language-make highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nl">.PHONY</span><span class="o">:</span> <span class="nf">initpost clean clone_site build deploy</span>
 
-initpost:
-	@bash -c "./scripts/initpost.sh"
+<span class="nl">initpost</span><span class="o">:</span>
+	<span class="p">@</span>bash <span class="nt">-c</span> <span class="s2">"./scripts/initpost.sh"</span>
 
-clean:
-	@bash -c ". scripts/build.sh &amp;&amp; clean"
+<span class="nl">clean</span><span class="o">:</span>
+	<span class="p">@</span>bash <span class="nt">-c</span> <span class="s2">". scripts/build.sh &amp;&amp; clean"</span>
 
-clone_site:
-	@bash -c ". scripts/build.sh &amp;&amp; clone_site"
+<span class="nl">clone_site</span><span class="o">:</span>
+	<span class="p">@</span>bash <span class="nt">-c</span> <span class="s2">". scripts/build.sh &amp;&amp; clone_site"</span>
 
-build: clean clone_site
-	@bash -c ". scripts/build.sh &amp;&amp; build"
+<span class="nl">build</span><span class="o">:</span> <span class="nf">clean clone_site</span>
+	<span class="p">@</span>bash <span class="nt">-c</span> <span class="s2">". scripts/build.sh &amp;&amp; build"</span>
 
-deploy: build
-	@bash -c ". scripts/build.sh &amp;&amp; deploy"
+<span class="nl">deploy</span><span class="o">:</span> <span class="nf">build</span>
+	<span class="p">@</span>bash <span class="nt">-c</span> <span class="s2">". scripts/build.sh &amp;&amp; deploy"</span>
 
 </code></pre></div></div>
 
@@ -311,15 +311,15 @@ deploy: build
 
 <p>This file sits in the root of the project and when committed, triggers a Travis build of the current branch and where applicable, the associated PR.</p>
 
-<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>language: ruby
-cache: bundler
-env:
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="ss">language: </span><span class="n">ruby</span>
+<span class="ss">cache: </span><span class="n">bundler</span>
+<span class="ss">env:
   global:
-    secure: dsfojisdfglksdhgflsdhgsdfghedlfs
-install:
-- bundle install
-script:
-- "make deploy"
+    secure: </span><span class="n">dsfojisdfglksdhgflsdhgsdfghedlfs</span>
+<span class="ss">install:
+</span><span class="o">-</span> <span class="n">bundle</span> <span class="n">install</span>
+<span class="ss">script:
+</span><span class="o">-</span> <span class="s2">"make deploy"</span>
 
 </code></pre></div></div>
 
@@ -340,44 +340,44 @@ script:
 
 <p>Now, when I commit changes to my blog base project, it runs in Travis and I get output similar to this;</p>
 
-<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Installing SSH key from: default repository key
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Installing SSH key from: default repository key
 Using /home/travis/.netrc to clone repository.
 git.checkout
-$ git clone --depth=50 --branch=master https://github.com/owenrumney/blogbase.git owenrumney/blogbase
+<span class="nv">$ </span>git clone <span class="nt">--depth</span><span class="o">=</span>50 <span class="nt">--branch</span><span class="o">=</span>master https://github.com/owenrumney/blogbase.git owenrumney/blogbase
 
 Setting environment variables from .travis.yml
-$ export GITHUB_TOKEN=[secure]
+<span class="nv">$ </span><span class="nb">export </span><span class="nv">GITHUB_TOKEN</span><span class="o">=[</span>secure]
 rvm
-$ rvm use default
-$ export BUNDLE_GEMFILE=$PWD/Gemfile
+<span class="nv">$ </span>rvm use default
+<span class="nv">$ </span><span class="nb">export </span><span class="nv">BUNDLE_GEMFILE</span><span class="o">=</span><span class="nv">$PWD</span>/Gemfile
 cache.1
 Setting up build cache
 cache.bundler
 adding /home/travis/build/owenrumney/blogbase/vendor/bundle to cache
 ruby.versions
-$ ruby --version
-install
+<span class="nv">$ </span>ruby <span class="nt">--version</span>
+<span class="nb">install</span>
 
-$ bundle install
-$ make deploy
+<span class="nv">$ </span>bundle <span class="nb">install</span>
+<span class="nv">$ </span>make deploy
 
 cleaning _site folder
 getting latest site
-Cloning into '_site'...
+Cloning into <span class="s1">'_site'</span>...
 building site
 Configuration file: /home/travis/build/owenrumney/blogbase/_config.yml
             Source: /home/travis/build/owenrumney/blogbase
        Destination: /home/travis/build/owenrumney/blogbase/_site
- Incremental build: disabled. Enable with --incremental
+ Incremental build: disabled. Enable with <span class="nt">--incremental</span>
       Generating... 
-                    done in 0.645 seconds.
- Auto-regeneration: disabled. Use --watch to enable.
+                    <span class="k">done in </span>0.645 seconds.
+ Auto-regeneration: disabled. Use <span class="nt">--watch</span> to enable.
 deploying changes
-[master a1e2f08] Travis Build: 6. Update the build script to use the Makefile
- 1 file changed, 2 insertions(+), 2 deletions(-)
+<span class="o">[</span>master a1e2f08] Travis Build: 6. Update the build script to use the Makefile
+ 1 file changed, 2 insertions<span class="o">(</span>+<span class="o">)</span>, 2 deletions<span class="o">(</span>-<span class="o">)</span>
 To https://github.com/owenrumney/owenrumney.github.io.git
    5f492f6..a1e2f08  master -&gt; master
-The command "make deploy" exited with 0.
+The <span class="nb">command</span> <span class="s2">"make deploy"</span> exited with 0.
 cache.2
 store build cache
 Done. Your build exited with 0.
