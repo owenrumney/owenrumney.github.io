@@ -1,6 +1,14 @@
 [
   
     {
+      "title"    : "Terraform Static Analysis with tfsec",
+      "category" : "",
+      "tags"     : "tfsec, terraform, security, and static-analysis",
+      "url"      : "/terraform-static-analysis-with-tfsec/",
+      "date"     : "11 Oct 2020"
+    } ,
+  
+    {
       "title"    : "Building Jekyll Websites with Travis",
       "category" : "",
       "tags"     : "travis, jekyll, and blogging",
