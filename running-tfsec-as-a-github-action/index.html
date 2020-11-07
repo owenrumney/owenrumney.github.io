@@ -246,7 +246,7 @@
  <span class="na">on</span><span class="pi">:</span>
    <span class="na">pull_request</span><span class="pi">:</span>
  <span class="na">jobs</span><span class="pi">:</span>
-   <span class="na">tfsec</span><span class="pi">:</span>
+   <span class="na">tfsec_commenter</span><span class="pi">:</span>
      <span class="na">name</span><span class="pi">:</span> <span class="s">tfsec PR commenter</span>
      <span class="na">runs-on</span><span class="pi">:</span> <span class="s">ubuntu-latest</span>
 
@@ -254,7 +254,7 @@
        <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">Clone repo</span>
          <span class="na">uses</span><span class="pi">:</span> <span class="s">actions/checkout@master</span>
 
-       <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">tfsec</span>
+       <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">tfsec commenter</span>
          <span class="na">uses</span><span class="pi">:</span> <span class="s">tfsec/tfsec-pr-commenter-action@main</span>
          <span class="na">with</span><span class="pi">:</span>
            <span class="na">github_token</span><span class="pi">:</span> <span class="s">${{ secrets.GITHUB_TOKEN }}</span>
