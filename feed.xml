@@ -5,16 +5,40 @@
     <description>Bits of blogging by Owen Rumney</description>
     <link>https://www.owenrumney.co.uk/</link>
     <atom:link href="https://www.owenrumney.co.uk/feed.xml" rel="self" type="application/rss+xml"/>
-    <pubDate>Sat, 17 Oct 2020 15:47:28 +0000</pubDate>
-    <lastBuildDate>Sat, 17 Oct 2020 15:47:28 +0000</lastBuildDate>
+    <pubDate>Sat, 07 Nov 2020 20:17:49 +0000</pubDate>
+    <lastBuildDate>Sat, 07 Nov 2020 20:17:49 +0000</lastBuildDate>
     <generator>Jekyll v4.1.1</generator>
+    
+      <item>
+        <title>Running tfsec as a Github Action</title>
+        <description>&lt;p&gt;In October 2020, the &lt;a href=&quot;https://www.thoughtworks.com/radar/tools/tfsec&quot; target=&quot;_blank&quot;&gt;Thoughtworks Tech Radar&lt;/a&gt; promoted &lt;a href=&quot;https://tfsec.dev&quot; target=&quot;_blank&quot;&gt;tfsec&lt;/a&gt; to Trial status. In the past few months, there has been a flurry of activity to improve performance, rewrite the parsing and add new features.&lt;/p&gt; &lt;p&gt;One of the recent additions is a Github Action that will process your Github Pull Request commits and add comments where there are &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;tfsec&lt;/code&gt; failures.&lt;/p&gt; &lt;h2 id=&quot;example&quot;&gt;Example&lt;/h2&gt; &lt;p&gt;Let’s take a possible addition to a code repo where the PR includes the creation of a bucket;&lt;/p&gt; &lt;div class=&quot;language-terraform highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;resource&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;aws_s3_bucket&quot;&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;another-bucket-with-logging&quot;&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;bucket&lt;/span&gt; &lt;span...</description>
+        <pubDate>Sat, 07 Nov 2020 00:00:00 +0000</pubDate>
+        <link>https://www.owenrumney.co.uk/running-tfsec-as-a-github-action/</link>
+        <guid isPermaLink="true">https://www.owenrumney.co.uk/running-tfsec-as-a-github-action/</guid>
+        
+        <category>tfsec</category>
+        
+        <category>terraform</category>
+        
+        <category>security</category>
+        
+        <category>static-analysis</category>
+        
+        <category>github actions</category>
+        
+        <category>github</category>
+        
+        <category>go</category>
+        
+        
+      </item>
     
       <item>
         <title>Terraform Static Analysis with tfsec</title>
         <description>&lt;p&gt;We use &lt;a href=&quot;https://www.terraform.io&quot;&gt;Terraform&lt;/a&gt; for all our deployment automation needs. Thanks to it’s fantastic extensibility, if there isn’t a provider available to do what we need, it’s very easy to create one.&lt;/p&gt; &lt;p&gt;Terraform, for those who haven’t used it before, lets you declaratively specify the resources that you want to deploy and then maintains a state of what has and hasn’t been deployed. For deployed resources, it tracks the characteristics or attributes, and updates accordingly with updates.&lt;/p&gt; &lt;p&gt;As an example, say we wanted to create a new S3 bucket in our AWS account we might define something like;&lt;/p&gt; &lt;div class=&quot;language-terraform...</description>
         <pubDate>Sun, 11 Oct 2020 00:00:00 +0000</pubDate>
-        <link>https://www.owenrumney.co.uk/terraform-static-analysis-with-tfsec/</link>
-        <guid isPermaLink="true">https://www.owenrumney.co.uk/terraform-static-analysis-with-tfsec/</guid>
+        <link>https://www.owenrumney.co.uk/terraform-static-analysis-with-tfsec-copy/</link>
+        <guid isPermaLink="true">https://www.owenrumney.co.uk/terraform-static-analysis-with-tfsec-copy/</guid>
         
         <category>tfsec</category>
         
@@ -174,20 +198,6 @@
         
         
         <category>Spark</category>
-        
-      </item>
-    
-      <item>
-        <title>CIDR Cheatsheet for available IP Address</title>
-        <description>&lt;p&gt;This is less of a post and more of a CIDR to mask cheatsheet to remind me how many IPs I get for a given block.&lt;/p&gt; &lt;table&gt; &lt;thead&gt; &lt;tr&gt; &lt;th&gt;CIDR&lt;/th&gt; &lt;th style=&quot;text-align: left&quot;&gt;Subnet&lt;/th&gt; &lt;th style=&quot;text-align: right&quot;&gt;Total IPs&lt;/th&gt; &lt;th style=&quot;text-align: right&quot;&gt;Usable IPs&lt;/th&gt; &lt;/tr&gt; &lt;/thead&gt; &lt;tbody&gt; &lt;tr&gt; &lt;td&gt;/32&lt;/td&gt; &lt;td style=&quot;text-align: left&quot;&gt;255.255.255.255&lt;/td&gt; &lt;td style=&quot;text-align: right&quot;&gt;1&lt;/td&gt; &lt;td style=&quot;text-align: right&quot;&gt;1&lt;/td&gt; &lt;/tr&gt; &lt;tr&gt; &lt;td&gt;/31&lt;/td&gt; &lt;td style=&quot;text-align: left&quot;&gt;255.255.255.254&lt;/td&gt; &lt;td style=&quot;text-align: right&quot;&gt;2&lt;/td&gt; &lt;td style=&quot;text-align: right&quot;&gt;0&lt;/td&gt; &lt;/tr&gt; &lt;tr&gt; &lt;td&gt;/30&lt;/td&gt; &lt;td style=&quot;text-align: left&quot;&gt;255.255.255.252&lt;/td&gt; &lt;td style=&quot;text-align: right&quot;&gt;4&lt;/td&gt; &lt;td style=&quot;text-align: right&quot;&gt;2&lt;/td&gt; &lt;/tr&gt; &lt;tr&gt; &lt;td&gt;/29&lt;/td&gt; &lt;td style=&quot;text-align: left&quot;&gt;255.255.255.248&lt;/td&gt; &lt;td style=&quot;text-align: right&quot;&gt;8&lt;/td&gt; &lt;td style=&quot;text-align: right&quot;&gt;6&lt;/td&gt; &lt;/tr&gt; &lt;tr&gt; &lt;td&gt;/28&lt;/td&gt; &lt;td style=&quot;text-align: left&quot;&gt;255.255.255.240&lt;/td&gt; &lt;td style=&quot;text-align: right&quot;&gt;16&lt;/td&gt;...</description>
-        <pubDate>Tue, 30 Apr 2019 00:00:00 +0000</pubDate>
-        <link>https://www.owenrumney.co.uk/cidr-ips-cheatsheet/</link>
-        <guid isPermaLink="true">https://www.owenrumney.co.uk/cidr-ips-cheatsheet/</guid>
-        
-        <category>networking</category>
-        
-        <category>cheatsheet</category>
-        
         
       </item>
     

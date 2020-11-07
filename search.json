@@ -1,10 +1,18 @@
 [
   
     {
+      "title"    : "Running tfsec as a Github Action",
+      "category" : "",
+      "tags"     : "tfsec, terraform, security, static-analysis, github actions, github, and go",
+      "url"      : "/running-tfsec-as-a-github-action/",
+      "date"     : "07 Nov 2020"
+    } ,
+  
+    {
       "title"    : "Terraform Static Analysis with tfsec",
       "category" : "",
       "tags"     : "tfsec, terraform, security, and static-analysis",
-      "url"      : "/terraform-static-analysis-with-tfsec/",
+      "url"      : "/terraform-static-analysis-with-tfsec-copy/",
       "date"     : "11 Oct 2020"
     } ,
   

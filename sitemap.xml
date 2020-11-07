@@ -2,7 +2,11 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 	
 	  <url>
-		<loc>https://www.owenrumney.co.uk/terraform-static-analysis-with-tfsec/</loc>
+		<loc>https://www.owenrumney.co.uk/running-tfsec-as-a-github-action/</loc>
+	  </url>
+	
+	  <url>
+		<loc>https://www.owenrumney.co.uk/terraform-static-analysis-with-tfsec-copy/</loc>
 	  </url>
 	
 	  <url>
