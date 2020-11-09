@@ -5,13 +5,13 @@
     <description>Bits of blogging by Owen Rumney</description>
     <link>https://www.owenrumney.co.uk/</link>
     <atom:link href="https://www.owenrumney.co.uk/feed.xml" rel="self" type="application/rss+xml"/>
-    <pubDate>Mon, 09 Nov 2020 10:02:55 +0000</pubDate>
-    <lastBuildDate>Mon, 09 Nov 2020 10:02:55 +0000</lastBuildDate>
+    <pubDate>Mon, 09 Nov 2020 10:11:52 +0000</pubDate>
+    <lastBuildDate>Mon, 09 Nov 2020 10:11:52 +0000</lastBuildDate>
     <generator>Jekyll v4.1.1</generator>
     
       <item>
         <title>Introduction Go Github PR Commenter</title>
-        <description>&lt;p&gt;A few weeks ago I write &lt;a href=&quot;https://github.com/tfsec/tfsec-pr-commenter-action&quot;&gt;tfsec-pr-commenter-action&lt;/a&gt;, this is a pre-built Github Action that you can drop into your Terraform code repository and have each PR checked for tfsec security issues.&lt;/p&gt; &lt;p&gt;If you don’t know anything about tfsec, you can learn more at https://tfsec.dev&lt;/p&gt; &lt;h2 id=&quot;the-pr-commenter&quot;&gt;The PR Commenter&lt;/h2&gt; &lt;p&gt;It occurred to me shortly after adding it to some of our projects that the underlying commenter could be used to comment using any static analysis tools that output content. Of course, the wrapping action code will be needed to un-marshall the analysis results but the creation of comments could be...</description>
+        <description>&lt;p&gt;A few weeks ago I wrote &lt;a href=&quot;https://github.com/tfsec/tfsec-pr-commenter-action&quot;&gt;tfsec-pr-commenter-action&lt;/a&gt;, this is a ready to go Github Action that you can drop into your Terraform code repository and have each PR checked for tfsec security issues.&lt;/p&gt; &lt;p&gt;If you don’t know anything about tfsec, you can learn more at &lt;a href=&quot;https://tfsec.dev&quot;&gt;https://tfsec.dev&lt;/a&gt;&lt;/p&gt; &lt;h2 id=&quot;the-pr-commenter&quot;&gt;The PR Commenter&lt;/h2&gt; &lt;p&gt;It occurred to me shortly after adding it to some of our projects that the underlying commenter code could be used to comment using any static analysis tool with output.&lt;/p&gt; &lt;p&gt;Of course, the wrapping action code will be needed to un-marshall the analysis results but the creation of...</description>
         <pubDate>Mon, 09 Nov 2020 00:00:00 +0000</pubDate>
         <link>https://www.owenrumney.co.uk/go-github-pr-commenter/</link>
         <guid isPermaLink="true">https://www.owenrumney.co.uk/go-github-pr-commenter/</guid>
