@@ -1,6 +1,14 @@
 [
   
     {
+      "title"    : "Introduction Go Github PR Commenter",
+      "category" : "",
+      "tags"     : "github and go",
+      "url"      : "/go-github-pr-commenter/",
+      "date"     : "09 Nov 2020"
+    } ,
+  
+    {
       "title"    : "Running tfsec as a Github Action",
       "category" : "",
       "tags"     : "tfsec, terraform, security, static-analysis, github actions, github, and go",

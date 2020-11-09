@@ -5,9 +5,23 @@
     <description>Bits of blogging by Owen Rumney</description>
     <link>https://www.owenrumney.co.uk/</link>
     <atom:link href="https://www.owenrumney.co.uk/feed.xml" rel="self" type="application/rss+xml"/>
-    <pubDate>Sat, 07 Nov 2020 20:35:19 +0000</pubDate>
-    <lastBuildDate>Sat, 07 Nov 2020 20:35:19 +0000</lastBuildDate>
+    <pubDate>Mon, 09 Nov 2020 10:02:55 +0000</pubDate>
+    <lastBuildDate>Mon, 09 Nov 2020 10:02:55 +0000</lastBuildDate>
     <generator>Jekyll v4.1.1</generator>
+    
+      <item>
+        <title>Introduction Go Github PR Commenter</title>
+        <description>&lt;p&gt;A few weeks ago I write &lt;a href=&quot;https://github.com/tfsec/tfsec-pr-commenter-action&quot;&gt;tfsec-pr-commenter-action&lt;/a&gt;, this is a pre-built Github Action that you can drop into your Terraform code repository and have each PR checked for tfsec security issues.&lt;/p&gt; &lt;p&gt;If you don’t know anything about tfsec, you can learn more at https://tfsec.dev&lt;/p&gt; &lt;h2 id=&quot;the-pr-commenter&quot;&gt;The PR Commenter&lt;/h2&gt; &lt;p&gt;It occurred to me shortly after adding it to some of our projects that the underlying commenter could be used to comment using any static analysis tools that output content. Of course, the wrapping action code will be needed to un-marshall the analysis results but the creation of comments could be...</description>
+        <pubDate>Mon, 09 Nov 2020 00:00:00 +0000</pubDate>
+        <link>https://www.owenrumney.co.uk/go-github-pr-commenter/</link>
+        <guid isPermaLink="true">https://www.owenrumney.co.uk/go-github-pr-commenter/</guid>
+        
+        <category>github</category>
+        
+        <category>go</category>
+        
+        
+      </item>
     
       <item>
         <title>Running tfsec as a Github Action</title>
@@ -176,28 +190,6 @@
         
         
         <category>Programming</category>
-        
-      </item>
-    
-      <item>
-        <title>Databricks Single SignOn with Azure Active Directory</title>
-        <description>&lt;h2 id=&quot;overview&quot;&gt;Overview&lt;/h2&gt; &lt;p&gt;At my current workplace we are using Databricks with much success. Having recently activated the Security Operations Package I was keen to implement the Single SignOn (SSO) functionality.&lt;/p&gt; &lt;p&gt;The documentation provided by Databricks doesn’t seem to cover integrating with Azure Active Directory as a SAML 2.0 Identity Provider and it took some effort to work out how to do it.&lt;/p&gt; &lt;h2 id=&quot;simple-steps&quot;&gt;Simple Steps&lt;/h2&gt; &lt;ol&gt; &lt;li&gt; &lt;p&gt;Log into Azure Portal and from the menu on the left, select &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Azure Active Directory&lt;/code&gt; then &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Enterprise applications&lt;/code&gt; from the secondary menu. &lt;img src=&quot;/images/azure_ad_enterprise_apps.png&quot; alt=&quot;Azure Active Directory - Enterprise...</description>
-        <pubDate>Thu, 23 May 2019 00:00:00 +0000</pubDate>
-        <link>https://www.owenrumney.co.uk/databricks_with_azure_ad/</link>
-        <guid isPermaLink="true">https://www.owenrumney.co.uk/databricks_with_azure_ad/</guid>
-        
-        <category>platform</category>
-        
-        <category>azure</category>
-        
-        <category>databrick</category>
-        
-        <category>authentication</category>
-        
-        <category>saml</category>
-        
-        
-        <category>Spark</category>
         
       </item>
     
