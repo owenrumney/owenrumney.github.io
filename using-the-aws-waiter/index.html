@@ -240,7 +240,7 @@
 
 <p>By default, the <code class="language-plaintext highlighter-rouge">ServicesStable</code> waiter will check every 15 seconds for 40 attempts. You can pass overrides into the wait call if required;</p>
 
-<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">waiter</span><span class="p">.</span><span class="n">wait</span><span class="p">(</span><span class="n">cluste_name</span><span class="o">=</span><span class="s">'myCluster'</span><span class="p">,</span>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">waiter</span><span class="p">.</span><span class="n">wait</span><span class="p">(</span><span class="n">cluster_name</span><span class="o">=</span><span class="s">'myCluster'</span><span class="p">,</span>
 						<span class="n">services</span><span class="o">=</span><span class="p">[</span><span class="s">'myService'</span><span class="p">],</span>
 					  <span class="n">WaiterConfig</span><span class="o">=</span><span class="p">{</span><span class="s">'Delay'</span><span class="p">:</span> <span class="mi">30</span><span class="p">,</span> <span class="s">'MaxAttempts'</span><span class="p">:</span> <span class="mi">10</span><span class="p">})</span>
 </code></pre></div></div>
