@@ -209,38 +209,31 @@
             <p>The AWS SDK provides a number of <code class="language-plaintext highlighter-rouge">waiters</code> that allow you to block your code while waiting for a process to complete. One that we make use of in our managed ECS container rollout is the <code class="language-plaintext highlighter-rouge">services_stable</code> waiter. This will wait for a defined amount of time for an ECS service to become stable, or raise an exception.</p>
 
 <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># bring in the boto3 import
-</span>
-<span class="kn">import</span> <span class="nn">boto3</span>
+</span><span class="kn">import</span> <span class="nn">boto3</span>
 <span class="kn">import</span> <span class="nn">botocore</span>
 
 <span class="c1"># create a session object
-</span>
-<span class="n">session</span> <span class="o">=</span> <span class="n">boto3</span><span class="p">.</span><span class="n">session</span><span class="p">.</span><span class="n">Session</span><span class="p">()</span>
+</span><span class="n">session</span> <span class="o">=</span> <span class="n">boto3</span><span class="p">.</span><span class="n">session</span><span class="p">.</span><span class="n">Session</span><span class="p">()</span>
 
 <span class="c1"># create an ECS client
-</span>
-<span class="n">ecs</span> <span class="o">=</span> <span class="n">session</span><span class="p">.</span><span class="n">client</span><span class="p">(</span><span class="s">'ecs'</span><span class="p">)</span>
+</span><span class="n">ecs</span> <span class="o">=</span> <span class="n">session</span><span class="p">.</span><span class="n">client</span><span class="p">(</span><span class="s">'ecs'</span><span class="p">)</span>
 
 <span class="c1"># trigger an update to the service
-</span>
-<span class="n">ecs</span><span class="p">.</span><span class="n">update_service</span><span class="p">(</span><span class="n">cluster</span><span class="o">=</span><span class="s">'myCluster'</span><span class="p">,</span>
+</span><span class="n">ecs</span><span class="p">.</span><span class="n">update_service</span><span class="p">(</span><span class="n">cluster</span><span class="o">=</span><span class="s">'myCluster'</span><span class="p">,</span>
 									 <span class="n">service</span><span class="o">=</span><span class="s">'myService'</span><span class="p">,</span>
                    <span class="n">taskDefinition</span><span class="o">=</span><span class="s">'myServiceTaskDefinition:10'</span><span class="p">)</span>
 
 <span class="c1"># create a waiter
-</span>
-<span class="n">waiter</span> <span class="o">=</span> <span class="n">ecs</span><span class="p">.</span><span class="n">get_waiter</span><span class="p">(</span><span class="s">'services_stable'</span><span class="p">)</span>
+</span><span class="n">waiter</span> <span class="o">=</span> <span class="n">ecs</span><span class="p">.</span><span class="n">get_waiter</span><span class="p">(</span><span class="s">'services_stable'</span><span class="p">)</span>
 
 <span class="k">try</span><span class="p">:</span>
 	<span class="n">logger</span><span class="p">.</span><span class="n">info</span><span class="p">(</span><span class="s">'waiting for myService to become stable'</span><span class="p">)</span>
 
 	<span class="c1"># call the wait method passing in an array of services you want to wait for
-</span>
-	<span class="n">waiter</span><span class="p">.</span><span class="n">wait</span><span class="p">(</span><span class="n">cluster</span><span class="o">=</span><span class="s">'myCluster'</span><span class="p">,</span> <span class="n">services</span><span class="o">=</span><span class="p">[</span><span class="s">'myService'</span><span class="p">]</span>
+</span>	<span class="n">waiter</span><span class="p">.</span><span class="n">wait</span><span class="p">(</span><span class="n">cluster</span><span class="o">=</span><span class="s">'myCluster'</span><span class="p">,</span> <span class="n">services</span><span class="o">=</span><span class="p">[</span><span class="s">'myService'</span><span class="p">])</span>
 
 <span class="k">except</span> <span class="n">botocore</span><span class="p">.</span><span class="n">exceptions</span><span class="p">.</span><span class="n">WaitError</span> <span class="k">as</span> <span class="n">wex</span><span class="p">:</span>
 	<span class="n">logger</span><span class="p">.</span><span class="n">error</span><span class="p">(</span><span class="s">'The service '</span><span class="n">myService</span><span class="s">' didn'</span><span class="n">t</span> <span class="n">become</span> <span class="n">stable</span><span class="p">.</span> <span class="p">{}</span><span class="s">'.format(wex))
-
 </span></code></pre></div></div>
 
 <p>The Boto3 documentation has the available waiters for each service that supports them, for example the <code class="language-plaintext highlighter-rouge">ecs</code> waiters <a href="https://boto3.amazonaws.com/v1/documentation/api/1.9.42/reference/services/ecs.html#waiters">can be found here</a>.{:target=”_blank”}</p>

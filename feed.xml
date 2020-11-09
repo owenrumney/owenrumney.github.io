@@ -5,8 +5,8 @@
     <description>Bits of blogging by Owen Rumney</description>
     <link>https://www.owenrumney.co.uk/</link>
     <atom:link href="https://www.owenrumney.co.uk/feed.xml" rel="self" type="application/rss+xml"/>
-    <pubDate>Mon, 09 Nov 2020 10:40:21 +0000</pubDate>
-    <lastBuildDate>Mon, 09 Nov 2020 10:40:21 +0000</lastBuildDate>
+    <pubDate>Mon, 09 Nov 2020 11:05:18 +0000</pubDate>
+    <lastBuildDate>Mon, 09 Nov 2020 11:05:18 +0000</lastBuildDate>
     <generator>Jekyll v4.1.1</generator>
     
       <item>
@@ -83,7 +83,7 @@
     
       <item>
         <title>Using the AWS waiter</title>
-        <description>&lt;p&gt;The AWS SDK provides a number of &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;waiters&lt;/code&gt; that allow you to block your code while waiting for a process to complete. One that we make use of in our managed ECS container rollout is the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;services_stable&lt;/code&gt; waiter. This will wait for a defined amount of time for an ECS service to become stable, or raise an exception.&lt;/p&gt; &lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;c1&quot;&gt;# bring in the boto3 import &lt;/span&gt; &lt;span class=&quot;kn&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;boto3&lt;/span&gt; &lt;span class=&quot;kn&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;botocore&lt;/span&gt; &lt;span class=&quot;c1&quot;&gt;# create a session object &lt;/span&gt; &lt;span class=&quot;n&quot;&gt;session&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;boto3&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;session&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Session&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;...</description>
+        <description>&lt;p&gt;The AWS SDK provides a number of &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;waiters&lt;/code&gt; that allow you to block your code while waiting for a process to complete. One that we make use of in our managed ECS container rollout is the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;services_stable&lt;/code&gt; waiter. This will wait for a defined amount of time for an ECS service to become stable, or raise an exception.&lt;/p&gt; &lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;c1&quot;&gt;# bring in the boto3 import &lt;/span&gt;&lt;span class=&quot;kn&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;boto3&lt;/span&gt; &lt;span class=&quot;kn&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;botocore&lt;/span&gt; &lt;span class=&quot;c1&quot;&gt;# create a session object &lt;/span&gt;&lt;span class=&quot;n&quot;&gt;session&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;boto3&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;session&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Session&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;c1&quot;&gt;#...</description>
         <pubDate>Wed, 19 Feb 2020 17:05:15 +0000</pubDate>
         <link>https://www.owenrumney.co.uk/using-the-aws-waiter/</link>
         <guid isPermaLink="true">https://www.owenrumney.co.uk/using-the-aws-waiter/</guid>
