@@ -1,0 +1,50 @@
+# Site settings
+title: Owen Rumney Blog
+description: Bits of blogging by Owen Rumney
+baseurl: "" # the subpath of your site, e.g. /blog
+url: "https://www.owenrumney.co.uk" 
+author: Owen Rumney
+username: Owen Rumney
+user_description: Software Engineer 
+user_title: Software Engineer
+email: owen@owenrumney.co.uk
+twitter_username: owenrum
+github_username:  owenrumney
+disqus_username: owenrumney
+linkedin_username: owenrumney
+
+social:
+  name: Owen Rumney
+  links:
+    - https://twitter.com/owenrum
+    - https://github.com/owenrumney
+    - https://www.linkedin.com/in/owenrumney
+
+markdown: kramdown
+highlighter: rouge
+permalink: /:title/
+
+compress_html:
+  clippings: all
+  comments: all
+  endings: []
+  profile: false
+
+links:
+  - title: Home
+    url: /
+  - title: Series
+    url: /series
+  - title: Tags
+    url: /tags
+  - title: About Me
+    url: /about    
+    
+twitter:
+  card: summary
+  username: owenrum
+
+plugins:
+  - jekyll-seo-tag
+
+exclude: ['package.json', 'src', 'node_modules', 'scripts', 'Gemfile', 'gulpfile.js', 'Makefile', 'Readme.md']
