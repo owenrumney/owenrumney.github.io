@@ -11,7 +11,7 @@ twitter_text: Using cfsec to scan CloudFormation
 
 Don't have time to read? Watch the video here - 
 <p>
-<video src="https://user-images.githubusercontent.com/3049157/142923624-29be06d2-399e-497a-81db-6cb412561c5f.mp4" controls="controls" style="max-width: 1100px;">
+<video src="https://user-images.githubusercontent.com/3049157/142923624-29be06d2-399e-497a-81db-6cb412561c5f.mp4" controls="controls" style="max-width: 1100px; text-align: center;">
 </video>
 </p>
 
