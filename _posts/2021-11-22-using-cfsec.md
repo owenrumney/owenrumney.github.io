@@ -9,21 +9,13 @@ categories:
 twitter_text: Using cfsec to scan CloudFormation
 ---
 
-Don't have time to read? Watch the video here - 
-<p>
-<video src="https://user-images.githubusercontent.com/3049157/142923624-29be06d2-399e-497a-81db-6cb412561c5f.mp4" controls="controls" style="max-width: 1100px; text-align: center;">
-</video>
-</p>
-
-
-
 Hot on the heels of [tfsec](https://tfsec.dev), we have been working on [cfsec](https://cfsec.dev) for scanning your CloudFormation templates. `cfsec` will scan both `yaml` and `json` template files and gives you the same rich information about any issues that it finds.
 
 ## The Example File
 
 For this whirlwind tour of `cfsec` I'm going to be using the following basic CloudFormation stack to create a new bucket.
 
-```yml
+```yaml
 ---
 AWSTemplateFormatVersion: "2010-09-09"
 Description: An example template
