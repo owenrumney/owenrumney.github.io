@@ -1,16 +1,13 @@
-.PHONEY: initpost clean clone_site build deploy
 
+.PHONY: initpost
 initpost:
 	@bash -c "./scripts/initpost.sh"
 
-clean:
-	@bash -c ". scripts/build.sh && clean"
+.PHONY: install
+install:
+	bundle install
 
-clone_site:
-	@bash -c ". scripts/build.sh && clone_site"
+.PHONY: test
+test: install
+	bundle exec jekyll serve
 
-build: clean clone_site
-	@bash -c ". scripts/build.sh && build"
-
-deploy: build
-	@bash -c ". scripts/build.sh && deploy"

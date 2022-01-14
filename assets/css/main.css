@@ -1050,6 +1050,11 @@ body {
   display: block;
 }
 
+.post-content img.skill {
+  max-width: 100%;
+  display: inline-block;
+}
+
 .post-content p,
 .post-content h1,
 .post-content h2,

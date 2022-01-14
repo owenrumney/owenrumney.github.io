@@ -8,4 +8,4 @@ category: Amazon Web Services
 
 Yesterday I created a scraper for the AWS documentation landing page to give an aws glossary of all of the services that have available documentation.
 
-Originally I posted it as a page in this site, I've now moved it to [https://tools.owenrumney.co.uk/aws/index.html](https://tools.owenrumney.co.uk/aws/index.html)
+Originally I posted it as a page in this site, I've now moved it to [https://aws.servicelist.cloud](https://aws.servicelist.cloud)
