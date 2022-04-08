@@ -2,7 +2,7 @@
 layout: post
 title: "Terraform Static Analysis with tfsec"
 date: 2020-10-11 00:00:00
-image: '/assets/img/blog-author.png'
+image: '/assets/img/owen.png'
 description: Security based static analysis for Terraform using tfsec
 tags: [tfsec, terraform, security, static-analysis]
 categories:

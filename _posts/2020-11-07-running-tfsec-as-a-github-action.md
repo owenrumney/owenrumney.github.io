@@ -2,7 +2,7 @@
 layout: post
 title: "Running tfsec as a Github Action"
 date: 2020-11-07 00:00:00
-image: '/assets/img/blog-author.png'
+image: '/assets/img/owen.png'
 description: Running tfsec as a Github Action; adding comments to your pull requests automatically
 tags: [tfsec, terraform, security, static-analysis, github actions, github, go]
 categories:

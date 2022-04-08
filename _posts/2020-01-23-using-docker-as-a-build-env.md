@@ -2,7 +2,7 @@
 layout: post
 title: "Using Docker Multi stage build"
 date: 2020-01-25 12:10:59
-image: '/assets/img/blog-author.png'
+image: '/assets/img/owen.png'
 description: A walkthrough of using Docker multi stage build Docker files to build an image containing an example Go application
 tags: [go, docker]
 categories: [Programming, SysAdmin]

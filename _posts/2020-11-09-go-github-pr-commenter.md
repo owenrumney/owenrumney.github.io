@@ -2,7 +2,7 @@
 layout: post
 title: "PR Commit Commenting Library"
 date: 2020-11-09 00:00:00
-image: '/assets/img/blog-author.png'
+image: '/assets/img/owen.png'
 description: Go library to facilitate writing comments to Github PR commits. Write single or multiline comments using the output of static analysis
 tags: [github, go]
 categories:

@@ -2,7 +2,7 @@
 layout: post
 title: "Using cfsec - A Brief Guide"
 date: 2021-11-21 00:00:00
-image: '/assets/img/blog-author.png'
+image: '/assets/img/owen.png'
 description: A brief guide covering the basics of using cfsec to scan your CloudFormation files
 tags: [cloudformation, aws, scanning]
 categories:

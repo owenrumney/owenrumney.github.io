@@ -1227,21 +1227,21 @@ body {
 .post-content blockquote {
   *zoom: 1;
   width: auto;
-  max-width: 45.625rem;
+  max-width: 65.625rem;
   float: none;
   display: block;
   margin-right: auto;
   margin-left: auto;
   padding-left: 0;
   padding-right: 0;
-  border-left: 0.313rem solid #202020;
-  padding: 0 1.875rem;
+  border-left: 0.313rem solid red;
+  padding: 0 0.875rem;
   margin: 3.125rem auto;
 }
 
 .post-content blockquote:before,
 .post-content blockquote:after {
-  content: "";
+  content: " ";
   display: table;
 }
 
