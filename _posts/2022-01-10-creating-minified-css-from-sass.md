@@ -13,6 +13,6 @@ I am having a baptism of fire with UI development updating a stalled knowledge b
 
 One of the entirely new technologies I'm picking up is sass for style sheets; the workflow of `compile` -> `minify` seemed clunky and it turns out they can be combined into a single command
 
-```bash
+```console
 sass combined.scss:../css/combined.min.css --style compressed
 ```

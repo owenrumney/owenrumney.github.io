@@ -33,7 +33,7 @@ This first section will configure the access control for a service account to ru
 
 I want to run monitoring as its own dedicated service account, so lets create the manifest file for that.
 
-```yaml
+```yml
 # monitor-sa.yaml
 
 apiVersion: v1
@@ -46,7 +46,7 @@ metadata:
 This will create a service account in the `monitoring` namespace called `monitor`.
 
 Create:
-```bash
+```console
 kubectl create -f monitor-sa.yaml
 ```
 
@@ -76,7 +76,7 @@ rules:
 This `ClusterRole` grants holders of the role to be able to `get`, `list` and `watch` a selection of resources (`nodes`, `services`, `endpoints` and `pods`). 
 
 Create:
-```bash
+```console
 kubectl create -f monitor-cluster-role.yaml
 ```
 
@@ -104,7 +104,7 @@ subjects:
 This manifest is binding the `ClusterRole` `monitor` to the service account `monitor` from the `monitoring` namespace.
 
 Create:
-```bash
+```console
 kubectl create -f monitor-cluster-role-binding.yaml
 ```
 
@@ -112,7 +112,7 @@ kubectl create -f monitor-cluster-role-binding.yaml
 
 At this stage, we want to verify that our new service account can do what we've set in the permissions. To do this, we can use the `auth can-i` command provided by `kubectl`
 
-```bash
+```console
 kubectl auth can-i watch pods --as system:serviceaccount:monitoring:monitor
 ```
 
@@ -157,7 +157,7 @@ scrape_configs:
 
 Create: (pay attention to creating in correct namespace)
 
-```bash
+```console
 kubectl -n monitoring create configmap prometheus-config --from-file prometheus.yml
 ```
 
@@ -200,7 +200,7 @@ spec:
 ```
 
 Create:
-```bash
+```console
 kubectl create -f prometheus-deployment.yaml
 ```
 
@@ -233,13 +233,13 @@ spec:
 To view the dashboard lets open up Prometheus with a simple port forward, (an ingress would be better, but this is quicker)
 
 First, find the name of the pod
-```bash
+```console
 kubectl get pods -n monitoring
 ```
 
 Making a note of the Pod name, we can create a port forward
 
-```bash
+```console
 kubectl port-forward -n monitoring prometheus-deployment-6559cbc88b-9m9hv 8080:9090
 ```
 
@@ -312,7 +312,7 @@ spec:
 Note that we're mounting `sys` and `root` from the host to be able to read from the host.
 
 Create:
-```bash
+```console
 kubectl create -f node-exporter-daemonset.yaml
 ```
 
@@ -364,7 +364,7 @@ This adds a job that will look for node exporter metrics.
 
 Now we can create the port forward again
 
-```bash
+```console
 kubectl port-forward -n monitoring prometheus-deployment-6559cbc88b-94dsf 8080:9090
 ```
 

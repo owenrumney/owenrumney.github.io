@@ -46,7 +46,6 @@ twitter:
 
 plugins:
   - jekyll-seo-tag
-  - jekyll-figure
 
 exclude:
   [

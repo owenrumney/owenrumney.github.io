@@ -60,13 +60,13 @@ There are a number of ways that we can run cfsec, we can [install locally](https
 
 To run locally we can do 
 
-```bash
+```console
 cfsec bucket.yaml
 ```
 
 **Running in Docker**
 
-```bash
+```console
 docker run --rm -v `pwd`:/src aquasec/cfsec /src
 ```
 
@@ -114,7 +114,7 @@ Resources:
 
 Now we get the result
 
-```bash
+```console
   0 potential problems detected.
 ```
 
