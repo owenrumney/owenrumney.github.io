@@ -122,11 +122,11 @@ In this case, we only had to make a single additional request to the API, but th
 
 Ideally, we would get the list of queues so we know how many we're talking about and this can drive our progress mechanism we might have in out UX. 
 
-Once we have the list of URLs, we want to parallelise the adaption process. But wait!! the `adaptQueue` function in this case takes a `[]string`, but for buckets it might be an `[]s3.Bucket` object or with IAM an `[]iam.Role`.
+Once we have the list of URLs, we want to parallelise the adaption process. But wait!! the `adaptQueue` function in this case takes a `[]string`, but for buckets it might be a `[]s3.Bucket` or with IAM an `[]iam.Role`.
 
-We need a generic function that will take the slice of inputs and a function to call for each item.
+We need a `generic` function that will take the slice of inputs and a function to call for each item.
 
-# Generics to the rescue
+# Generics to the rescue!!
 
 Lets say out input (in this case a `[]string`) is type `T` and the output we want (in this case a `[]Queue`) is type `S`, we can create a generic function to handle this
 
@@ -213,7 +213,7 @@ We also create a channel with an arbitrary number of slots where we're going to 
 
 Next, we create as many Go routines as we have processes that takes a value off the channel `ch` and if its ok, it will run the `adapt` function provided against the value of type `T`. We get an error and an output result of type `S` from the function which we can safely add to the `results` then the go routine can go back to the channel for another item of work.
 
-The last step is to add everything to the channel - we loop over the items (in this case `strings`) sending them to the channel. When this is done, we `close` the channel to tell it nothing else is coming then `Wait` for the `WaitGroup` to be done (this is done when the channel has nothing else on it, and each process will complete).
+The last step is to add everything to the channel - we loop over the items (in this case `[]string`) sending them to the channel. When this is done, we `close` the channel to tell it nothing else is coming then `Wait` for the `WaitGroup` to be done (this is done when the channel has nothing else on it, and each process will complete).
 
 Finally, we return the results back to the caller.
 
