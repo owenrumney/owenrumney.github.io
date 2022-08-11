@@ -25,9 +25,6 @@ Lets put a little bit more detail around this and take SQS for example.
 The first thing that we need to do is get all off the SQS queues. The API pages them, so that needs to be handled too...
 
 ```go
-// Getting information about a regions SQS queues
-
-// create the client for SQS
 client = sqs.NewFromConfig(ctx.SessionConfig()) // import "github.com/aws/aws-sdk-go-v2/service/sqs/types"
 
 var apiQueueURLS []string
@@ -143,8 +140,6 @@ func ParallelAdapt[T any, S any](items []T adapt func(T) (*S, error)) []S {
     var ch = make(chan T, 50)
 	wg := sync.WaitGroup{}
 	wg.Add(processes)
-
-	
 
 	for i := 0; i < processes; i++ {
 		go func() {
