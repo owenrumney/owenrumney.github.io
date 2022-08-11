@@ -22,7 +22,7 @@ When dealing with a medium to large number of buckets, making these calls sequen
 
 Lets put a little bit more detail around this and take SQS for example.
 
-The first thing that we need to do is get all off the SQS queues. The API pages them, so that needs to be handled too...
+The first thing that we need to do is get all of the SQS queues. The API returns them in pages, so that needs to be handled too...
 
 ```go
 client = sqs.NewFromConfig(ctx.SessionConfig()) // import "github.com/aws/aws-sdk-go-v2/service/sqs/types"
@@ -65,20 +65,20 @@ If we create a function to get the details - with some of the logic removed for 
 func adaptQueue(queueUrl string) (*Queue, error) {
 
 	// make another call to get the attributes for the Queue
-	queueAttributes, err := a.client.GetQueueAttributes(a.Context(), &sqsApi.GetQueueAttributesInput{
+	queueAttributes, err := a.client.GetQueueAttributes(a.Context(), &sqs.GetQueueAttributesInput{
 		QueueUrl: aws.String(queueUrl),
-		AttributeNames: []sqsTypes.QueueAttributeName{
-			sqsTypes.QueueAttributeNameSqsManagedSseEnabled,
-			sqsTypes.QueueAttributeNameKmsMasterKeyId,
-			sqsTypes.QueueAttributeNamePolicy,
-			sqsTypes.QueueAttributeNameQueueArn,
+		AttributeNames: []types.QueueAttributeName{
+			types.QueueAttributeNameSqsManagedSseEnabled,
+			types.QueueAttributeNameKmsMasterKeyId,
+			types.QueueAttributeNamePolicy,
+			types.QueueAttributeNameQueueArn,
 		},
 	})
 	if err != nil {
 		return nil, err
 	}
 
-	queueARN := queueAttributes.Attributes[string(sqsTypes.QueueAttributeNameQueueArn)]
+	queueARN := queueAttributes.Attributes[string(types.QueueAttributeNameQueueArn)]
 	queue := &sqs.Queue{
 		QueueURL: queueUrl,
 		Policies: []iam.Policy{},
@@ -88,9 +88,9 @@ func adaptQueue(queueUrl string) (*Queue, error) {
 		},
 	}
 
-	sseEncrypted := queueAttributes.Attributes[string(sqsTypes.QueueAttributeNameSqsManagedSseEnabled)]
-	kmsEncryption := queueAttributes.Attributes[string(sqsTypes.QueueAttributeNameKmsMasterKeyId)]
-	queuePolicy := queueAttributes.Attributes[string(sqsTypes.QueueAttributeNamePolicy)]
+	sseEncrypted := queueAttributes.Attributes[string(types.QueueAttributeNameSqsManagedSseEnabled)]
+	kmsEncryption := queueAttributes.Attributes[string(types.QueueAttributeNameKmsMasterKeyId)]
+	queuePolicy := queueAttributes.Attributes[string(types.QueueAttributeNamePolicy)]
 
 	if sseEncrypted == "SSE-SQS" || sseEncrypted == "SSE-KMS" {
 		queue.Encryption.ManagedEncryption = true
@@ -211,7 +211,7 @@ We create a `sync.WaitGroup` that has space for the number of process we're goin
 
 We also create a channel with an arbitrary number of slots where we're going to push the inputs of type `T` for processing.
 
-Next, we create as many Go routines as we have processes that takes a value of the channel `ch` and if its ok, it will run the `adapt` function provided against the value of type `T`. We get an error and an output result of type `S` from the function which we can safely add to the `results` then the go routine can go back to the channel for another item of work.
+Next, we create as many Go routines as we have processes that takes a value off the channel `ch` and if its ok, it will run the `adapt` function provided against the value of type `T`. We get an error and an output result of type `S` from the function which we can safely add to the `results` then the go routine can go back to the channel for another item of work.
 
 The last step is to add everything to the channel - we loop over the items (in this case `strings`) sending them to the channel. When this is done, we `close` the channel to tell it nothing else is coming then `Wait` for the `WaitGroup` to be done (this is done when the channel has nothing else on it, and each process will complete).
 
