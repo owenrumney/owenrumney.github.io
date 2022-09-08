@@ -1,5 +1,6 @@
 @import url(syntax.css);
 
+
 html {
   font-family: sans-serif;
   -ms-text-size-adjust: 100%;
@@ -714,6 +715,8 @@ body.search-overlay:after {
   margin-right: 0.125rem;
   margin-bottom: 0.5rem;
   text-decoration: none;
+  background-color: #282828;
+  ;
 }
 
 .tags a:hover {
@@ -1281,6 +1284,7 @@ body {
   border-left: 0.313rem solid red;
   padding: 0 0.875rem;
   margin: 3.125rem auto;
+  background-color: #282828;
 }
 
 .post-content blockquote:before,
@@ -1300,7 +1304,7 @@ body {
 }
 
 .post-content blockquote p {
-  color: rgba(0, 0, 0, 0.6);
+  color: white;
   margin: 0;
 }
 
@@ -1718,10 +1722,12 @@ pre {
   .bs-callout {
     padding-top: 30px;
     padding: 20px;
-    margin: 20px 0;
+    margin: 3.125rem auto;
     border: 1px solid #262626;
     border-left-width: 5px;
     border-radius: 3px;
+    color: white;
+    background-color: #282828;
   }
 
   .bs-callout h4 {
@@ -1789,3 +1795,50 @@ pre {
   .bs-callout-info h4 {
     color: #5bc0de;
   }
+}
+
+pre.highlight {
+  padding: 8px 12px;
+  position: relative;
+}
+
+pre.highlight>code {
+  border: 0;
+  overflow-x: auto;
+  padding-right: 0;
+  padding-left: 0;
+}
+
+pre.highlight.highlight {
+  border-left: 10px solid #35383c;
+  color: #c1c2c3;
+  overflow: auto;
+  white-space: pre;
+  word-wrap: normal;
+}
+
+pre.highlight.highlight,
+pre.highlight.highlight code {
+  font-size: 14px;
+}
+
+pre.highlight .copy {
+  color: #fff;
+  position: absolute;
+  right: .3rem;
+  top: .3rem;
+  opacity: 0;
+
+}
+
+pre.highlight .copy:active,
+pre.highlight .copy:focus,
+pre.highlight .copy:hover {
+  opacity: 1;
+}
+
+pre.highlight:active .copy,
+pre.highlight:focus .copy,
+pre.highlight:hover .copy {
+  opacity: 1;
+}
