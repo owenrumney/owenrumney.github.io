@@ -8,6 +8,7 @@ html {
 
 body {
   margin: 0;
+  background: #202020;
 }
 
 
@@ -24,6 +25,7 @@ nav,
 section,
 summary {
   display: block;
+  background: #262626;
 }
 
 audio,
@@ -51,6 +53,7 @@ a {
 a:active,
 a:hover {
   outline: 0;
+  color: lightskyblue !important;
 }
 
 abbr[title] {
@@ -73,7 +76,7 @@ h1 {
 
 mark {
   background: #ff0;
-  color: #000;
+  color: white;
 }
 
 small {
@@ -326,7 +329,7 @@ h4 {
 }
 
 .icons-home a:hover .icon {
-  fill: #202020;
+  fill: lightskyblue !important;
 }
 
 .down {
@@ -347,6 +350,7 @@ h4 {
   transform: translate(-50%, -50%);
   width: 100px;
   height: 100px;
+  color: white;
   fill: #fff;
   -webkit-animation: pulse 1.3s infinite;
   animation: pulse 1.3s infinite;
@@ -459,7 +463,7 @@ aside nav li a {
 }
 
 aside nav li a:hover {
-  color: #191918;
+  color: lightskyblue !important;
   background: #fff;
 }
 
@@ -599,12 +603,14 @@ input[type="search"]::-webkit-search-cancel-button {
   font-style: normal;
 }
 
-.search-form h4,
+.search-form h4 .search-form a {
+  color: white;
+}
+
 .search-form li,
 .search-form p,
-.search-form a,
 .search-form a:hover {
-  color: #fff;
+  color: lightskyblue !important;
 }
 
 body.search-overlay {
@@ -656,8 +662,9 @@ body.search-overlay:after {
 }
 
 .search-list {
-  padding: 0;
-  margin: 0;
+  color: white;
+  padding: 5px 5px;
+  margin: 5px 5px;
   list-style-type: none;
 }
 
@@ -670,14 +677,16 @@ body.search-overlay:after {
 
 .search-list a {
   text-decoration: none;
+  color: white;
   display: block;
-  padding: 0.938rem 0;
+  padding: 0.938rem 05rem;
+
   width: 100%;
   border-bottom: 1px solid #fff;
 }
 
 .search-list a:hover {
-  color: #b3b3b3;
+  color: lightskyblue !important;
   border-bottom: 1px solid #b3b3b3;
 }
 
@@ -697,9 +706,9 @@ body.search-overlay:after {
 
 .tags a {
   font-size: 0.875rem;
-  color: #202020;
+  color: #262626;
   display: inline-block;
-  border: 1px solid #202020;
+  border: 1px solid #262626;
   border-radius: 0.313rem;
   padding: 0.25rem 0.625rem;
   margin-right: 0.125rem;
@@ -708,8 +717,7 @@ body.search-overlay:after {
 }
 
 .tags a:hover {
-  color: #03316e;
-  border: 1px solid #03316e;
+  color: lightskyblue !important;
 }
 
 .img-rounded {
@@ -936,7 +944,7 @@ body {
   font-family: "Open Sans", sans-serif;
   font-weight: 800;
   font-style: normal;
-  color: #202020;
+  color: white;
   font-size: 5rem;
   line-height: 1.6;
 }
@@ -961,11 +969,12 @@ body {
 }
 
 .post-item .datetime .month-year {
-  color: #000;
+  color: white;
   font-size: 1.125rem;
 }
 
 .post-item .content {
+  color: white;
   *zoom: 1;
   float: left;
   clear: none;
@@ -1009,15 +1018,21 @@ body {
 }
 
 .post-item .content a {
-  text-decoration: none;
+  color: white;
+  text-decoration: dashed;
+}
+
+.post-item .content a:hover {
+  color: lightblue;
+  text-decoration: dashed;
 }
 
 .post-item .content .date {
-  color: #202020;
+  color: white;
 }
 
 .post-item .content .post-title {
-  color: #000;
+  color: white;
   font-size: 2rem;
 }
 
@@ -1028,7 +1043,7 @@ body {
 }
 
 .post-item .content .description {
-  color: #333;
+  color: white;
   font-family: "Open Sans", sans-serif;
   font-weight: 300;
   font-style: normal;
@@ -1037,11 +1052,12 @@ body {
 
 .post-item .content .description a {
   color: #202020;
-  text-decoration: underline;
 }
 
 .post-content {
   padding: 2.5rem 0;
+  background: #262626;
+  color: white;
 }
 
 .post-content img {
@@ -1055,10 +1071,32 @@ body {
   display: inline-block;
 }
 
-.post-content p,
+
 .post-content h1,
 .post-content h2,
-.post-content h3,
+.post-content h3 {
+  *zoom: 1;
+  width: auto;
+  max-width: 70rem;
+  margin-right: auto;
+  margin-left: auto;
+  float: none;
+  display: block;
+
+  padding-top: 20;
+  padding-left: 0;
+  padding-right: 0;
+  padding: 1.1rem 0;
+  margin: 0 auto 1.1rem;
+  font-family: "Open Sans", sans-serif;
+  font-weight: 300;
+  font-style: normal;
+  font-size: 1.125rem;
+  line-height: 2;
+  letter-spacing: 0.01rem;
+}
+
+.post-content p,
 .post-content h4,
 .post-content ul,
 .post-content ol,
@@ -1076,8 +1114,8 @@ body {
   padding-top: 20;
   padding-left: 0;
   padding-right: 0;
-  padding: 0 1.25rem;
-  margin: 0 auto 1.875rem;
+  padding: 0 0.9rem;
+  margin: 0 auto 1.1rem;
   font-family: "Open Sans", sans-serif;
   font-weight: 300;
   font-style: normal;
@@ -1140,21 +1178,27 @@ body {
 
 .post-content p,
 .post-content li {
-  color: #333;
+  color: white;
 }
 
 .post-content p code,
 .post-content li code {
-  color: purple;
+  color: whitesmoke;
+  background: #393939;
+  padding: 0px 0.5rem;
 }
 
 .post-content a {
   font-family: "Open Sans", sans-serif;
-  font-weight: 300;
-  font-style: normal;
-  color: #202020;
-  text-decoration: none;
+  font-weight: 600;
+  font-size: 0.9em;
+  color: white;
   border-bottom: 2px solid #202020;
+  text-decoration: none;
+}
+
+.post-content a :hover {
+  color: lightskyblue !important;
 }
 
 .post-content iframe {
@@ -1294,6 +1338,7 @@ body {
 
 .share {
   *zoom: 1;
+  color: white;
   width: auto;
   max-width: 800px;
   float: none;
@@ -1305,6 +1350,7 @@ body {
   text-align: center;
   border-top: 1px solid #f2f2f2;
   padding-top: 1.25rem;
+  fill: white;
 }
 
 .share:before,
@@ -1486,7 +1532,7 @@ pre {
 @media only screen and (min-width: 37.5rem) {
 
   .author {
-    background: #f2f2f2;
+    color: white;
     display: table;
     width: 100%;
     padding: 2.5rem 0;
@@ -1525,7 +1571,7 @@ pre {
   }
 
   .author .def {
-    color: #808080;
+    color: white;
     font-size: 1.125rem;
     font-family: "Open Sans", sans-serif;
     font-weight: 300;
@@ -1549,12 +1595,12 @@ pre {
     font-weight: 800;
     font-style: normal;
     text-decoration: none;
-    color: #000;
+    color: white;
     font-size: 1.875rem;
   }
 
   .author .name a:hover {
-    color: #202020;
+    color: whitesmoke;
   }
 
   @media only screen and (min-width: 37.5rem) {
@@ -1583,6 +1629,7 @@ pre {
   }
 
   .comments {
+    color: white;
     *zoom: 1;
     width: auto;
     max-width: 50rem;
@@ -1663,14 +1710,16 @@ pre {
   }
 
   .back-to-top:hover :visited :active {
+    color: lightskyblue !important;
     text-decoration: none;
   }
 
 
   .bs-callout {
+    padding-top: 30px;
     padding: 20px;
     margin: 20px 0;
-    border: 1px solid #eee;
+    border: 1px solid #262626;
     border-left-width: 5px;
     border-radius: 3px;
   }
@@ -1688,9 +1737,6 @@ pre {
     border-radius: 3px;
   }
 
-  .bs-callout+.bs-callout {
-    margin-top: -5px;
-  }
 
   .bs-callout-default {
     border-left-color: #777;
@@ -1710,7 +1756,7 @@ pre {
 
   .bs-callout-success {
     border-left-color: #5cb85c;
-    background-color: #e6ffe6;
+    /* background-color: #e6ffe6; */
   }
 
   .bs-callout-success h4 {
@@ -1719,7 +1765,7 @@ pre {
 
   .bs-callout-danger {
     border-left-color: #d9534f;
-    background-color: #ffe6e6;
+    /* background-color: #ffe6e6; */
   }
 
   .bs-callout-danger h4 {
@@ -1728,7 +1774,7 @@ pre {
 
   .bs-callout-warning {
     border-left-color: #f0ad4e;
-    background-color: #fff2cc;
+    /* background-color: #fff2cc; */
   }
 
   .bs-callout-warning h4 {
@@ -1737,7 +1783,7 @@ pre {
 
   .bs-callout-info {
     border-left-color: #5bc0de;
-    background-color: #e6f7ff;
+    /* background-color: #e6f7ff; */
   }
 
   .bs-callout-info h4 {

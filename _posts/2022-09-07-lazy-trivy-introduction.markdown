@@ -9,7 +9,7 @@ categories: [Scanning]
 twitter_text: Scanning for vulnerabilities just got lazier
 ---
 
-[![](https://badgen.net/badge/icon/github?icon=github&label=View%20in%20)](https://github.com/owenrumney/lazytrivy)]
+#### View `lazytrivy` on [GitHub](https://github.com/owenrumney/lazytrivy){:target="_blank" }
 
 ![lazytrivy](https://github.com/owenrumney/lazytrivy/blob/master/.github/images/scan_all.png?raw=true)
 
@@ -76,7 +76,7 @@ Pressing `return` on the issues will show more information about the issue.
 
 ### Issues, Comments, Suggestions
 
-Comments, suggestions and issues are most welcome, please raise them [in GitHub](https://github.com/owenrumney/lazytrivy/issues)
+Comments, suggestions and issues are most welcome, please raise them in [GitHub](https://github.com/owenrumney/lazytrivy/issues)
 
 
 
