@@ -9,6 +9,8 @@ categories: [Scanning]
 twitter_text: Scanning for vulnerabilities just got lazier
 ---
 
+> UPDATED: updated 12th Sept 2022 to include Filesystem Scanning
+
 #### View `lazytrivy` on [GitHub](https://github.com/owenrumney/lazytrivy){:target="_blank" }
 
 ![lazytrivy](https://github.com/owenrumney/lazytrivy/blob/master/.github/images/scan_all.png?raw=true)
@@ -28,6 +30,8 @@ lazytrivy just makes the experience even easier. You can run `lazytrivy` without
 - AWS Scanning
   - Scan your AWS account for misconfigurations
   - Dive into services and find service specific misconfigurations
+- File System Scanning
+  - Scan a local directory for misconfigurations, vulnerabilities and secrets
 
 ### Image Scanning
 
@@ -72,6 +76,18 @@ Scanning takes a short while depending on the size of the account, but eventuall
 Selecting a service will show all the issues identified and you can drill into the AWS resources to see what the problems are.
 
 Pressing `return` on the issues will show more information about the issue.
+
+### File System Scanning
+
+Switching to Filesystem mode using `w` and you can scan a local directory. 
+
+Alternatively, you can start `lazytrivy` in file system mode using
+
+```bash
+lazytrivy fs /path/to/scan
+```
+
+![Scanning File System](https://github.com/owenrumney/lazytrivy/blob/master/.github/images/scan_filesystem.gif?raw=true)
 
 
 ### Issues, Comments, Suggestions
