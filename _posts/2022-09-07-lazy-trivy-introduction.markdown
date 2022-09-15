@@ -9,7 +9,7 @@ categories: [Scanning]
 twitter_text: Scanning for vulnerabilities just got lazier
 ---
 
-> UPDATED: updated 12th Sept 2022 to include Filesystem Scanning
+> UPDATED 12th Sept 2022: Include Filesystem Scanning
 
 #### View `lazytrivy` on [GitHub](https://github.com/owenrumney/lazytrivy){:target="_blank" }
 
