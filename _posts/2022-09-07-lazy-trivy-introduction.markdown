@@ -9,7 +9,7 @@ categories: [Scanning]
 twitter_text: Scanning for vulnerabilities just got lazier
 ---
 
-> UPDATED 12th Sept 2022: Include Filesystem Scanning
+> UPDATED 21st Sept 2022: v1.0.0 Release
 
 #### View `lazytrivy` on [GitHub](https://github.com/owenrumney/lazytrivy){:target="_blank" }
 
@@ -18,6 +18,12 @@ twitter_text: Scanning for vulnerabilities just got lazier
 [Trivy](https://trivy.dev) is the go to scanner for vulnerabilities and is rapidly becoming the go to for all your scanning needs.
 
 lazytrivy just makes the experience even easier. You can run `lazytrivy` without remembering all the commands and get a quick summary of the vulnerabilities you have.
+
+### How does it work?
+
+Trivy is released as a binary or a Docker image. In order to support Windows users, `lazytrivy` uses the docker image and mounts the Docker socket to all the Trivy image to scan other images on the Docker host.
+
+`lazytrivy` will query the Docker context to find the current context and use that host; alternatively, you can specify the `--docker-host` on start to point to a remote host.
 
 ### Features
 
