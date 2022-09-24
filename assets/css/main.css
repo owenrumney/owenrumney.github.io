@@ -1828,7 +1828,9 @@ pre.highlight .copy {
   right: .3rem;
   top: .3rem;
   opacity: 0;
-
+  background: #35383c;
+  border: none;
+  padding: 10px;
 }
 
 pre.highlight .copy:active,
