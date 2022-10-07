@@ -4,7 +4,7 @@ title: Introducing lazytrivy
 date: 2022-09-07 00:00:00
 image: '/assets/img/owen.png'
 description: Using lazytrivy as a Trivy wrapper to simplify usage
-tags: [go programming, tools]
+tags: [go, programming, tools]
 categories: [Programming]
 twitter_text: Scanning for vulnerabilities just got lazier
 ---
