@@ -4,8 +4,8 @@ title: "Building Jekyll Websites with Travis"
 date: 2020-10-04 00:00:00
 image: '/assets/img/owen.png'
 description: How to generate your Jekyll website with Travis
-tags: [travis, jekyll, blogging]
-categories:
+tags: [blogging]
+categories: [Blogging]
 twitter_text: Generating your Jekyll website with Travis
 ---
 
@@ -46,7 +46,7 @@ If you've got Jekyll, I'm assuming you've already got the Ruby infrastructure on
 
 Below is the build script I use; I'll break down the sections.
 
-```shell
+```bash
 #! /bin/bash
 
 set -e
@@ -172,7 +172,7 @@ Finally the job runs `make deploy` which will build the site and deploy it to th
 
 Now, when I commit changes to my blog base project, it runs in Travis and I get output similar to this;
 
-```shell
+```bash
 Installing SSH key from: default repository key
 Using /home/travis/.netrc to clone repository.
 git.checkout

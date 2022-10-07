@@ -4,8 +4,8 @@ title: "Using Docker Multi stage build"
 date: 2020-01-25 12:10:59
 image: '/assets/img/owen.png'
 description: A walkthrough of using Docker multi stage build Docker files to build an image containing an example Go application
-tags: [go, docker]
-categories: [Programming, SysAdmin]
+tags: [go, docker, programming]
+categories: [Programming, SysAdmin, Containers]
 twitter_text: Using Docker multi stage builds
 ---
 
@@ -180,7 +180,7 @@ curl -v http://localhost:8080/502
 
 This should return a verbose message saying we got a `502`
 
-```shell
+```bash
 *   Trying 127.0.0.1...
 * TCP_NODELAY set
 * Connected to localhost (127.0.0.1) port 8080 (#0)

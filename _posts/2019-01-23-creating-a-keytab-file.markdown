@@ -3,7 +3,7 @@ layout: post
 author: Owen Rumney
 title: Creating a Kerberos Keytab file with ktutil
 description: Steps that are required to create a Kerberos keytab file on Linux
-tags: [security, kerberos, keytab, ktutil]
+tags: [linux]
 categories: [SysAdmin]
 ---
 
@@ -33,13 +33,13 @@ sudo apt-get install krb5-user
 
 Now you have the required programs installed, you can create your keytab file using `ktutil`.
 
-```shell
+```bash
 ktutil
 ```
 
 This will present you with a prompt for you to add the entries in the keytab file
 
-```shell
+```bash
 add_entry -password -p user@DPE.INTERNAL -k 1 -e aes256-cts-hmac-sha1-96
 Password for user@DPE.INTERNAL: <enter password here>
 
@@ -53,7 +53,7 @@ The `-p` is the principal that we will be logging in as using the end file.
 
 The `-k` refers to the Key Version Number which in some situations isn't really needed and is ignored (in Windows environment for example). You can get the current Key version number (kvno) by using the `kvno` command
 
-```shell
+```bash
 kvno user@DPE.INTERNAL
 user@DPE.INTERNAL: kvno = 1
 ```
@@ -64,13 +64,13 @@ The `-e` refers to the enctype mentioned earlier. This needs to be one of those 
 
 We can now test the keytab for successfully login
 
-```shell
+```bash
 kinit -kt user.keytab user@DPE.INTERNAL
 ```
 
 This should exit normally, then we can check we've got a ticket using `klist`
 
-```shell
+```bash
 klist
 
 Ticket cache: FILE:/tmp/krb5cc_1000

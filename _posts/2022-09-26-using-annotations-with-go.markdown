@@ -4,8 +4,8 @@ title: Leveraging Annotations in Go
 date: 2022-09-26 00:00:00
 image: '/assets/img/owen.png'
 description: An introduction to using annotations on structs in Go
-tags: [golang]
-categories: [Go, Programming]
+tags: [go, programming]
+categories: [Programming]
 twitter_text: Introduction to using type annotations in Go
 ---
 

@@ -2,7 +2,7 @@
 title: Unit testing HDFS code
 layout: post
 author: Owen Rumney
-tags: [hadoop, testing, java]
+tags: [hadoop, programming]
 categories: [Big Data, Programming]
 ---
 

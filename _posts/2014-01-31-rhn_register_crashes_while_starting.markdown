@@ -2,7 +2,7 @@
 layout: post
 author: Owen Rumney
 title: rhn_register crashes while starting
-tags: [red hat, linux, work stuff]
+tags: [linux]
 categories: [SysAdmin]
 ---
 
@@ -12,10 +12,10 @@ The new servers are running on trader desktops so they're reasonably good kit. T
 
 While trying to run rhn_register on this last machine, it kept starting then crashing straight away with no really error. I dug into the log file and found the following error.
 
-{% highlight sh %}
+```bash
 FatalErrorWindow(screen, e.errmsg)
 exceptions.AttributeError: SSLCertificateVerifyFailedError instance has not attribute 'errmsg'
-{% endhighlight %}
+```
 
 I'm sure you'll agree that from this exception it's obvious what the problem is? No? Well chances are, its the datetime of the machine. In my case it thought it was 24th October 2010.
 

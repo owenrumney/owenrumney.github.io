@@ -2,11 +2,11 @@
 layout: post
 title: git alias for concise history
 description: Getting more concise git log
-tags: [git, alias, nice]
-category: Git
+tags: [git]
+category: [SysAdmin]
 ---
 
-This is pretty short post. H/T to [@prokopp](https://twitter.com/prokopp) for telling me know about this.
+This is pretty short post. H/T to [@prokopp](https://twitter.com/prokopp){:target="_blank"} for telling me know about this.
 
 Git allows you to add aliases in your global config - this is the first one I've actually added and all it does is a concise, clearly formatted git log.
 

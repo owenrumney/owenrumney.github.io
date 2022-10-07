@@ -3,15 +3,15 @@ layout: post
 author: Owen Rumney
 title: Introducing gitsearch-cli
 description: Description of a tool I've written that can be used to find github projects from the command line
-tags: [python3, github, pypi]
-categories: [Git, Programming]
+tags: [python, git, programming]
+categories: [Programming]
 ---
 The first version of gitsearch-cli is now available. This command line interface allows you to search github repositories and users using keywords and (currently) a handful of additional criteria.
 
 ## Installation
 To install git search you can use `pip3` with the following command;
 
-```shell
+```bash
 pip3 install gitsearch-cli
 ```
 
@@ -20,12 +20,12 @@ By default the search will be scoped to look in repositories, however you can ch
 
 For additional help, just use;
 
-```Shell
+```bash
 git-search --help
 ```
 
 ### Searching for Users
-```shell
+```bash
 git-search --scope=users owen rumney
 
 or
@@ -42,7 +42,7 @@ This will yield the following results;
 ### Searching for repositories
 When searching for repositories you can create a general search by keyword or focus the search by including the language and/or user.
 
-```shell
+```bash
 git-search -l=scala -u=apache spark
 ```
 This will give the following result;
@@ -56,7 +56,7 @@ This will give the following result;
 
 If you want to only return results where the keyword is in the name, you can use the `--nameonly` flag
 
-```shell
+```bash
 git-search -l=scala -u=apache spark --nameonly
 ```
 This will give the following result;

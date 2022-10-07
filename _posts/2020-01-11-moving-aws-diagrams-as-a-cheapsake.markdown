@@ -2,8 +2,8 @@
 layout: post
 title: Moving AWS Diagrams, aka Docker for cheapskates
 description: Fargate with an ALB started to get a bit expensive so I needed to find a new way to host my aws diagram tool.
-tags: [aws, docker, diagrams, nginx, letsencrypt]
-categories: [Amazon Web Services]
+tags: [aws, programming, docker, tools]
+categories: [AWS, Programming, Containers]
 ---
 
 Last year I created a diagram tool specifically for AWS diagrams. It was essentially a hack of the underlying code draw.io uses.
@@ -90,19 +90,19 @@ To build this locally;
 
 1. Login to Docker
 
-```shell
+```bash
 docker login -u owenrumney`
 ```
 
 2. Build the image
 
-```shell
+```bash
 docker build -t owenrumney/awsbackend .
 ```
 
 3. Push to `Dockerhub`
 
-```shell
+```bash
 docker push owenrumney/awsbackend
 ```
 

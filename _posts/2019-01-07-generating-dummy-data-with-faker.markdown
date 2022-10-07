@@ -3,7 +3,7 @@ layout: post
 author: Owen Rumney
 title: Generating test data with Faker
 description: Using faker in python to generate test data that is reasonably meaningful
-tags: [python, faker, test data, generator]
+tags: [python, programming, tools]
 categories: [Programming]
 ---
 Python is one of those languages where if you can concieve it, there is probably already a library for it. 
@@ -35,7 +35,7 @@ fake.first_name(), fake.last_name(), fake.email()
 
 This will give you a tuple with a random name and email;
 
-```shell 
+```bash 
 ('Mary', 'Bennett', 'jamesrodriguez@hotmail.com')
 ```
 
@@ -52,7 +52,7 @@ fake.street_address(), fake.postcode()
 
 which will yield;
 
-```shell
+```bash
 ('Studio 54\nCollins fork', 'L2 7XP')
 ```
 
@@ -77,7 +77,7 @@ fake1.name(), fake2.name()
 
 This will result in a tuple containing the same name across synchronised `fake` objects.
 
-```shell
+```bash
 ('Adam Bryan', 'Adam Bryan')
 ('Jacob Lee', 'Jacob Lee')
 ```
@@ -148,14 +148,14 @@ create_customer_files()
 Once we run this, we'll have 2 files with customer details and a credit card transaction.
 
 Customer records
-```shell
+```bash
 0000000001,Clifford,Turner,"Flat 17, Smith crescent",Johnsonborough,DN5 7JJ,ucooper@gmail.com
 0000000002,Amy,Clements,"Studio 96s, Anne harbor",Maureenfurt,LA53 8HZ,marshalllee@williams-hart.info
 0000000003,Robin,Sinclair,5 Lesley motorway,Bryanbury,E2 9EU,sheilawhitehead@miles.com
 ```
 
 Financial records
-```shell
+```bash
 0000000001,4851450166907,179.28,2009-06-01T07:03:43
 0000000002,370196022599953,229.46,2017-12-11T10:14:59
 0000000003,4285121047016,10.61,1995-04-23T23:54:19

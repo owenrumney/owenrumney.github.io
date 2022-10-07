@@ -2,19 +2,19 @@
 layout: post
 author: Owen Rumney
 title: Cross Join Columns in Excel
-tags: Excel, VBA
-categories: [Office]
+tags: [excel, programming]
+categories: [Programming]
 ---
 
 As part of a project I'm working on I need to create a cross join of users against symbols; the idea being that any of the given users might look at any of the given symbols. I have a list of users and a list of symbols which I essentially need a cross-join on.
 
 For this example I'll use cars and engine/transmission variants.
 
-![Lists]({{ site.baseurl }}/images/lists.png)
+![List](../images/lists.png)
 
 From these two lists I need to quickly create all possible combinations;
 
-![cross-joined lists]({{ site.baseurl }}/images/crossjoin.png)
+![cross-joined list](../images/crossjoin.png)
 
 I can't find any function that will do what I was so I've created a VBA function that will do it;
 

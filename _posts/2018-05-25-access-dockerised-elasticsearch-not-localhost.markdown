@@ -2,7 +2,8 @@
 layout: post
 author: Owen Rumney
 title: Allow connection to dockerised elasticsearch other than localhost
-tags: [docker, elasticsearch, kubernetes, minikube]
+tags: [docker, linux]
+categories: [Containers, SysAdmin]
 ---
 
 We need to access ElasticSearch in a namespace within minikube and the other Pods can't connect to 9200. It turns out that from the box its limited to localhost and the `network.host` property needs updating.

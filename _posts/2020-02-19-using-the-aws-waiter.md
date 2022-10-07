@@ -4,8 +4,8 @@ title: "Using the AWS waiter"
 date: 2020-02-19 17:05:15
 image: "/assets/img/"
 description: Using the waiter to wait for something to happen in your lambda
-tags: [aws, python, lambda]
-categories:
+tags: [aws, python]
+categories: [AWS, Programming]
 twitter_text: Using the waiter in your AWS lambda
 ---
 

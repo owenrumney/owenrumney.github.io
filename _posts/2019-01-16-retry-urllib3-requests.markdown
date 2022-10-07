@@ -3,7 +3,7 @@ layout: post
 author: Owen Rumney
 title: Adding retry logic to urllib3 Python code
 description: Tutorial on the steps required to add retry logic to urllib3 requests
-tags: [python, urllib3, retry logic]
+tags: [python, programming]
 categories: [Programming]
 ---
 
@@ -47,15 +47,15 @@ In this code we've created a `Retry` object telling it to retry a total of 3 tim
 
 Some other interesting arguments for the `Retry` object are.
 
-|Argument  |Comment |
-|:---|:---|
-|  total | The total number of retries that are allowed. Trumps the combined figure of connect and read   |
-| read  | How many read retries that are allowed   |
-| connect  | How many connect errors that are allowed  |
-| redirect | How many redirects to allow. This is handy to prevent redirect loops |
-| method_whitelist | Which pethos are allowed. By default only idempotent methods are allowed, ruling out POST |
-|backoff_factor | How much to increase the back off factor (see docs for more info)|
-| raise_on_status | Whether to return the failed status or raise an exception |
+| Argument         | Comment                                                                                      |
+| :--------------- | :------------------------------------------------------------------------------------------- |
+| total            | The total number of retries that are allowed. Trumps the combined figure of connect and read |
+| read             | How many read retries that are allowed                                                       |
+| connect          | How many connect errors that are allowed                                                     |
+| redirect         | How many redirects to allow. This is handy to prevent redirect loops                         |
+| method_whitelist | Which pethos are allowed. By default only idempotent methods are allowed, ruling out POST    |
+| backoff_factor   | How much to increase the back off factor (see docs for more info)                            |
+| raise_on_status  | Whether to return the failed status or raise an exception                                    |
 
 For more information, see the [urllib3 documentation](https://urllib3.readthedocs.io/en/latest/reference/urllib3.util.html#module-urllib3.util.retry)
 

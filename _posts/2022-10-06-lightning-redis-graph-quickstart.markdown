@@ -5,7 +5,7 @@ date: 2022-09-26 00:00:00
 image: '/assets/img/owen.png'
 description: A lightning intro to Redis Graph from a nights playing
 tags: [graph, learning]
-categories: [Graph, Learning, Programming]
+categories: [Learning, Programming]
 twitter_text: What I learned in a night with Redis Graph
 ---
 
@@ -66,30 +66,30 @@ The UI can be launched from [http://localhost:8001](http://localhost:8001/){:tar
 
 The first screen you'll see is Welcome screen 
 
-![Redis Welcome](../images/redis_insight_1.png)
+![Redis Welcome]](../images/redis_insight_1.png)
 
 From here - say that you already have a database then choose to connect to the database.
 
-![Redis Configure DB](../images/redis_insight_2.png)
+![Redis Configure DB]](../images/redis_insight_2.png)
 
 As we used docker compose, the internal network wiring is done, so we can connect to the redis server by the name  `redis`. This is the name we gave it in `docker-compose.yaml`
 q
 Provide the details as below;
 
-![Redis Connect](../images/redis_insight_3.png)
+![Redis Connect]](../images/redis_insight_3.png)
 
 Clicking `ADD REDIS DATABASE` takes us to our databases - from here we choose `demodb`
 
-![Redis Browser](../images/redis_insight_4.png)
+![Redis Browser]](../images/redis_insight_4.png)
 
 This takes us to the main page for this database and we can select `RedisGraph` for the menu.
 
-![Redis Database Details](../images/redis_insight_5.png)
+![Redis Database Details]](../images/redis_insight_5.png)
 
 
 This screen is where we're going to create the graph and do our simple family graph
 
-![Redis Graph](../images/redis_insight_6.png)
+![Redis Graph]](../images/redis_insight_6.png)
 
 
 
@@ -118,7 +118,7 @@ MATCH (p:Person) return p
 
 This gives us a graph of the people with no links
 
-![Redis no links](../images/redis_person_1.png)
+![Redis no links]](../images/redis_person_1.png)
 
 #### Linking up the family
 
@@ -155,7 +155,7 @@ MATCH (p:Person) return p
 
 The graph of this looks like 
 
-![redis person links](../images/redis_person_2.png)
+![redis person links]](../images/redis_person_2.png)
 
 How about if we want tot know who is a father
 
@@ -165,7 +165,7 @@ MATCH (p:Person)-[r:Related{relationship:"father"}]-(p2:Person) return p
 
 This query is looking for people who are `Related` explicitly with the `relationship` of `"father"`.
 
-![Father relationship](../images/redis_person_3.png)
+![Father relationship]](../images/redis_person_3.png)
 
 ### Scratching the surface
 

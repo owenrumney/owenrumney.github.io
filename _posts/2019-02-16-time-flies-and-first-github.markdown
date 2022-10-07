@@ -2,7 +2,8 @@
 layout: post
 title: Delving in the depths of my github
 description: I found an old javascript game I wrote in 2012 - it still works, sort of
-tags: [github, nodejs, lightsout]
+tags: [git, programming]
+
 ---
 
 This morning I was trying to solve an issue where http://owenrumney.co.uk has an SSL error when trying to access my blog but https://www.owenrumney.co.uk is fine! (its still not resolved).
@@ -13,7 +14,7 @@ The first project was an implementation of the LightsOut game written in NodeJS.
 
 The game is simple, click on the lights till they all go out, but when you click a cell, the state of the horizontal and vertical adjacent cells toggle their state.
 
-![LightsOut Game]({{ site.baseurl }}/images/lightsout.png)
+![LightsOut Gam](../images/lightsout.png)
 
 Even a cursory look at the code has highlighted that it isn't great, but my thoughts are more about how great it is to have Github and source control systems as a whole. Over the years, my laptops have been changed, flattened, stolen and lost, yet all I needed was a `git clone git@github.com:owenrumney/Lightsout.git` and I was able to run (confession, I also had to install node) my inagural GitHub contribution.
 

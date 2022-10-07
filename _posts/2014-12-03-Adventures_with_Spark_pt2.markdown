@@ -34,7 +34,7 @@ I don't want to detail the process of install Kafka and getting Spark set up, I'
 
 Step 1: - Start the zookeeper for Kafka
 
-```text
+```bash
 
 # in my case $KAFKA_HOME = /usr/local/Cellar/kafka_2.10-0.8.1.1/
 cd $KAFKA_HOME
@@ -44,7 +44,7 @@ cd $KAFKA_HOME
 
 Step 2: - Start the Kafka server
 
-```text
+```bash
 
 cd $KAFKA_HOME
 ./bin/kafka-server-start.sh $KAFKA_HOME/config/server.properties
@@ -53,7 +53,7 @@ cd $KAFKA_HOME
 
 Step 3: Create the Kafka topic
 
-```text
+```bash
 
 cd $KAFKA_HOME
 ./bin/kafka-topics.sh --create --zookeeper localhost:2181 --replication-factor 1 --partitions 1 --topic kafka_queue

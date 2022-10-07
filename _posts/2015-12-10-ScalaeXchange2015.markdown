@@ -2,7 +2,8 @@
 title: Scala eXchange 2015 - Embracing the community
 layout: post
 author: Owen Rumney
-tags: [scala, community, conference]
+tags: [programming, conference]
+categories: [Conference, Programming]
 ---
 
 Today I'm at my first [Scala eXchange](https://skillsmatter.com/conferences/6862-scala-exchange-2015) conference - the 5th annual one to be precise.

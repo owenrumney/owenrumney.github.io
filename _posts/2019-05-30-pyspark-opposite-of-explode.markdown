@@ -2,8 +2,8 @@
 layout: post
 title: Combining rows into an array in pyspark
 description: Yeah, I know how to explode in Spark, but what is the opposite and how do I do it? HINT (collect_list)
-tags: [pyspark, python, spark, collect_list, explode]
-categories: [Programming]
+tags: [programming, spark]
+categories: [Programming, Big Data]
 ---
 
 ## Overview

@@ -2,8 +2,8 @@
 layout: post
 author: Owen Rumney
 title: TFL Cycling DataSet - Part 1
-tags: [python, programming, spark, learning, datasets]
-categories: [Spark, Programming]
+tags: [python, programming, spark, learning]
+categories: [Big Data, Programming, Learning]
 ---
 
 I'm hoping this will be a reasonably accurate account of my play with the [TfL Cycling DataSets](http://cycling.data.tfl.gov.uk).

@@ -1,9 +1,14 @@
 ---
 layout: post
 author: Owen Rumney
+date: 2013-09-27
 title: New blog, new platform
-tags: [blogging, platforms, general]
+description: Moving to a new platform for my blog
+image: '/assets/img/owen.png'
+tags: [blogging]
+categories: [Blogging]
 ---
+
 
 An interesting chain of events happened last week; [@thecodejunkie](http://twitter.com/thecodejunkie) relaunched his blog, I happen to follow his twitter feed and he happened to mention it.
 

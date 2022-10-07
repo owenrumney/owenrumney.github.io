@@ -2,7 +2,7 @@
 layout: post
 author: Owen Rumney
 title: Creating environment variables from the command line (Windows)
-tags: [windows, system, configuration]
+tags: [windows]
 categories: [SysAdmin]
 ---
 
@@ -14,8 +14,8 @@ Since Windows XP, setx has been available as an extra download, and more recentl
 
 To create a persistent STORM_HOME environment variable, use the following command. The /M sets it as a system variable rather than the default user variable.
 
-{% highlight sh %}
+```bash
 setx /M STORM_HOME d:\storm-latest
-{% endhighlight %}
+```
 
 There are a number of other options, do `setx /?` to see them.

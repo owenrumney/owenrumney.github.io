@@ -3,6 +3,7 @@ title: Refresh Linux mounts after changes made to /etc/fstab
 tags: [linux, fstab, hardware]
 layout: post
 author: Owen Rumney
+tags: [linux, sysadmin]
 categories: [SysAdmin]
 ---
 
@@ -10,6 +11,6 @@ When an update has been made to /etc/fstab the changes won't immediately and aut
 
 This can be done either by rebooting, which is a pain or just use the mount command
 
-{% highlight sh %}
+```bash
 mount -a
-{% endhighlight %}
+```

@@ -1,7 +1,8 @@
 ---
 layout: post
 author: Owen Rumney
-tags: [sharepoint, office 365]
+tags: [sharepoint]
+categories: [Office365]
 title: SharePoint and Office 365
 ---
 

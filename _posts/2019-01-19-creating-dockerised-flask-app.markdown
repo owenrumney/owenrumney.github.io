@@ -3,7 +3,8 @@ layout: post
 author: Owen Rumney
 title: Creating a simple Dockerised Flask App
 description: Walkthrough on the steps required to create a flask app that can run within a docker container
-tags: [docker, flask, python, tutorial]
+tags: [docker, programming]
+categories: [Containers, Programming]
 ---
 
 This post covers the steps to create a simple dockerised flask app to cover some of the basic steps required when creating a REST(ish) service that can be run as a Docker container.

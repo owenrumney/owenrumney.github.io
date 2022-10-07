@@ -2,7 +2,8 @@
 title: TMA470 first assignment returned
 layout: post
 author: Owen Rumney
-tags: [tma470, open university, tram project]
+tags: [open university, learning]
+categories: [Learning]
 ---
 
 I got the result and feedback for the first assignment of the final Open University project today. Its been a long week waiting for it, not least because a significant number of others on the course have been reporting back very low marks.

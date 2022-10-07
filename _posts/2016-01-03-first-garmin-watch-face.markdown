@@ -2,7 +2,7 @@
 title: First go at creating a Garmin watch face
 layout: post
 author: Owen Rumney
-tags: [monkey c, garmin, coding]
+tags: [programming]
 categories: [Programming]
 ---
 
@@ -104,8 +104,8 @@ Running in IntelliJ for me is a case of Shift+F10 and the Run Configuration load
 
 In the simulator you can set the levels of activity and change properties of the device such as battery status and GPS etc.
 
-![Steps in progress]({{ site.baseurl }}/images/steps_in_progress.png)
+![Steps in progres](../images/steps_in_progress.png)
 _Daily steps in progress_
 
-![Steps in progress]({{ site.baseurl }}/images/steps_complete.png)
+![Steps in progres](../images/steps_complete.png)
 _Daily steps in completed_

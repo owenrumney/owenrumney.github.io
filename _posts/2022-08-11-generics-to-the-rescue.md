@@ -4,11 +4,11 @@ title: Generics to the Rescue
 date: 2022-08-11 00:00:00
 image: '/assets/img/owen.png'
 description: A tale of performance improvements using Generics
-tags: [performance, generics, golang, programming]
+tags: [programming, go]
 categories: [Programming]
 twitter_text: A tale of performance improvements using Generics
 ---
-![Generics To the Rescue](../images/generics-to-the-rescue.png)
+![Generics To the Rescue]](../images/generics-to-the-rescue.png)
 
 ### A bit of background
 

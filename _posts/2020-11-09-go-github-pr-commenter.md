@@ -4,8 +4,8 @@ title: "PR Commit Commenting Library"
 date: 2020-11-09 00:00:00
 image: '/assets/img/owen.png'
 description: Go library to facilitate writing comments to Github PR commits. Write single or multiline comments using the output of static analysis
-tags: [github, go]
-categories:
+tags: [git, go]
+categories: [Programming]
 twitter_text: Using Go Github PR Commenter, automate your Github Comments
 ---
 
@@ -25,7 +25,7 @@ This is where [go-github-pr-commenter](https://github.com/owenrumney/go-github-p
 
 First, get the library;
 
-```shell
+```bash
 go get github.com/owenrumney/go-github-pr-commenter/commenter
 ```
 

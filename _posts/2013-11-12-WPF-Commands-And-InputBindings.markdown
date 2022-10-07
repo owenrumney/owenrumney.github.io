@@ -2,7 +2,8 @@
 layout: post
 author: Owen Rumney
 title: WPF Commands and Events with MVVM
-tags: [wpf commands, input bindings, windows programming]
+tags: [wpf, programming]
+categories: [Programming, .NET]
 ---
 
 I have been doing some revision on my WPF, particularly around ModelView-View-Model pattern. One thing that I've always found a bit difficult to get right is the handling of events on the window and getting them back to the view model.
@@ -14,17 +15,17 @@ In my current play project I decided to find a better way to achieve this and I 
 
 On my ViewModel I have a DelegateCommand called AddTicker which I pass delegates for the Execute and CanExecute,
 
-{% highlight csharp %}
+```csharp
 public ICommand AddTicker {get; private set;}
-{% endhighlight %}
+```
 
 to bind to this from a button is easy, and now the same can be said for a Key press using the following XAML;
 
-{% highlight xml  %}
+```xml
 <TextBox.InputBindings>
 <KeyBinding Key="Return" Command="{Binding AddTicker}"></KeyBinding>
 </TextBox.InputBindings>
-{% endhighlight %}
+```
 
 As an aside, it took me a while to remember how to get the CanExecuteChanged to fire without some ugly callback mechanism, I knew it involved a registration and it eventually came to me;
 
@@ -38,4 +39,4 @@ if (CanExecuteChanged != null)
 CanExecuteChanged(this, EventArgs.Empty);
 }
 }
-{% endhighlight %}
+```

@@ -3,8 +3,8 @@ layout: post
 author: Owen Rumney
 title: Bing of the Day revisited
 description: Walkthough of the steps required to move a bing of the day wallpaper borrower into a lambda script triggered by CloudWatch
-tags: [aws, bing, python]
-categories: [Amazon Web Services, Programming]
+tags: [aws, python, programming]
+categories: [AWS, Programming]
 ---
 
 Back in 2014 I wrote an [article about borrowing the bing wallpaper]({% post_url 2014-09-13-Update_Bing_Desktop_For_Mac %}) to use on my Macbook. Not long after that, I found that I was missing the odd "Bing of the Day" so I decided to run it in the cloud. 
@@ -24,7 +24,7 @@ First thing you're going to need is somewhere to store the images. I'm going to 
 
 In the AWS management console, go to the S3 service and create the new bucket, the create page should look like this;
 
-![Create the S3 Bucket for storing bing images]({{ site.baseurl }}/images/bing_create_bucket.png)
+![Create the S3 Bucket for storing bing image](../images/bing_create_bucket.png)
 
 ### Creating the Lambda Role
 
@@ -50,7 +50,7 @@ In the IAM service of the AWS Management console, create a new policy and switch
 
 The policy should look something like this; (you can ignore the error at the top of the screen shot)
 
-![Create a new policy to write to S3]({{ site.baseurl }}/images/bing_create_policy.png) 
+![Create a new policy to write to S](../images/bing_create_policy.png) 
 
 #### Creating the role
 
@@ -58,15 +58,15 @@ Now that the policy has been created, we need the role that Lambda will execute 
 
 Create a new role in the IAM service in AWS Management console. Ensure you select the service as Lambda to allow Lambda to assume the role.
 
-![Create the new role]({{ site.baseurl }}/images/bing_create_lambda_role.png) 
+![Create the new rol](../images/bing_create_lambda_role.png) 
 
 Next, attach the policy we created earlier, you can filter to find it
 
-![Create the new role]({{ site.baseurl }}/images/bing_attach_policy.png) 
+![Create the new rol](../images/bing_attach_policy.png) 
 
 Finally, save the policy with a unique name
 
-![Create the new role]({{ site.baseurl }}/images/bing_role_name.png) 
+![Create the new rol](../images/bing_role_name.png) 
 
 At this point, all of the plumbing is done to create the new Lambda function. Go to the Lambda service in AWS Management console.
 
@@ -75,7 +75,7 @@ For this function we're going to be starting a function from scratch. As the cod
 
 Create a new function and the first page should look something like this;
 
-![Create the new role]({{ site.baseurl }}/images/bing_new_function.png) 
+![Create the new rol](../images/bing_new_function.png) 
 
 Specify the new role that you've just created, it will allow the function to PUT our images into the specified bucket.
 
@@ -132,7 +132,7 @@ The lambda function can now be tested. We'll need an event to send so using the 
 
 Fill out the details for an empty event so it looks like this;
 
-![Create the test event]({{ site.baseurl }}/images/bing_test_event.png) 
+![Create the test even](../images/bing_test_event.png) 
 
 Now, when you press the `Test` button, it will send the empty event to trigger the lambda function, all being well, you'll find today's image in the specified S3 bucket.
 
@@ -140,7 +140,7 @@ Now, when you press the `Test` button, it will send the empty event to trigger t
 
 The intention was to move this from the laptop to run automatically within AWS. We now need to trigger this function to download once a day. To achieve this, we're going to use a CloudWatch trigger with a schedule of 24 hours.
 
-![Creating the CloudWatch rule]({{ site.baseurl }}/images/bing_configure_rule.png)
+![Creating the CloudWatch rul](../images/bing_configure_rule.png)
 
 Give the rule and name and save it. Our lambda function will now be triggered every 24hours to download the Bing of the day.
 
@@ -148,7 +148,7 @@ Give the rule and name and save it. Our lambda function will now be triggered ev
 
 The last thing to do is the routine download of the latest files. To do this I use the aws cli and the sync function. this will download anything not already on my machine;
 
-```shell
+```bash
 aws s3 sync s3://owensbingoftheday/2019 ~/Pictures/bing-wallpapers/2019
 ```
 

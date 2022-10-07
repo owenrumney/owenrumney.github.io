@@ -4,8 +4,8 @@ title: "Using cfsec - A Brief Guide"
 date: 2021-11-21 00:00:00
 image: '/assets/img/owen.png'
 description: A brief guide covering the basics of using cfsec to scan your CloudFormation files
-tags: [cloudformation, aws, scanning]
-categories:
+tags: [cloudformation, aws]
+categories: [AWS, Programming]
 twitter_text: Using cfsec to scan CloudFormation
 ---
 
@@ -60,13 +60,13 @@ There are a number of ways that we can run cfsec, we can [install locally](https
 
 To run locally we can do 
 
-```console
+```bash
 cfsec bucket.yaml
 ```
 
 **Running in Docker**
 
-```console
+```bash
 docker run --rm -v `pwd`:/src aquasec/cfsec /src
 ```
 
@@ -74,7 +74,7 @@ docker run --rm -v `pwd`:/src aquasec/cfsec /src
 
 However we've chosen to run it, we'll get the same results. It looks like I've missed two issues 
 
-![cfsec output](../images/cfsec-output-bucket.png)
+![cfsec output]](../images/cfsec-output-bucket.png)
 
 There is a `Medium` issue with Versioning not being enabled and there is a `High` issue where I have forgotten to enable encryption.
 
@@ -114,7 +114,7 @@ Resources:
 
 Now we get the result
 
-```console
+```bash
   0 potential problems detected.
 ```
 

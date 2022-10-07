@@ -2,7 +2,7 @@
 layout: post
 author: Owen Rumney
 title: Using yum history
-tags: [linux, yum]
+tags: [linux]
 categories: [SysAdmin]
 ---
 
@@ -14,20 +14,20 @@ My script on the new machine was the same as the script on the working machine s
 
 To get the history of yum commands use
 
-{% highlight sh %}
+```bash
 yum history
-{% endhighlight %}
+```
 
 which will give the output similar to;
 
-![yum history output]({{ site.baseurl }}/images/yum_history.png)
+![yum history outpu](../images/yum_history.png)
 
 Thankfully, from the dates I was able to work out the point that I had done the install. From this point you can look at a specific item, for example;
 
-{% highlight sh %}
+```bash
 yum history info 57
 {%endhighlight%}
 
 which will return more information about the command
 
-![yum history info for id 57]({{ site.baseurl }}/images/yum_history_info_57.png)
+![yum history info for id 5](../images/yum_history_info_57.png)

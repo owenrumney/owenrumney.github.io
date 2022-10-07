@@ -2,7 +2,7 @@
 layout: post
 author: Owen Rumney
 title: Quick introduction to pyspark
-tags: [pyspark, python, spark]
+tags: [python, spark]
 categories: [Programming, Spark]
 ---
 
@@ -12,7 +12,7 @@ One of the intentions is to limit bandwidth when transferring data to S3 the ide
 
 I'm using my Macbook and to keep things quick and easy I'm going to download a package with Hadoop and Spark then dump it in `/usr/share`
 
-```text
+```bash
 wget http://archive.apache.org/dist/spark/spark-1.0.2/spark-1.0.2-bin-hadoop2.tgz
 tar -xvf spark-1.0.2-bin-hadoop2.tgz
 mv spark-1.0.2-bin-hadoop2 /usr/share/spark-hadoop
@@ -21,7 +21,7 @@ mv spark-1.0.2-bin-hadoop2 /usr/share/spark-hadoop
 
 I'm going to create a folder to do my dev in under my home folder, to keep things clean I like to use [virtualenv](https://pypi.python.org/pypi/virtualenv)
 
-```text
+```bash
 cd ~/dev
 virtualenv pyspark
 cd pyspark
@@ -29,7 +29,7 @@ cd pyspark
 
 To start pyspark with IPYTHON we need to start it with some IPYTHON_OPTS
 
-```text
+```bash
 IPYTHON_OPTS="notebook" /usr/share/spark-hadoop/bin/pyspark
 ```
 

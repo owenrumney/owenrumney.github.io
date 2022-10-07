@@ -4,8 +4,8 @@ title: "Terraform Static Analysis with tfsec"
 date: 2020-10-11 00:00:00
 image: '/assets/img/owen.png'
 description: Security based static analysis for Terraform using tfsec
-tags: [tfsec, terraform, security, static-analysis]
-categories:
+tags: [terraform, tools, tfsec]
+categories: [Terraform, Tools]
 twitter_text: Security based static analysis for Terraform using tfsec
 ---
 
@@ -53,7 +53,7 @@ choco install tfsec
 
 ### Linux/everything else
 Alternatively, you can install using `go get` 
-```shell
+```bash
 go get -u github.com/tfsec/tfsec/cmd/tfsec
 ```
 

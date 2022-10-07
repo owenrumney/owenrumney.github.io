@@ -2,7 +2,7 @@
 layout: post
 title: Adding Help to a Makefile
 description: Add a quick help section to a Makefile
-tags: [make,documentation]
+tags: [make, documentation]
 categories: [SysAdmin]
 ---
 
@@ -64,7 +64,7 @@ Now we can run `make help` to get more information about the available targets.
 
 This will give us the result;
 
-```shell
+```bash
 $ make help
 Usage:
 

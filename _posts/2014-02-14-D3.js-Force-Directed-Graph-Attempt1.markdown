@@ -2,18 +2,19 @@
 title: First attempt at a Force Directed Graph
 layout: post
 author: Owen Rumney
-tags: [d3.js, javascript, open university, tm470, visualisation]
+tags: [programming, javascript, learning, open university]
+categories: [Programming, Learning]
 ---
 
 For the final project of my open university degree I am looking at creating an application to bring together a proprietary dataset of information about available workers and cross it with social media data.
 
 The project is in the early stages (very early) but I started playing with the graphing capabilities of D3 and some random data I made up about employees and their links.
 
-I'm sure there will be more to come, but this is what I have so far.r
+I'm sure there will be more to come, but this is what I have so far.
 
-![Example network diagram]({{ site.baseurl }}/images/network.png)
+![Example network diagra](../images/network.png)
 
-{% highlight javascript %}
+```javascript
 var width = 960,
 height = 500;
 
@@ -119,4 +120,4 @@ force.nodes(graph.nodes)
 
 });
 
-{% endhighlight %}
+```

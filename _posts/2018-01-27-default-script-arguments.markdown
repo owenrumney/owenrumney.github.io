@@ -2,7 +2,7 @@
 layout: post
 author: Owen Rumney
 title: Argument defaults in shell scripts
-tags: [shell, bash, scripting]
+tags: [bash]
 categories: [SysAdmin]
 ---
 
@@ -10,7 +10,7 @@ Regularly when writing a shell script I find that I want to be able to pass an a
 
 Default arguments can be used in scripts using the following simple syntax
 
-```shell
+```bash
 #!/bin/sh
 
 # example script to write to output folder
@@ -23,7 +23,7 @@ echo "some arbitrary process" > ${OUTPUT_PATH}/arbitrary_output.output
 
 This will either used the first parameter passed in for the output path or a default value of `/tmp/output` if that isn't provided
 
-```Shell
+```bash
 sh example_script.sh # outputs to /tmp/output
 
 sh example_script.sh /var/tmp/special # outputs to /var/tmp/special

@@ -15,7 +15,7 @@ To create the customer key click the **Create Key** button and follow through th
 
 You need a couple of libraries before you start, for testing I use [virtualenv](https://pypi.python.org/pypi/virtualenv)
 
-```text
+```bash
 bin/pip install boto3
 
 bin/pip install pycrypto

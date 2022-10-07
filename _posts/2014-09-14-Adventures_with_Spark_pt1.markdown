@@ -18,22 +18,22 @@ For now I just extracted it to a folder in Downloads;
 
 To start the Spark shell
 
-{% highlight sh %}
+```bash
 \$ cd ~/Downloads/spark-1.0.2-bin-hadoop2/bin
 ./spark-shell
-{% endhighlight %}
+```
 
 One of the key parts to Spark is the `SparkContext` which if you've done mapreduce seems to be similar to the `JobConf`. The SparkContext has all the required information about where to run the work and application details for view in the Spark UI web page.
 
 In the spark shell you can use the SparkContext `sc`
 
-{% highlight scala %}
+```scala
 
 scala> val sentence = "The quick brown fox jumps over the lazy dog"
 scala> val words = sc.parallelize(sentence)
 scala> words.count() // should return 9  
 scala> words.filter(\_.toLowerCase() == "the").count() // should return 2
 
-{% endhighlight %}
+```
 
 All this is doing is creating a string, splitting it into words and creating a Spark RDD with it. We can use the `Action` count() to find out how many words there are and we can use the filter() to create a new RDD with filtered results (in this case, filter to the word 'the')

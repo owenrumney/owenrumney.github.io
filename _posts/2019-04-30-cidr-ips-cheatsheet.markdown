@@ -2,7 +2,8 @@
 layout: post
 title: CIDR Cheatsheet for available IP Address
 description: Simple post with a cheatsheet table for CIDR block mask and available IP numbers
-tags: [networking, cheatsheet]
+tags: [sysadmin, networking]
+categories: [SysAdmin]
 notruncate: true
 ---
 
@@ -10,7 +11,7 @@ notruncate: true
 This is less of a post and more of a CIDR to mask cheatsheet to remind me how many IPs I get for a given block.
 
 | CIDR | Subnet          |     Total IPs |    Usable IPs |
-| ---- |:--------------- | -------------:| -------------:|
+| ---- | :-------------- | ------------: | ------------: |
 | /32  | 255.255.255.255 |             1 |             1 |
 | /31  | 255.255.255.254 |             2 |             0 |
 | /30  | 255.255.255.252 |             4 |             2 |

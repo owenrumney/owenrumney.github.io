@@ -3,8 +3,8 @@ layout: post
 author: Owen Rumney
 title: RefreshingAWSCredentials with .NET
 description: Steps required to handle refreshing AWS credentials when using the AWS .NET SDK
-tags: [aws, c#, csharp, .net aws sdk]
-categories: [Amazon Web Services, Programming]
+tags: [aws, programming]
+categories: [AWS, Programming]
 ---
 
 Where I am currently working we have Single Sign On for AWS API calls and need to use task accounts to connect and get temporary credentials. To that end, its not very easy to have long running processes making calls to AWS API's such as S3 and SQS.

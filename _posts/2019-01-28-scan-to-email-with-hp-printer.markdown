@@ -2,7 +2,8 @@
 layout: post
 title: Using Amazon SES with HP Scan-to-Email Printer
 description: Walkthrough for using Amazon Simple Email Service to relay Scan-to-email messages
-tags: [aws, ses, simple email service,  hp printer, email relay, smtp]
+tags: [aws, sysadmin]
+categories: [SysAdmin]
 ---
 
 ## Overview
@@ -27,31 +28,31 @@ Under `Identity Management` select `Email Addresses` then click the `Verify a Ne
 
 This will being up the dialog where you can specify the email you want to approve.
 
-![Verify an Email Address dialog]({{ site.baseurl }}/images/verify_email_address.png)
+![Verify an Email Address dialo](../images/verify_email_address.png)
 
 Once you've submitted this, you'll get an email to the specified address which you need to validate by clicking the link in the email. You should then see the email verified as below;
 
-![Verified Email Address]({{ site.baseurl }}/images/verified_email_addresses.png)
+![Verified Email Addres](../images/verified_email_addresses.png)
 
 ### Creating the SMTP credentials
 
 The next thing you need to do is create some credentials with which to relay through the SMTP server with. Clicking on `SMTP Settings` under the `Email Sending` section will show you the details - as below;
 
-![SMTP Settings]({{ site.baseurl }}/images/ses_smtp_relay_details.png)
+![SMTP Setting](../images/ses_smtp_relay_details.png)
 
 Click on the `Create My SMTP Credentials` button and either accept the IAM user name or change to something more appropriate
 
-![SES IAM User]({{ site.baseurl }}/images/create_ses_creds.png)
+![SES IAM Use](../images/create_ses_creds.png)
 
 Clicking `Create` will generate the new credentials for the IAM user which you can download and make a note of.
 
-![IAM User Credentials]({{ site.baseurl }}/images/creds_download.png)
+![IAM User Credential](../images/creds_download.png)
 
 
 ### Configuring the Printer
 
 Finally, we can update the configuration in the printer. In my case, the screen looks something like this. 
 
-![MFP Email Config Screen]({{ site.baseurl }}/images/mfp_email_config.png)
+![MFP Email Config Scree](../images/mfp_email_config.png)
 
 Last step is to do a test scan and make sure it gets routed through your email.

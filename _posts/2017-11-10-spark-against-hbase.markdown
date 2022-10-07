@@ -2,8 +2,8 @@
 layout: post
 author: Owen Rumney
 title: Running Spark against HBase
-tags: [programming, spark, hbase, scala]
-categories: [Spark, Programming]
+tags: [programming, spark, hbase]
+categories: [Big Data, Programming]
 ---
 
 Its reasonably easy to run a Spark job against HBase using the `newAPIHadoopRDD` available on the `SparkContext`.
@@ -40,7 +40,7 @@ def createConfig(zookeeper: String, hbaseParentNode: String, tableName: String):
 
 The `SparkContext` is going to be the main engine of the job. At a minimum we just need to have the `SparkConf` with the job name.
 
-```csharp
+```scala
 val conf = new SparkConf().setAppName(jobname)
 val spark = new SparkContext(conf)
 ```
@@ -49,7 +49,7 @@ val spark = new SparkContext(conf)
 
 We have a `HBaseConfiguration` and a `SparkContext` so now we can create the `newAPIHadoopRDD`. The `newAPIHadoopRDD` needs the config with the table name and namespace and needs to know to use a `TableInputFormat` for the `InputFormat`. We're expecting the class of the keys to be `ImmutableBytesWritable` and for the values a `Result`.
 
-```csharp
+```scala
 val zookeeper = "hbase-box1:2181,hbase-box2:2181"
 val hbaseParentNode = "/hbase"
 val tableName = "credit_data:accounts"
@@ -67,17 +67,17 @@ val hBaseRDD = spark.newAPIHadoopRDD(config,
 
 Thats all we need, we can now run our job. Its contrived, but consider the following table.
 
-| key              | d:cl | d:cb |
-| ---------------- | ------------- | ---------------- |
-| 1234678838472938 | 1000.00       | 432.00           |
-| 9842897418374027 | 100.00        | 95.70            |
-| 7880927412346013 | 600.00        | 523.30           |
+| key              | d:cl    | d:cb   |
+| ---------------- | ------- | ------ |
+| 1234678838472938 | 1000.00 | 432.00 |
+| 9842897418374027 | 100.00  | 95.70  |
+| 7880927412346013 | 600.00  | 523.30 |
 
 In our table, we have a key with the credit card number and a `ColumnFamily` of `d:` which holds the `column_qualifiers` `cl (credit limit)` and `cb (current balance)`.
 
 For this job, I want to know all the accounts which are at >90% of their available credit.
 
-```csharp
+```scala
 case class Account(ccNumber: String, limit: Double, balance: Double)
 
 val accountsRDD = hBaseRDD.map(r => {
@@ -91,7 +91,7 @@ val accountsRDD = hBaseRDD.map(r => {
 
 That gives us a nicely typed RDD of Accounts we can use to do our filtering on.
 
-```csharp
+```scala
 val eligibleAccountsRDD = accountRDD.filter(a => {
     (a.balance / a.limit) > 0.9
 })
@@ -99,7 +99,7 @@ val eligibleAccountsRDD = accountRDD.filter(a => {
 
 That gives the matching accounts which we can now extract the account number for and save to disk.
 
-```csharp
+```scala
 val accountNoRDD = eligibleAccountsRDD.map(a => {
     a.ccNumber
 }).saveAsTextFile("/save/location")

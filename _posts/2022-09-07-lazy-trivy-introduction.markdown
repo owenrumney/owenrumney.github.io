@@ -4,8 +4,8 @@ title: Introducing lazytrivy
 date: 2022-09-07 00:00:00
 image: '/assets/img/owen.png'
 description: Using lazytrivy as a Trivy wrapper to simplify usage
-tags: [scanning, tui, UI, golang, programming]
-categories: [Scanning]
+tags: [go programming, tools]
+categories: [Programming]
 twitter_text: Scanning for vulnerabilities just got lazier
 ---
 
@@ -13,7 +13,7 @@ twitter_text: Scanning for vulnerabilities just got lazier
 
 #### View `lazytrivy` on [GitHub](https://github.com/owenrumney/lazytrivy){:target="_blank" }
 
-![lazytrivy](https://github.com/owenrumney/lazytrivy/blob/master/.github/images/scan_all.png?raw=true)
+![lazytrivy](https://github.com/owenrumney/lazytrivy/blob/master/.git](../images/scan_all.png?raw=true)
 
 [Trivy](https://trivy.dev) is the go to scanner for vulnerabilities and is rapidly becoming the go to for all your scanning needs.
 
@@ -45,21 +45,21 @@ Trivy is released as a binary or a Docker image. In order to support Windows use
 
 Choose an image from the side menu on the left and scan for vulnerbalities. 
 
-![Scan an image](https://github.com/owenrumney/lazytrivy/blob/master/.github/images/scan_individual_images.gif?raw=true)
+![Scan an image](https://github.com/owenrumney/lazytrivy/blob/master/.git](../images/scan_individual_images.gif?raw=true)
 
 
 #### All Images
 
 Alternative, you can scan all the images on the machine for a summary list that can be navigated through.
 
-![All Image Scanning](https://github.com/owenrumney/lazytrivy/blob/master/.github/images/scan_all_images.gif?raw=true)
+![All Image Scanning](https://github.com/owenrumney/lazytrivy/blob/master/.git](../images/scan_all_images.gif?raw=true)
 
 
 #### Remote Images
 
 For images not on your machine, no problem - you can scan a remote image by pressing `r`
 
-![Remote Image scanning](https://github.com/owenrumney/lazytrivy/blob/master/.github/images/scan_remote_image.gif?raw=true)
+![Remote Image scanning](https://github.com/owenrumney/lazytrivy/blob/master/.git](../images/scan_remote_image.gif?raw=true)
 
 The image will be scanned without needing to take up storage on your machine. You still get the same detailed results.
 
@@ -75,7 +75,7 @@ Quickly switch to AWS mode by pressing `w` and you can scan accounts. If you hav
 
 For this to work, you will need to have either `AWS` environment variables set or valid credentials in your `.aws` folder by using the `awscli`, `saml2aws` or similar.
 
-![Scanning AWS](https://github.com/owenrumney/lazytrivy/blob/master/.github/images/scan_aws_account.gif?raw=true)
+![Scanning AWS](https://github.com/owenrumney/lazytrivy/blob/master/.git](../images/scan_aws_account.gif?raw=true)
 
 Scanning takes a short while depending on the size of the account, but eventually you will get a service list on the left that you can navigate through.
 
@@ -93,7 +93,7 @@ Alternatively, you can start `lazytrivy` in file system mode using
 lazytrivy fs /path/to/scan
 ```
 
-![Scanning File System](https://github.com/owenrumney/lazytrivy/blob/master/.github/images/scan_filesystem.gif?raw=true)
+![Scanning File System](https://github.com/owenrumney/lazytrivy/blob/master/.git](../images/scan_filesystem.gif?raw=true)
 
 
 ### Issues, Comments, Suggestions

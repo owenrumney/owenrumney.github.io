@@ -3,7 +3,7 @@ layout: post
 author: Owen Rumney
 title: Using AWS Simple Email Service with Oozie in Cloudera
 tags: [aws, cloudera, linux]
-categories: [Big Data, Programming, Amazon Web Services]
+categories: [Big Data, Programming, AWS]
 ---
 
 I've moved to a new role where I will be doing a lot more "devops" type work which hopefully comes with more interesting subjects to start writing about.

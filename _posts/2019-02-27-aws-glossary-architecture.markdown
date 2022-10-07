@@ -2,8 +2,8 @@
 layout: post
 title: How it works - www.aws-glossary.info
 description: Overview of how the www.aws-glossary.info website works
-tags: [aws, architecture, glossary]
-category: Amazon Web Services
+tags: [aws, tools]
+category: [AWS]
 ---
 
 I recently posted an entry [announcing www.aws-glossary.info]({% post_url 2019-02-21-aws-glossary-info %}). In this post I want to cover how it actually works.
@@ -22,7 +22,7 @@ The logical diagram below details the basic structure of the application. The co
 | Lambda            | Python lambda function to get the latest documentation data and store in a neat JSON file   |
 | CloudWatch Events | Used to trigger the lambda function                                                         |
 
-![Basic Architecture Diagram]({{ site.baseurl }}/images/aws_glossary_architecture.png)
+![Basic Architecture Diagra](../images/aws_glossary_architecture.png)
 
 ## User Interface
 

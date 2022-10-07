@@ -4,8 +4,8 @@ title: "Running tfsec as a Github Action"
 date: 2020-11-07 00:00:00
 image: '/assets/img/owen.png'
 description: Running tfsec as a Github Action; adding comments to your pull requests automatically
-tags: [tfsec, terraform, security, static-analysis, github actions, github, go]
-categories:
+tags: [tfsec, terraform, go, git, tools]
+categories: [Programming]
 twitter_text: Running tfsec as a Github Action
 ---
 
@@ -32,7 +32,7 @@ This bucket has logging, but the definition doesn't set up encryption on the buc
 
 When the PR is committed, the Github Action runs and comments directly to the PR has failed the tfsec check. Reviewers can now quickly see the issues and act accordingly.
 
-![Failed tfsec check]({{ site.baseurl }}/images/tfsec-pr-committer.png)
+![Failed tfsec chec](../images/tfsec-pr-committer.png)
 
 ## Configuring your project
 
@@ -68,17 +68,17 @@ A quick note on `secrets.GITHUB_TOKEN` - this is created automatically for you w
 
 Now, when you go to the `Actions` tab in the Github page for your repo, you can see the action which will run on PR commit.
 
-![Action Tab]({{ site.baseurl }}/images/actions_tab.png)
+![Action Ta](../images/actions_tab.png)
 
 When the PR has a commit or is closed and reopened, the Github Action will run and add the comment, as below
 
-![Failed tfsec check]({{ site.baseurl }}/images/tfsec-pr-committer.png)
+![Failed tfsec chec](../images/tfsec-pr-committer.png)
 
 As you can see in the comment, this is a multi line comment. Something is missing from the definition so the error spans the entire `aws_s3_bucket` block.
 
 When there is a specific issue, for example an attribute is set to a value it shouldn't be, the comment is scoped to the single line. This can be seen in the image below;
 
-![Failed tfsec check]({{ site.baseurl }}/images/single_line_pr_commit.png)
+![Failed tfsec chec](../images/single_line_pr_commit.png)
 
 ## Shameless Plug
 

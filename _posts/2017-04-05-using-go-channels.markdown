@@ -2,7 +2,8 @@
 layout: post
 author: Owen Rumney
 title: Go routines and channels
-tags: [go, golang, coding]
+tags: [go, programming]
+categories: [Programming]
 ---
 
 I'm having a bit of a dabble with Go, as a by product of working with Elastic Search beats.

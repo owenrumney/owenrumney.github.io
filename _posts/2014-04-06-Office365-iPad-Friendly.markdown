@@ -2,14 +2,15 @@
 title: Office365 and SharePoint iPad Friendly
 layout: post
 author: Owen Rumney
-tags: [office 365, sharepoint, ipad, css]
+tags: [sharepoint]
+categories: [Office365]
 ---
 
 I have been doing some work for a company who have a user base who primarily use iPads to access the SharePoint site. There was a requirement to allow those users to easily access the team site without getting their screens filled with the quick launch and the bloated title.
 
 Initially, I solved this using by using JavaScript to set the page to full screen;
 
-{% highlight javascript %}
+```javascript
 
 window.onload = function () {
 
@@ -32,7 +33,7 @@ window.onload = function () {
 
 };
 
-{% endhighlight %}
+```
 
 The problem with this approach was the short delay from the page loading to the screen resizing to remove the side bar etc which was undesirable.
 
@@ -67,4 +68,4 @@ To achieve this, I looked at what the SharePoint `SetFullScreenMode` function ac
 	}
 </style>
 
-{% endhighlight %}
+```
