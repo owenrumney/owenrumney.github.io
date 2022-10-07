@@ -245,7 +245,7 @@ kubectl port-forward -n monitoring prometheus-deployment-6559cbc88b-9m9hv 8080:9
 
 Now if we browse to `http://localhost:8080` we can see the Prometheus dashboard.
 
-![Prometheus Dashboard]](../images/prometheus_dashboard.png)
+![Prometheus Dashboard](../images/prometheus_dashboard.png)
 
 
 ## Node Exporter

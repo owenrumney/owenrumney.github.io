@@ -8,7 +8,7 @@ tags: [programming, go]
 categories: [Programming]
 twitter_text: A tale of performance improvements using Generics
 ---
-![Generics To the Rescue]](../images/generics-to-the-rescue.png)
+![Generics To the Rescue](../images/generics-to-the-rescue.png)
 
 ### A bit of background
 

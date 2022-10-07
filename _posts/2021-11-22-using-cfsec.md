@@ -74,7 +74,7 @@ docker run --rm -v `pwd`:/src aquasec/cfsec /src
 
 However we've chosen to run it, we'll get the same results. It looks like I've missed two issues 
 
-![cfsec output]](../images/cfsec-output-bucket.png)
+![cfsec output](../images/cfsec-output-bucket.png)
 
 There is a `Medium` issue with Versioning not being enabled and there is a `High` issue where I have forgotten to enable encryption.
 
