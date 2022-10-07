@@ -1,7 +1,7 @@
 ---
 layout: post
 title: Lightning introduction to Redis Graph
-date: 2022-09-26 00:00:00
+date: 2022-10-06 00:00:00
 image: '/assets/img/owen.png'
 description: A lightning intro to Redis Graph from a nights playing
 tags: [graph, learning]
