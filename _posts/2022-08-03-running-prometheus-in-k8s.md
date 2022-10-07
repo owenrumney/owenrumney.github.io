@@ -372,4 +372,4 @@ We can see a number of metrics now in the metrics explorer. Try adding the expre
 
 Over a period of time, this will give you a graph of free memory for the nodes in your cluster.
 
-![Node Exporter Memory Metrics](../image/../images/prometheus_node_exporter.png)
+[![Node Exporter Memory Metrics](../image/../images/prometheus_node_exporter.png)](../image/../images/prometheus_node_exporter.png){:target="_blank"}
