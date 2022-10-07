@@ -26,7 +26,7 @@ Thankfully, from the dates I was able to work out the point that I had done the 
 
 ```bash
 yum history info 57
-{%endhighlight%}
+```
 
 which will return more information about the command
 

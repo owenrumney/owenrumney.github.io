@@ -13,8 +13,7 @@ If the DisplayLevel is set to OnDemand for SharePoint 2010 then the behaviour wi
 
 ####Activating in PowerShell
 
-{% highlight powershell %}
-
+```powershell
 $d = [Microsoft.SharePoint.Administration.SPWebService]::ContentService.DeveloperDashboardSettings
 $d.DisplayLevel = 'OnDemand'
 $d.TraceEnabled = $true
@@ -25,7 +24,6 @@ $d.TraceEnabled = $true
 ####Activatin using command line and stsadm
 
 ```bash
-
 stsadm -o setproperty -pn developer-dashboard -pv OnDemand
 
 ```

@@ -29,7 +29,7 @@ to bind to this from a button is easy, and now the same can be said for a Key pr
 
 As an aside, it took me a while to remember how to get the CanExecuteChanged to fire without some ugly callback mechanism, I knew it involved a registration and it eventually came to me;
 
-{% highlight csharp table %}
+```csharp
 CommandManager.RequerySuggested += (s, e) => RaiseCanExecuteChanged();
 
 public void RaiseCanExecuteChanged()
