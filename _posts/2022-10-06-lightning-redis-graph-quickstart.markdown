@@ -107,7 +107,7 @@ Paste this snippet into the query window;
 CREATE (p1:Person{name:"Rod", gender: "M"}),
        (p2:Person{name:"Jane", gender: "F"}),
        (p3:Person{name:"Freddy", gender: "M"}),
-       (p4:Person{name:"Jeffery", gender: "M"})
+       (p4:Person{name:"Jeffrey", gender: "M"})
 ```
 
 All being well, we've added 4 people to the database and we can visualise them with a simple `MATCH` command
@@ -128,8 +128,8 @@ First things first - `Rod` and `Freddy` are brothers
 
 ```sql
 MATCH (p1:Person{name:"Rod"}), (p2:Person{name:"Freddy"})
-CREATE (p1)-[:Related{relationship:"brothers"}]->(p2)
-CREATE (p2)-[:Related{relationship:"brothers"}]->(p1)
+CREATE (p1)-[:Related{relationship:"brother"}]->(p2)
+CREATE (p2)-[:Related{relationship:"brother"}]->(p1)
 ```
 
 `Jane` and `Freddy` are married
@@ -139,10 +139,10 @@ CREATE (p1)-[:Related{relationship:"spouse"}]->(p2)
 CREATE (p2)-[:Related{relationship:"spouse"}]->(p1)
 ```
 
-And `Jane`'s father is `Jeffery`
+And `Jane`'s father is `Jeffrey`
 
 ```sql
-MATCH (p1:Person{name:"Jeffery"}), (p2:Person{name:"Jane"})
+MATCH (p1:Person{name:"Jeffrey"}), (p2:Person{name:"Jane"})
 CREATE (p1)-[:Related{relationship:"father"}]->(p2)
 CREATE (p2)-[:Related{relationship:"daughter"}]->(p1)
 ```
