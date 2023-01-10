@@ -21,7 +21,7 @@ The only thing you need to get started is Docker - I'm going to be launching Red
 
 Lets start with the compose file, this is just straight forward yaml representation of what we want to achieve. In its simplest form, this will work;
 
-```yaml
+```yml
 version: '3.9'
 services:
   redis:

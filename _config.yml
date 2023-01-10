@@ -22,6 +22,8 @@ social:
 
 markdown: kramdown
 highlighter: rouge
+kramdown:
+  input: GFM
 permalink: /:title/
 
 compress_html:
@@ -46,6 +48,9 @@ twitter:
 
 plugins:
   - jekyll-seo-tag
+  - jekyll-remote-theme
+
+remote_theme: owenrumney/jekylltheme
 
 exclude:
   [
