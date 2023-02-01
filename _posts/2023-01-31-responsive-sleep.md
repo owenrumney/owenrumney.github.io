@@ -1,7 +1,7 @@
 ---
 layout: post
 title: Sleeping responsively
-date: 2023-02-01 00:00:00
+date: 2023-01-31 00:00:00
 image: '/assets/img/owen.png'
 description: Handle context cancellation during a sleep
 tags: [go, learning]
