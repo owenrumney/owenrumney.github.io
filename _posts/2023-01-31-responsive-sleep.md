@@ -20,15 +20,14 @@ func Start () {
 
     // create a channel for signals and listen for SIGINT and SIGTERM
     c := make(chan os.Signal, 1)
-	signal.Notify(c, os.Interrupt, syscall.SIGTERM)
+    signal.Notify(c, os.Interrupt, syscall.SIGTERM)
     // cancel the context when we receive a signal
-	go func() {
-			<-c
-			cancel()
+    go func() {
+	<-c
+		cancel()
 	}()
 
     poll(ctx)
-
 }
 
 func poll(ctx context.Context) {
@@ -68,15 +67,14 @@ func Start () {
 
     // create a channel for signals and listen for SIGINT and SIGTERM
     c := make(chan os.Signal, 1)
-	signal.Notify(c, os.Interrupt, syscall.SIGTERM)
+    signal.Notify(c, os.Interrupt, syscall.SIGTERM)
     // cancel the context when we receive a signal
-	go func() {
-			<-c
-			cancel()
+    go func() {
+	<-c
+		cancel()
 	}()
 
     poll(ctx)
-
 }
 
 func poll(ctx context.Context) {
