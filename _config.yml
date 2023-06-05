@@ -5,8 +5,8 @@ baseurl: "" # the subpath of your site, e.g. /blog
 url: "https://www.owenrumney.co.uk"
 author: Owen Rumney
 username: Owen Rumney
-user_description: Open Source Engineer
-user_title: Open Source Engineer
+user_description: Software Engineer
+user_title: Software Engineer
 email: owen@owenrumney.co.uk
 twitter_username: owen_rumney
 github_username: owenrumney
