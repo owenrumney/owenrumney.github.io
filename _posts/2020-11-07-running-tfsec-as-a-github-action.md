@@ -2,14 +2,14 @@
 layout: post
 title: "Running tfsec as a Github Action"
 date: 2020-11-07 00:00:00
-image: '/assets/img/owen.png'
+image: "/assets/img/owen.png"
 description: Running tfsec as a Github Action; adding comments to your pull requests automatically
 tags: [tfsec, terraform, go, git, tools]
 categories: [Programming]
 twitter_text: Running tfsec as a Github Action
 ---
 
-In October 2020, the [Thoughtworks Tech Radar](https://www.thoughtworks.com/radar/tools/tfsec){:target="_blank"} promoted [tfsec](https://tfsec.dev){:target="_blank"} to Trial status. In the past few months, there has been a flurry of activity to improve performance, rewrite the parsing and add new features.
+In October 2020, the [Thoughtworks Tech Radar](https://www.thoughtworks.com/radar/tools/tfsec){:target="\_blank"} promoted [tfsec](https://tfsec.dev){:target="\_blank"} to Trial status. In the past few months, there has been a flurry of activity to improve performance, rewrite the parsing and add new features.
 
 One of the recent additions is a Github Action that will process your Github Pull Request commits and add comments where there are `tfsec` failures.
 
@@ -38,31 +38,32 @@ When the PR is committed, the Github Action runs and comments directly to the PR
 
 With Github Actions it is now incredibly easy to add this check to your repositories quickly.
 
-The tfsec PR Commenter is [available in the Marketplace](https://github.com/marketplace/actions/run-tfsec-pr-commenter){:target="_blank"}
+The tfsec PR Commenter is [available in the Marketplace](https://github.com/marketplace/actions/run-tfsec-pr-commenter){:target="\_blank"}
 
 The steps are quite simple;
 
 1. In the root of the project there must be a `.github/workflows` directory
 2. Create a new file called something like `tfsec_pr_commenter.yml` - the only requirement being that it has the `yml` suffix.
 3. The content of the file should be as below
-    ```yaml
-    name: tfsec-pr-commenter
-    on:
-      pull_request:
-    jobs:
-      tfsec_commenter:
-        name: tfsec PR commenter
-        runs-on: ubuntu-latest
 
-        steps:
-          - name: Clone repo
-            uses: actions/checkout@master
+   ```yaml
+   name: tfsec-pr-commenter
+   on:
+     pull_request:
+   jobs:
+     tfsec_commenter:
+       name: tfsec PR commenter
+       runs-on: ubuntu-latest
 
-          - name: tfsec commenter
-            uses: tfsec/tfsec-pr-commenter-action@main
-            with:
-              github_token: {% raw %}${{ secrets.GITHUB_TOKEN }}{% endraw %}
-    ```
+       steps:
+         - name: Clone repo
+           uses: actions/checkout@master
+
+         - name: tfsec commenter
+           uses: tfsec/tfsec-pr-commenter-action@main
+           with:
+             github_token: {% raw %}${{ secrets.GITHUB_TOKEN }}{% endraw %}
+   ```
 
 A quick note on `secrets.GITHUB_TOKEN` - this is created automatically for you when you start using Actions. Additional secrets can be added in the Settings of the project repo, but this one is all you need.
 
@@ -84,7 +85,7 @@ When there is a specific issue, for example an attribute is set to a value it sh
 
 The commenting library used in the action is `owenrumney/go-github-pr-commenter` - this can be used by pretty much any CI process to add comments to PRs in Github with a very simple interface;
 
-```golang
+```go
 formattedErrorMessage := `
 tfsec check AWS017 failed.
 

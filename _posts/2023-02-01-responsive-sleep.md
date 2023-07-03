@@ -2,16 +2,16 @@
 layout: post
 title: Sleeping responsively
 date: 2023-02-01 00:00:00
-image: '/assets/img/owen.png'
+image: "/assets/img/owen.png"
 description: Handle context cancellation during a sleep
 tags: [go, learning]
 categories: [programming]
 twitter_text: Handle context cancellation during a sleep
 ---
 
-How do you have an long polling mechanism that can be cancelled even during its sleep? THis is a question I found myself facing recently with a CLI app that is polling AWS Cloud Watch
+How do you have a long polling mechanism that can be cancelled even during it's sleep? THis is a question I found myself facing recently with a CLI app that is polling AWS Cloud Watch
 
-Lets say you have a function that looks like this:
+Let's say you have a function that looks like this:
 
 ```go
 func Start () {
@@ -20,14 +20,15 @@ func Start () {
 
     // create a channel for signals and listen for SIGINT and SIGTERM
     c := make(chan os.Signal, 1)
-    signal.Notify(c, os.Interrupt, syscall.SIGTERM)
+	signal.Notify(c, os.Interrupt, syscall.SIGTERM)
     // cancel the context when we receive a signal
-    go func() {
-	<-c
-		cancel()
+	go func() {
+			<-c
+			cancel()
 	}()
 
     poll(ctx)
+
 }
 
 func poll(ctx context.Context) {
@@ -67,14 +68,15 @@ func Start () {
 
     // create a channel for signals and listen for SIGINT and SIGTERM
     c := make(chan os.Signal, 1)
-    signal.Notify(c, os.Interrupt, syscall.SIGTERM)
+	signal.Notify(c, os.Interrupt, syscall.SIGTERM)
     // cancel the context when we receive a signal
-    go func() {
-	<-c
-		cancel()
+	go func() {
+			<-c
+			cancel()
 	}()
 
     poll(ctx)
+
 }
 
 func poll(ctx context.Context) {

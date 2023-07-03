@@ -2,24 +2,24 @@
 layout: post
 title: "PR Commit Commenting Library"
 date: 2020-11-09 00:00:00
-image: '/assets/img/owen.png'
+image: "/assets/img/owen.png"
 description: Go library to facilitate writing comments to Github PR commits. Write single or multiline comments using the output of static analysis
 tags: [git, go]
 categories: [Programming]
 twitter_text: Using Go Github PR Commenter, automate your Github Comments
 ---
 
-A few weeks ago I wrote [tfsec-pr-commenter-action](https://github.com/tfsec/tfsec-pr-commenter-action){:target="_blank"} , this is a ready to go Github Action that you can drop into your Terraform code repository and have each PR checked for tfsec security issues. 
+A few weeks ago I wrote [tfsec-pr-commenter-action](https://github.com/tfsec/tfsec-pr-commenter-action){:target="\_blank"} , this is a ready to go Github Action that you can drop into your Terraform code repository and have each PR checked for tfsec security issues.
 
-If you don't know anything about tfsec, you can learn more at [https://tfsec.dev](https://tfsec.dev){:target="_blank"} 
+If you don't know anything about tfsec, you can learn more at [https://tfsec.dev](https://tfsec.dev){:target="\_blank"}
 
 ## The PR Commenter
 
-It occurred to me shortly after adding it to some of our projects that the underlying commenter code could be used to comment using any static analysis tool with output. 
+It occurred to me shortly after adding it to some of our projects that the underlying commenter code could be used to comment using any static analysis tool with output.
 
 Of course, the wrapping action code will be needed to un-marshall the analysis results but the creation of comments could be deferred to another library.
 
-This is where [go-github-pr-commenter](https://github.com/owenrumney/go-github-pr-commenter){:target="_blank"}  comes in. 
+This is where [go-github-pr-commenter](https://github.com/owenrumney/go-github-pr-commenter){:target="\_blank"} comes in.
 
 ## Usage
 
@@ -31,7 +31,7 @@ go get github.com/owenrumney/go-github-pr-commenter/commenter
 
 Then you need to import the library into your Github Action, or where ever it is being used.
 
-```golang
+```go
 import (
   "github.com/owenrumney/go-github-pr-commenter/commenter"
 )
@@ -39,7 +39,7 @@ import (
 
 You will need a `GITHUB_TOKEN` to write the comments - if you're using Github Actions you get one created for you when you activate Actions. If you are passing the `GITHUB_TOKEN` as a parameter to the Action called `GITHUB_TOKEN`, it is going to be available to your code as `INPUT_GITHUB_TOKEN`.
 
-```golang
+```go
 token := os.Getenv("INPUT_GITHUB_TOKEN")
 if len(token) == 0 {
   return errors.New("Couldn't find the token")
@@ -48,7 +48,7 @@ if len(token) == 0 {
 
 Now that we have a token, we can create the Commenter
 
-```golang
+```go
 owner := "owenrumney"
 repo := "go-github-pr-commenter"
 prNo := 1
@@ -62,12 +62,11 @@ if err != nil {
 
 We now have a commenter, on creation it checked that it had connectivity and that the PR exists so you would have an error if this wasn't the case.
 
-
 Let's assume your static analysis results are in a slice call `analysisResults` - you can now iterate over them, and create the comments;
 
 Lets say the `AnalysisResult` looks like this;
 
-```golang
+```go
 type AnalysisResult struct {
   Filepath  string
   Comment   string
@@ -78,7 +77,7 @@ type AnalysisResult struct {
 
 Now we iterate over the slice
 
-```golang
+```go
 for _, r := analysisResults {
   err = c.WriteMultiLineComment(r.Filepath, r.Comment, r.StartLine, r.EndLine)
 }

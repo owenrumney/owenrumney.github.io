@@ -19,3 +19,9 @@ gem "webrick", "~> 1.7"
 gem "jekyll-figure", "~> 0.1.0"
 
 gem "jekyll-remote-theme", "~> 0.4.3"
+
+gem "jekyll-gist", "~> 1.5"
+
+gem "jekyll-paginate", "~> 1.1"
+
+gem "jekyll-feed", "~> 0.17.0"

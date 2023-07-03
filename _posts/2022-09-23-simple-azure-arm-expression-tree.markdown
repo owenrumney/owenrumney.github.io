@@ -2,7 +2,7 @@
 layout: post
 title: Parsing Azure ARM functions in Go
 date: 2022-09-23 00:00:00
-image: '/assets/img/owen.png'
+image: "/assets/img/owen.png"
 description: A simplified guide to parsing function expressions in Azure ARM templates
 tags: [go, programming]
 categories: [Programming]
@@ -11,9 +11,9 @@ twitter_text: A simplified guide to parsing function expressions in Azure ARM te
 
 ### An introduction
 
-For those who don't know, I'm one of the original creators of [tfsec](https://tfsec.dev){:target="_blank"} and I now work on [Trivy](https://trivy.dev){:target="_blank"} as an open source engineer at [Aqua](https://aquasec.com){:target="_blank"}. Together with [@liam_galvin](https://twitter.com/liam_galvin){:target="_blank"} I am working on adding scanning support for `Azure ARM Templates` and ultimately `bicep` to Trivy.
+For those who don't know, I'm one of the original creators of [tfsec](https://tfsec.dev){:target="\_blank"} and I now work on [Trivy](https://trivy.dev){:target="\_blank"} as an open source engineer at [Aqua](https://aquasec.com){:target="\_blank"}. Together with [@liam_galvin](https://twitter.com/liam_galvin){:target="\_blank"} I am working on adding scanning support for `Azure ARM Templates` and ultimately `bicep` to Trivy.
 
-`Azure ARM Templates` are written in JSON and define the infrastructure that is going to be applied when the template is applied to the Azure resource group. In the same way we scan Terraform and CloudFormation, we need to parse the template into our common objects from [defsec](https://github.com/aquasecurity/defsec){:target="_blank"}; these abstractions allow the same checks to be run on the object regardless of which language was used to define it.
+`Azure ARM Templates` are written in JSON and define the infrastructure that is going to be applied when the template is applied to the Azure resource group. In the same way we scan Terraform and CloudFormation, we need to parse the template into our common objects from [defsec](https://github.com/aquasecurity/defsec){:target="\_blank"}; these abstractions allow the same checks to be run on the object regardless of which language was used to define it.
 
 #### An example
 
@@ -33,7 +33,7 @@ It doesn't matter whether the source that was used to populate the object was Te
 ```hcl
 resource "aws_s3_bucket_server_side_encryption_configuration" "example-bucket-encryption" {
    bucket = aws_s3_bucket.example-bucket.id
- 
+
    rule {
      apply_server_side_encryption_by_default {
        kms_master_key_id = aws_kms_key.mykey.arn
@@ -55,7 +55,6 @@ Resources:
           - BucketKeyEnabled: true
             ServerSideEncryptionByDefault:
               SSEAlgorithm: AES256
-    
 ```
 
 The end result is the same and the check will work and the check can be applied;
@@ -97,6 +96,7 @@ Finally, we reach the point of the blog post. How do we write a parser/evaluator
 We need a number of parts;
 
 #### A Lexer
+
 The lexer is going to break the function into its constituent parts - lets call these `tokens`. Using our example from before;
 
 ```
@@ -116,10 +116,9 @@ this is made up of the following tokens;
 | 'connection_throttling' | TokenLiteralString |
 |            )            | TokenCloseParen    |
 
-
 The lexer will read through the source string looking at each `Rune` and break down into logical tokens - core of the lexer just a loop over the runes
 
-```golang
+```go
 func (l *lexer) Lex() ([]Token, error) {
 	var tokens []Token
 
@@ -196,7 +195,7 @@ func (t *tokenWalker) hasNext() bool {
 	return t.currentPosition+1 < len(t.tokens)
 }
 
-// if pop has been called and we need to use the value we can 
+// if pop has been called and we need to use the value we can
 // unpop to step back to the previous position
 func (t *tokenWalker) unPop() {
 	if t.currentPosition > 0 {
@@ -216,7 +215,7 @@ func (t *tokenWalker) pop() *Token {
 
 ```
 
-This block of code holds the tokens and allows us to move back and forward on the them, looking at whats coming. 
+This block of code holds the tokens and allows us to move back and forward on the them, looking at whats coming.
 
 #### Expression Tree
 
@@ -252,7 +251,7 @@ func newFunctionNode(tw *tokenWalker) Node {
 		switch token.Type {
 		case TokenCloseParen:
 			return funcNode
-        
+
 		case TokenName:
 			if tw.peek().Type == TokenOpenParen {
                 // this is a function so we need to go back a step and call the newFunctionNode
@@ -273,7 +272,6 @@ This block takes the `code` - in this case the string with the function in it. T
 
 The walker is then stepped through looking at each token to see what type it is - if its a name followed by an open bracket we can say its the start of a function and we will stop at the next closing bracket and that is the bounds of the function. Anything in between that is a literal value is treated as a verbatim argument.
 
-
 Our expression tree uses a `Node` interface with two types `expression` and `expressionValue` implementing the interface. The root `Node` will have each of its arguments `Evaluate` function called, if it is a literal value that will be returned verbatim, if it is an expression, it will be evaluated first; this allows us to nest the function calls.
 
 ```go
@@ -284,7 +282,7 @@ type Node interface {
 
 The `Node` interface has a single function called `Evaluate` to return any value.
 
-There are two types going to be used, both of these implement the interface. 
+There are two types going to be used, both of these implement the interface.
 
 ```go
 type expression struct {
@@ -308,7 +306,7 @@ func (f expression) Evaluate() interface{} {
 }
 
 
-// if the expressionValue arg is a nested expression, we 
+// if the expressionValue arg is a nested expression, we
 // need to evaluate that first
 func (e expressionValue) Evaluate() interface{} {
 	if f, ok := e.val.(expression); ok {
@@ -333,7 +331,7 @@ func Format(args ...interface{}) interface{} {
 	return fmt.Sprintf(formatter, args[1:]...)
 }
 
-// the formatter string has the wrong style placeholders, so using the 
+// the formatter string has the wrong style placeholders, so using the
 // args we can switch to the correct ones
 func generateFormatterString(args ...interface{}) string {
 	formatter, ok := args[0].(string)
@@ -401,4 +399,4 @@ func Test_resolveFormatFunc(t *testing.T) {
 
 There is a lot more to it, and a lot more work to implement each of the functions supported by ARM, but the general structure is now there to get started.
 
-Checkout [defsec](https://github.com/aquasecurity/defsec/tree/master/pkg/scanners){:target="_blank"} to learn more about how we parse `Terraform`, `CloudFormation`, `Dockerfile` `Kubernetes Manifests` and `Helm Charts` to name a few.
+Checkout [defsec](https://github.com/aquasecurity/defsec/tree/master/pkg/scanners){:target="\_blank"} to learn more about how we parse `Terraform`, `CloudFormation`, `Dockerfile` `Kubernetes Manifests` and `Helm Charts` to name a few.

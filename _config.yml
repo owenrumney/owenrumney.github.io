@@ -8,7 +8,7 @@ username: Owen Rumney
 user_description: Software Engineer
 user_title: Software Engineer
 email: owen@owenrumney.co.uk
-twitter_username: owen_rumney
+twitter_username: 
 github_username: owenrumney
 disqus_username: owenrumney
 linkedin_username: owenrumney
@@ -16,7 +16,6 @@ linkedin_username: owenrumney
 social:
   name: Owen Rumney
   links:
-    - https://twitter.com/owenrum
     - https://github.com/owenrumney
     - https://www.linkedin.com/in/owenrumney
 
@@ -42,15 +41,12 @@ links:
   - title: About Me
     url: /about
 
-twitter:
-  card: summary
-  username: owenrum
 
 plugins:
   - jekyll-seo-tag
   - jekyll-remote-theme
 
-remote_theme: owenrumney/jekylltheme
+remote_theme: owenrumney/jekylltheme2
 
 exclude:
   [

@@ -18,7 +18,7 @@ description: "Blog posts organised by tag..."
   {% endif %}
 {% assign tags_list = nil %}
 </div>
-<br />
+
 {% for tag in site.tags  %}
     <span class="tag-title" id="{{ tag[0] | slugify }}">{{ tag[0] }}</span>
     <ul class="post-list">
@@ -33,5 +33,4 @@ description: "Blog posts organised by tag..."
         {% assign pages_list = nil %}
         {% assign group = nil %}
     </ul>
-  </br />
 {% endfor %}

@@ -2,7 +2,7 @@
 layout: post
 title: Controlling my office lights from my webcam!?!?
 date: 2022-11-30 00:00:00
-image: '/assets/img/owen.png'
+image: "/assets/img/owen.png"
 description: A dirty, dirty hacky way to control my lights from my webcam
 tags: [go, learning]
 categories: [Niche]
@@ -28,7 +28,7 @@ So what is it about? When I start a Zoom call, I want to dim the lights in my of
 
 #### Alexa Initial Setup
 
-First things first, install the GU10s or whatever light bulbs you're going to be using and register them with Alexa. In my case, this required adding their associated app then discovering them in the Alexa app. 
+First things first, install the GU10s or whatever light bulbs you're going to be using and register them with Alexa. In my case, this required adding their associated app then discovering them in the Alexa app.
 
 It's useful later if you've grouped them, mine are a group called `Owen Office`
 
@@ -44,7 +44,7 @@ The last thing to do is set up the routines;
 
 **Trigger:** Smart Home -> CallStart
 
-**Add Action:** Smart Home -> Groups -> Owen Office -> Select All 
+**Add Action:** Smart Home -> Groups -> Owen Office -> Select All
 
 Now, I have set mine to turn on the lights, set the brightness to 12% and the colour to blue - you do you!!
 
@@ -56,13 +56,13 @@ It'll look something like this
 
 This is where it gets a bit niche - I briefly looked at if there was hooks in Zoom where I could get the start and end of a call, but that wasn't working so I looked a the webcam and if it had device hooks.
 
-Eventually, I settled on tailing the the `log` on my MacBook. I used the work of [Max Schaefer](https://github.com/MaxSchaefer/macos-log-stream/blob/main/pkg/mls/logs.go) for inspiration. 
+Eventually, I settled on tailing the the `log` on my MacBook. I used the work of [Max Schaefer](https://github.com/MaxSchaefer/macos-log-stream/blob/main/pkg/mls/logs.go) for inspiration.
 
 Essentially, an external process is started with the `log` command to `stream` and read the entries looking for `Cameras changed` events.
 
 The main logic of the stream processing is here
 
-```golang
+```go
 cmd := exec.Command("log", args...)
 stdout, err := cmd.StdoutPipe()
 if err != nil {
@@ -98,7 +98,7 @@ go func() {
 
 And consuming that log data is my main monitoring function.
 
-```golang
+```go
 logs := newLogTail()
 for {
 	func() {
@@ -163,7 +163,7 @@ Then load and start it
 launchctl load ~/Library/LaunchAgents/com.owenrumney.webcam-watcher.plist
 
 launchctl start com.owenrumney.webcam-watcher
- ```
+```
 
 You can check its actually running using
 

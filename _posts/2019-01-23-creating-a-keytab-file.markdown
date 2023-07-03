@@ -7,8 +7,6 @@ tags: [linux]
 categories: [SysAdmin]
 ---
 
-{% include callout.html type="info" content="NOTE: Creating a keytab is easy this is just to remind me." %}
-
 ## Assumptions
 
 I'm assuming for anyone who is doing this that you have your `/etc/krb5.conf` in order and that isn't going to get in your way.

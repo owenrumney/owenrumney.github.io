@@ -2,18 +2,16 @@
 layout: post
 title: Leveraging Annotations in Go
 date: 2022-09-26 00:00:00
-image: '/assets/img/owen.png'
+image: "/assets/img/owen.png"
 description: An introduction to using annotations on structs in Go
 tags: [go, programming]
 categories: [Programming]
 twitter_text: Introduction to using type annotations in Go
 ---
 
-In [defsec](https://github.com/aquasecurity/defsec){:target="_blank"}, we have a large number of Go objects which represent real world Cloud entities. A documented schema is required, but due to the number, it would be nice to automate the generation.
+In [defsec](https://github.com/aquasecurity/defsec){:target="\_blank"}, we have a large number of Go objects which represent real world Cloud entities. A documented schema is required, but due to the number, it would be nice to automate the generation.
 
 In this post, I'm going to give a simplified introduction to Annotations that can be used with `text/template`in a struct to aid this.
-
-
 
 ### S3 Bucket example
 
@@ -21,7 +19,7 @@ Lets take the `S3 bucket` as an example. Regardless of how we create the bucket 
 
 Lets look at a simplified `defsec` object that represents an `S3 bucket`;
 
-```golang
+```go
 package main
 
 import (
@@ -29,54 +27,53 @@ import (
 )
 
 type Bucket struct {
-	Name              string             
-	PublicAccessBlock *PublicAccessBlock 
-	BucketPolicies    []Policy           
-	Encryption        Encryption         
-	Versioning        Versioning         
-	Logging           Logging            
-	ACL               string             
+	Name              string
+	PublicAccessBlock *PublicAccessBlock
+	BucketPolicies    []Policy
+	Encryption        Encryption
+	Versioning        Versioning
+	Logging           Logging
+	ACL               string
 }
 
 type PublicAccessBlock struct {
-	BlockPublicACLs       bool 
-	BlockPublicPolicy     bool 
-	IgnorePublicACLs      bool 
-	RestrictPublicBuckets bool 
+	BlockPublicACLs       bool
+	BlockPublicPolicy     bool
+	IgnorePublicACLs      bool
+	RestrictPublicBuckets bool
 }
 
 type Logging struct {
-	Enabled      bool   
-	TargetBucket string 
+	Enabled      bool
+	TargetBucket string
 }
 
 type Versioning struct {
-	Enabled   bool 
-	MFADelete bool 
+	Enabled   bool
+	MFADelete bool
 }
 
 type Encryption struct {
-	Enabled   bool   
-	Algorithm string 
-	KMSKeyId  string 
+	Enabled   bool
+	Algorithm string
+	KMSKeyId  string
 }
 
 type Policy struct {
-	Name     string  
-	Document Document 
-	Builtin  bool     
+	Name     string
+	Document Document
+	Builtin  bool
 }
 
 type Document struct {
-	Parsed   iamgo.Document 
-	IsOffset bool           
-	HasRefs  bool           
+	Parsed   iamgo.Document
+	IsOffset bool
+	HasRefs  bool
 }
 
 ```
 
 This type has all the core attributes that we might want to check for any possible misconfigurations. We have written a comprehensive list of checks that can be applied to a bucket represented in this type - but what if you wanted to write your own Rego rule against the type? You might want to know what the properties mean?
-
 
 ## Annotations
 
@@ -84,13 +81,13 @@ If you have experience with Go, you likely know that you can use annotations to 
 
 For example, you might have something like;
 
-```golang
+```go
 
 type HairColour int
 
 const (
     Brown HairColour = iota
-    Blonde 
+    Blonde
     Grey
     Black
     Purple
@@ -105,11 +102,11 @@ type Person struct {
 
 We could then use the `json` library to display this;
 
-```golang
+```go
 package main
 
 func main() {
-    
+
 	person := Person{
 		Name:      "Owen",
 		Age:       40,
@@ -141,7 +138,7 @@ Returning to our bucket, if we wanted to support people writing Rego rules again
 
 Below, I've updated the `S3 Bucket` with additional documentation about what each attribute means;
 
-```golang
+```go
 package main
 
 import (
@@ -198,7 +195,7 @@ We want to use this to generate some meaningful documentation for the user so th
 
 We start with an example bucket for the docs
 
-```golang
+```go
 bucket := Bucket{
 	Name: "example-bucket",
 	PublicAccessBlock: &PublicAccessBlock{
@@ -233,7 +230,7 @@ This gives us a `[]byte` of the `json` representation in a pretty-printed format
 
 We're not done yet, we're wanting to print this as documentation so people can work out what the attributes are for. To do this, we can make use of the extra annotation we have added.
 
-```golang
+```go
 Name string `json:"name",doc:"The name of the bucket"`
 ```
 
@@ -241,7 +238,7 @@ To access the annotation, we need to use the `reflect` package to get the fields
 
 Lets start with a `doc` object to hold the attribute name and docString and make a `Map` to hold our objects in
 
-```golang
+```go
 type doc struct {
 	AttributeName string
 	DocString     string
@@ -252,17 +249,16 @@ docs := make(map[string][]doc)
 
 Next, we use reflection to get the type and iterate over the fields extracting the doc using a simple lookup on the `Tag` value
 
-```golang
+```go
 docString, ok := field.Tag.Lookup("doc")
 if !ok {
 	continue
 }
 ```
 
-Which gives us a whole function of 
+Which gives us a whole function of
 
-
-```golang
+```go
 func processTypeForDocs(t reflect.Type, docs map[string][]doc, key string) {
 	for i := 0; i < t.NumField(); i++ {
 		field := t.Field(i)
@@ -296,27 +292,27 @@ func processTypeForDocs(t reflect.Type, docs map[string][]doc, key string) {
 Now we have a populated map, we can pass that to our documentation Template to generate the docs.
 
 {% raw %}
-    var docTemplate = `# S3 Bucket
-    
+var docTemplate = `# S3 Bucket
+
     ## Example S3 Bucket JSON
-    
+
     ` + "```json" + `
     {{ .ExampleJSON }}
     ` + "```" + `
     {{ range $key, $value := .Docs }}### {{ $key }}
-    
+
     | Attribute Name     | Description          |
     | ------------------ | -------------------- |
     | {{ range $value }} | {{ .AttributeName }} | {{ .DocString }} |
     {{ end }}
     {{end}}
     `
+
 {% endraw %}
 
 Using the templated string above, we can use Go Templates to generate our documentation
 
-
-```golang
+```go
 
 docs := make(map[string][]doc)
 docs["Bucket"] = []doc{}
@@ -333,13 +329,13 @@ tmplt.Execute(os.Stdout, map[string]nterface{}{
 
 Here we are creating a `Map` with the attributes required in the template, some example `json` and the `doc` objects we created.
 
-
 When we run it in the terminal, we get the Markdown below written out.
 
-```markdown
+````markdown
 # S3 Bucket
 
 ## Example S3 Bucket JSON
+
 ```json
 {
   "name": "example-bucket",
@@ -408,16 +404,14 @@ When we run it in the terminal, we get the Markdown below written out.
 | Enabled        | Is the S3 bucket versioning enabled?            |
 | MFADelete      | Is the S3 bucket versioning MFA delete enabled? |
 
-
 ```
-<br /> 
-
-## Actual Rendered Output
-
+````
 
 <br />
 
+## Actual Rendered Output
 
+<br />
 
 # S3 Bucket
 
@@ -449,6 +443,7 @@ When we run it in the terminal, we get the Markdown below written out.
   "acl": "false"
 }
 ```
+
 ### Bucket
 
 | Attribute Name    | Description                                          |
@@ -490,4 +485,3 @@ When we run it in the terminal, we get the Markdown below written out.
 | -------------- | ----------------------------------------------- |
 | Enabled        | Is the S3 bucket versioning enabled?            |
 | MFADelete      | Is the S3 bucket versioning MFA delete enabled? |
-
