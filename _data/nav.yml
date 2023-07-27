@@ -1,6 +1,12 @@
 - name: GitHub
+  image: github
   link: https://github.com/owenrumney
-- name: Resume
-  link: https://cv.owenrumney.co.uk
+  size: 30
 - name: LinkedIn
-  link: https://www.linkedin.com/in/owenrumney/
+  image: linkedin
+  link: https://linkedin.com/in/owenrumney
+  size: 30
+- name: Resume
+  image: resume
+  size: 32
+  link: https://cv.owenrumney.co.uk
