@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<!-- Begin Jekyll SEO tag v2.6.1 -->
+<title>Testing private methods with ScalaTest | Owen Rumney</title>
+<meta name="generator" content="Jekyll v4.2.1" />
+<meta property="og:title" content="Testing private methods with ScalaTest" />
+<meta name="author" content="Owen Rumney" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="How to test private methods easily with ScalaTest and PrivateMethodTester" />
+<meta property="og:description" content="How to test private methods easily with ScalaTest and PrivateMethodTester" />
+<link rel="canonical" href="https://www.owenrumney.co.uk/testing-private-methods/" />
+<meta property="og:url" content="https://www.owenrumney.co.uk/testing-private-methods/" />
+<meta property="og:site_name" content="Owen Rumney" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2019-05-29T00:00:00+00:00" />
+<script type="application/ld+json">
+{"dateModified":"2019-05-29T00:00:00+00:00","datePublished":"2019-05-29T00:00:00+00:00","author":{"@type":"Person","name":"Owen Rumney"},"description":"How to test private methods easily with ScalaTest and PrivateMethodTester","mainEntityOfPage":{"@type":"WebPage","@id":"https://www.owenrumney.co.uk/testing-private-methods/"},"url":"https://www.owenrumney.co.uk/testing-private-methods/","@type":"BlogPosting","headline":"Testing private methods with ScalaTest","@context":"https://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+
+
+<meta name="keywords" content="programming,testing" />
+
+<link rel="shortcut icon" href="/favicon.ico" />
+<link rel="apple-touch-icon" href="/favicon.ico"/>
+<link rel="stylesheet" type="text/css" href="/assets/css/styles.css" />
+<link rel="stylesheet" type="text/css" href="/assets/css/prism.css" />
+<script src="/assets/js/prism.js"></script>
+
+
+
+</head>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-TLCVNKXMFJ"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-TLCVNKXMFJ');
+</script>
+
+<body>
+    <div class="wrapper">
+        <header class="wrapper-header">
+            <div class="header">
+  <nav class="float-right">
+  
+  <a href="https://github.com/owenrumney" target="_blank"
+    ><img
+      src="/assets/images/github.svg"
+      style="color: white; display: inline-block"
+      height="30px"
+      alt="GitHub"
+  /></a>
+  
+  <a href="https://linkedin.com/in/owenrumney" target="_blank"
+    ><img
+      src="/assets/images/linkedin.svg"
+      style="color: white; display: inline-block"
+      height="30px"
+      alt="LinkedIn"
+  /></a>
+  
+  <a href="https://cv.owenrumney.co.uk" target="_blank"
+    ><img
+      src="/assets/images/resume.svg"
+      style="color: white; display: inline-block"
+      height="32px"
+      alt="Resume"
+  /></a>
+  
+</nav>
+
+  <a href="https://www.owenrumney.co.uk" target="_blank"><h1>Owen Rumney</h1></a>
+  <br />
+  <h5><i>Software Engineer</i></h5>
+  <br />
+
+  <hr />
+</div>
+
+        </header>
+
+        <main class="wrapper-main">
+            <div class="main-content">
+            <div class="post-info">
+    <h2>Testing private methods with ScalaTest</h2>
+    <p>29 May 2019 - Owen Rumney</p>
+</div>
+
+<div class="post-content">
+<h2 id="overview">Overview</h2>
+
+<p>As part of my journey into using Scala I have had to get used to the ScalaTest and the wealth of functionality it offers.</p>
+
+<p>One of the enduring headaches with unit testing is find a clean way to test private methods without being left feeling that you’ve somehow compromised the solution in order to fully test.</p>
+
+<h2 id="example">Example</h2>
+<p>I’ve used an example which is reasonably common so easy to see the usefulness of the <a href="http://doc.scalatest.org/3.0.1/#org.scalatest.PrivateMethodTester"><code class="language-plaintext highlighter-rouge">PrivateMethodTester</code></a> trait.</p>
+
+<p>The example is that of a file loader where the source might be local, or S3 or similar. In this case, I’m going to have a public method on my <code class="language-plaintext highlighter-rouge">ObjectWithPrivate</code> scala object, this method will accept a <code class="language-plaintext highlighter-rouge">String</code> for the sourcePath to a file that I want to load the content of as a <code class="language-plaintext highlighter-rouge">BufferedSource</code>.</p>
+
+<p>The sourcePath may be local, or it may be S3, but as the consumer I don’t really want to care. The logical thing in this situation is to have the implementation details of loading the file hidden in private methods. These methods will attempt to load the file from their respective sources and throw a <code class="language-plaintext highlighter-rouge">FileNotFoundException</code> if it isn’t available.</p>
+
+<div class="language-scala highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">import</span> <span class="nn">org.slf4j.</span><span class="o">{</span><span class="nc">Logger</span><span class="o">,</span> <span class="nc">LoggerFactory</span><span class="o">}</span>
+<span class="k">import</span> <span class="nn">scala.io.</span><span class="o">{</span><span class="nc">BufferedSource</span><span class="o">,</span> <span class="nc">Source</span><span class="o">}</span>
+<span class="k">import</span> <span class="nn">scala.reflect.io.File</span>
+
+<span class="k">object</span> <span class="nc">ObjectWithPrivate</span> <span class="o">{</span>
+
+  <span class="k">val</span> <span class="nv">logger</span><span class="k">:</span> <span class="kt">Logger</span> <span class="o">=</span> <span class="nv">LoggerFactory</span><span class="o">.</span><span class="py">getLogger</span><span class="o">(</span><span class="s">"ObjectWithPrivate"</span><span class="o">)</span>
+
+  <span class="k">def</span> <span class="nf">loadFromPath</span><span class="o">(</span><span class="n">sourcePath</span><span class="k">:</span> <span class="kt">String</span><span class="o">)</span><span class="k">:</span> <span class="kt">BufferedSource</span> <span class="o">=</span> <span class="o">{</span>
+    <span class="n">sourcePath</span> <span class="k">match</span> <span class="o">{</span>
+      <span class="k">case</span> <span class="n">s</span> <span class="k">if</span> <span class="nv">s</span><span class="o">.</span><span class="py">startsWith</span><span class="o">(</span><span class="s">"s3"</span><span class="o">)</span> <span class="k">=&gt;</span> <span class="nf">loadFromS3</span><span class="o">(</span><span class="n">sourcePath</span><span class="o">)</span>
+      <span class="k">case</span> <span class="k">_</span>                       <span class="k">=&gt;</span> <span class="nf">loadFromLocal</span><span class="o">(</span><span class="n">sourcePath</span><span class="o">)</span>
+    <span class="o">}</span>
+  <span class="o">}</span>
+
+  <span class="k">private</span> <span class="k">def</span> <span class="nf">loadFromS3</span><span class="o">(</span><span class="n">sourcePath</span><span class="k">:</span> <span class="kt">String</span><span class="o">,</span> <span class="n">s3Client</span><span class="k">:</span> <span class="kt">AmazonS3</span> 
+                                            <span class="k">=</span> <span class="nv">AmazonS3ClientBuilder</span><span class="o">.</span><span class="py">defaultClient</span><span class="o">())</span><span class="k">:</span> <span class="kt">BufferedSource</span> <span class="o">=</span> <span class="o">{</span>
+    <span class="k">val</span> <span class="nv">uri</span><span class="k">:</span> <span class="kt">AmazonS3URI</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">AmazonS3URI</span><span class="o">(</span><span class="n">sourcePath</span><span class="o">)</span>
+    <span class="k">try</span> <span class="o">{</span>
+      <span class="k">val</span> <span class="nv">s3Object</span><span class="k">:</span> <span class="kt">S3Object</span> <span class="o">=</span> <span class="nv">s3Client</span><span class="o">.</span><span class="py">getObject</span><span class="o">(</span><span class="nv">uri</span><span class="o">.</span><span class="py">getBucket</span><span class="o">,</span> <span class="nv">uri</span><span class="o">.</span><span class="py">getKey</span><span class="o">)</span>
+      <span class="nv">Source</span><span class="o">.</span><span class="py">fromInputStream</span><span class="o">(</span><span class="nv">s3Object</span><span class="o">.</span><span class="py">getObjectContent</span><span class="o">)</span>
+    <span class="o">}</span> <span class="k">catch</span> <span class="o">{</span>
+      <span class="k">case</span> <span class="n">aex</span><span class="k">:</span> <span class="kt">AmazonServiceException</span> <span class="o">=&gt;</span> <span class="o">{</span>
+        <span class="nf">if</span> <span class="o">(</span><span class="nv">aex</span><span class="o">.</span><span class="py">getStatusCode</span> <span class="o">==</span> <span class="mi">404</span><span class="o">)</span> <span class="o">{</span>
+          <span class="k">throw</span> <span class="k">new</span> <span class="nc">FileNotFoundException</span><span class="o">(</span><span class="n">s</span><span class="s">"file not found: $sourcePath"</span><span class="o">)</span>
+        <span class="o">}</span>
+        <span class="k">throw</span> <span class="n">aex</span>
+      <span class="o">}</span>
+    <span class="o">}</span>
+  <span class="o">}</span>
+
+  <span class="k">private</span> <span class="k">def</span> <span class="nf">loadFromLocal</span><span class="o">(</span><span class="n">sourcePath</span><span class="k">:</span> <span class="kt">String</span><span class="o">)</span> <span class="k">=</span> <span class="o">{</span>
+    <span class="nv">logger</span><span class="o">.</span><span class="py">info</span><span class="o">(</span><span class="n">s</span><span class="s">"Loading config from local File: $sourcePath"</span><span class="o">)</span>
+    <span class="nf">if</span> <span class="o">(!</span><span class="nc">File</span><span class="o">(</span><span class="n">sourcePath</span><span class="o">).</span><span class="py">exists</span><span class="o">)</span> <span class="o">{</span>
+      <span class="k">throw</span> <span class="k">new</span> <span class="nc">FileNotFoundException</span><span class="o">(</span><span class="n">s</span><span class="s">"Config file not found: $sourcePath"</span><span class="o">)</span>
+    <span class="o">}</span>
+    <span class="k">val</span> <span class="nv">bufferedSource</span> <span class="k">=</span> <span class="nv">Source</span><span class="o">.</span><span class="py">fromFile</span><span class="o">(</span><span class="n">sourcePath</span><span class="o">)</span>
+    <span class="n">bufferedSource</span>
+  <span class="o">}</span>
+
+<span class="o">}</span>
+</code></pre></div></div>
+
+<p>The difficulty now comes in testing the private methods. Testing local load can be done by calling the public <code class="language-plaintext highlighter-rouge">loadFromPath</code> method, but that won’t work with the <code class="language-plaintext highlighter-rouge">loadFromS3</code> method as this needs the S3 Mocking to adaquetely test without requiring connectivity to S3 and a known file guaranteed to be present.</p>
+
+<p>This is where the <code class="language-plaintext highlighter-rouge">PrivateMethodTester</code> trait comes in. By mixing this trait into our <code class="language-plaintext highlighter-rouge">ScalaTest</code> class, we can invoke a private method on our object. I’ve included the whole test class because it has all the set up of the S3 Mock (I see little point in creating an example that calls S3 then not include the required information on how to replicate.)</p>
+
+<div class="language-scala highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">import</span> <span class="nn">com.amazonaws.auth.</span><span class="o">{</span><span class="nc">AWSStaticCredentialsProvider</span><span class="o">,</span> <span class="nc">AnonymousAWSCredentials</span><span class="o">}</span>
+<span class="k">import</span> <span class="nn">com.amazonaws.client.builder.AwsClientBuilder</span>
+<span class="k">import</span> <span class="nn">com.amazonaws.services.s3.AmazonS3ClientBuilder</span>
+<span class="k">import</span> <span class="nn">io.findify.s3mock.S3Mock</span>
+<span class="k">import</span> <span class="nn">org.scalatest.Matchers._</span>
+<span class="k">import</span> <span class="nn">org.scalatest.</span><span class="o">{</span><span class="nc">BeforeAndAfterAll</span><span class="o">,</span> <span class="nc">BeforeAndAfterEach</span><span class="o">,</span> <span class="nc">FunSuite</span><span class="o">,</span> <span class="nc">PrivateMethodTester</span><span class="o">}</span>
+
+<span class="k">import</span> <span class="nn">scala.io.BufferedSource</span>
+
+<span class="k">class</span> <span class="nc">ObjectWithPrivateTest</span> <span class="k">extends</span> <span class="nc">FunSuite</span> <span class="k">with</span> <span class="nc">BeforeAndAfterEach</span> <span class="k">with</span> <span class="nc">BeforeAndAfterAll</span> <span class="k">with</span> <span class="nc">PrivateMethodTester</span> <span class="o">{</span>
+
+  <span class="k">val</span> <span class="nv">endpoint</span><span class="k">:</span> <span class="kt">AwsClientBuilder.EndpointConfiguration</span> <span class="o">=</span> <span class="k">new</span> <span class="nv">AwsClientBuilder</span><span class="o">.</span><span class="py">EndpointConfiguration</span><span class="o">(</span>
+      <span class="s">"http://localhost:8001"</span><span class="o">,</span>
+      <span class="s">"eu-west-1"</span>
+    <span class="o">)</span>
+  <span class="k">val</span> <span class="nv">credentials</span> <span class="k">=</span> <span class="k">new</span> <span class="nc">AWSStaticCredentialsProvider</span><span class="o">(</span><span class="k">new</span> <span class="nc">AnonymousAWSCredentials</span><span class="o">)</span>
+  <span class="k">val</span> <span class="nv">api</span><span class="k">:</span> <span class="kt">S3Mock</span> <span class="o">=</span> <span class="k">new</span> <span class="nv">S3Mock</span><span class="o">.</span><span class="py">Builder</span><span class="o">()</span>
+                        <span class="o">.</span><span class="py">withPort</span><span class="o">(</span><span class="mi">8001</span><span class="o">)</span>
+                        <span class="o">.</span><span class="py">withInMemoryBackend</span><span class="o">.</span><span class="py">build</span>
+  <span class="nv">api</span><span class="o">.</span><span class="py">start</span>
+
+  <span class="k">override</span> <span class="k">def</span> <span class="nf">beforeEach</span><span class="o">()</span> <span class="o">{</span>
+    <span class="k">val</span> <span class="nv">client</span> <span class="k">=</span> <span class="nv">AmazonS3ClientBuilder</span><span class="o">.</span><span class="py">standard</span>
+      <span class="o">.</span><span class="py">withPathStyleAccessEnabled</span><span class="o">(</span><span class="kc">true</span><span class="o">)</span>
+      <span class="o">.</span><span class="py">withEndpointConfiguration</span><span class="o">(</span><span class="n">endpoint</span><span class="o">)</span>
+      <span class="o">.</span><span class="py">withCredentials</span><span class="o">(</span><span class="n">credentials</span><span class="o">)</span>
+      <span class="o">.</span><span class="py">build</span>
+    <span class="nv">client</span><span class="o">.</span><span class="py">createBucket</span><span class="o">(</span><span class="s">"testbucket"</span><span class="o">)</span>
+    <span class="nv">client</span><span class="o">.</span><span class="py">putObject</span><span class="o">(</span><span class="s">"testbucket"</span><span class="o">,</span> <span class="s">"files/file1"</span><span class="o">,</span> <span class="s">"file1_content"</span><span class="o">)</span>
+  <span class="o">}</span>
+
+  <span class="k">override</span> <span class="k">def</span> <span class="nf">afterAll</span><span class="o">()</span> <span class="o">{</span>
+    <span class="nv">api</span><span class="o">.</span><span class="py">stop</span>
+  <span class="o">}</span>
+
+  <span class="nf">test</span><span class="o">(</span><span class="s">"ObjectWithPrivate loads a test file from S3"</span><span class="o">)</span> <span class="o">{</span>
+    <span class="k">val</span> <span class="nv">client</span> <span class="k">=</span> <span class="nv">AmazonS3ClientBuilder</span><span class="o">.</span><span class="py">standard</span>
+      <span class="o">.</span><span class="py">withPathStyleAccessEnabled</span><span class="o">(</span><span class="kc">true</span><span class="o">)</span>
+      <span class="o">.</span><span class="py">withEndpointConfiguration</span><span class="o">(</span><span class="n">endpoint</span><span class="o">)</span>
+      <span class="o">.</span><span class="py">withCredentials</span><span class="o">(</span><span class="n">credentials</span><span class="o">)</span>
+      <span class="o">.</span><span class="py">build</span>
+
+    <span class="k">val</span> <span class="nv">loadFromS3</span> <span class="k">=</span> <span class="nc">PrivateMethod</span><span class="o">[</span><span class="kt">BufferedSource</span><span class="o">](</span><span class="ss">'loadFromS3</span><span class="o">)</span>
+    <span class="k">val</span> <span class="nv">content</span> <span class="k">=</span> <span class="nc">ObjectWithPrivate</span> <span class="n">invokePrivate</span> <span class="nf">loadFromS3</span><span class="o">(</span>
+      <span class="s">"s3://testbucket/files/file1"</span><span class="o">,</span>
+      <span class="n">client</span>
+    <span class="o">)</span>
+    <span class="nv">content</span><span class="o">.</span><span class="py">mkString</span> <span class="n">shouldBe</span> <span class="s">"file1_content"</span>
+  <span class="o">}</span>
+<span class="o">}</span>
+
+<span class="c1">// further tests for local omitted</span>
+
+</code></pre></div></div>
+
+<p>In the test, the key part is the following line;</p>
+
+<div class="language-scala highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">val</span> <span class="nv">loadFromS3</span> <span class="k">=</span> <span class="nc">PrivateMethod</span><span class="o">[</span><span class="kt">BufferedSource</span><span class="o">](</span><span class="ss">'loadFromS3</span><span class="o">)</span>
+</code></pre></div></div>
+
+<p>This creates a <code class="language-plaintext highlighter-rouge">PrivateMethod</code> object which will return a <code class="language-plaintext highlighter-rouge">BufferedSource</code> which we pass the name of the method to be called as a <code class="language-plaintext highlighter-rouge">Symbol</code>. One of the features added by the <code class="language-plaintext highlighter-rouge">PrivateMethodTester</code> is the <code class="language-plaintext highlighter-rouge">invokePrivate</code> method such that we can use it to call the private method on a given Object (or instance of a class for that matter)</p>
+
+<div class="language-scala highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">val</span> <span class="nv">content</span> <span class="k">=</span> <span class="nc">ObjectWithPrivate</span> <span class="n">invokePrivate</span> <span class="nf">loadFromS3</span><span class="o">(</span>
+  <span class="s">"s3://testbucket/files/file1"</span><span class="o">,</span>
+  <span class="n">client</span>
+<span class="o">)</span>
+</code></pre></div></div>
+
+<p>This will call the private method, returning our <code class="language-plaintext highlighter-rouge">BufferedSource</code> and I can test that the content of the mocked S3 object is infact <code class="language-plaintext highlighter-rouge">file1_content</code>.</p>
+
+<p>For interest, here is the <code class="language-plaintext highlighter-rouge">build.sbt</code> for this simple project</p>
+
+<div class="language-scala highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">name</span> <span class="o">:=</span> <span class="s">"PrivateMethodTester"</span>
+
+<span class="n">version</span> <span class="o">:=</span> <span class="s">"0.1"</span>
+
+<span class="n">scalaVersion</span> <span class="o">:=</span> <span class="s">"2.12.8"</span>
+
+<span class="c1">// dependencies versions</span>
+<span class="k">val</span> <span class="nv">amazonSdkVersion</span> <span class="k">=</span> <span class="s">"1.11.540"</span>
+<span class="k">val</span> <span class="nv">logbackClassicVersion</span> <span class="k">=</span> <span class="s">"1.2.3"</span>
+<span class="k">val</span> <span class="nv">s3MockVersion</span> <span class="k">=</span> <span class="s">"0.2.4"</span>
+<span class="k">val</span> <span class="nv">scalaTestVersion</span> <span class="k">=</span> <span class="s">"3.0.5"</span>
+<span class="k">val</span> <span class="nv">slf4jVersion</span> <span class="k">=</span> <span class="s">"1.7.25"</span>
+
+<span class="n">libraryDependencies</span> <span class="o">++=</span> <span class="nc">Seq</span><span class="o">(</span>
+  <span class="s">"com.amazonaws"</span> <span class="o">%</span> <span class="s">"aws-java-sdk-core"</span> <span class="o">%</span> <span class="n">amazonSdkVersion</span><span class="o">,</span>
+  <span class="s">"com.amazonaws"</span> <span class="o">%</span> <span class="s">"aws-java-sdk-s3"</span> <span class="o">%</span> <span class="n">amazonSdkVersion</span><span class="o">,</span>
+  <span class="s">"org.slf4j"</span> <span class="o">%</span> <span class="s">"slf4j-api"</span> <span class="o">%</span> <span class="n">slf4jVersion</span><span class="o">,</span>
+  <span class="s">"ch.qos.logback"</span> <span class="o">%</span> <span class="s">"logback-classic"</span> <span class="o">%</span> <span class="n">logbackClassicVersion</span><span class="o">,</span>
+  <span class="s">"org.scalatest"</span> <span class="o">%%</span> <span class="s">"scalatest"</span> <span class="o">%</span> <span class="n">scalaTestVersion</span><span class="o">,</span>
+  <span class="s">"io.findify"</span> <span class="o">%%</span> <span class="s">"s3mock"</span> <span class="o">%</span> <span class="n">s3MockVersion</span> <span class="o">%</span> <span class="nc">Test</span>
+<span class="o">)</span>
+</code></pre></div></div>
+
+<h3 id="update---implicit-parameters">Update - Implicit Parameters</h3>
+
+<p>One thing worth adding is what to do when you have a method that takes an implicit method which needs testing. Lets used this contrived example;</p>
+
+</div>
+
+            </div>
+        </main>
+    </div>
+
+    <footer class="wrapper-footer">
+        <div class="footer">
+    <span class="footer-text float-left">This work is licensed under <a rel="license" href="https://www.gnu.org/licenses/gpl-3.0.en.html" target="_blank">GPLv3</a></span>
+    <span class="footer-text float-right">
+    Site Updated: 2023-12-01  (<a href="/feed.xml" target="_blank">RSS</a>)
+  </span>
+</div>
+    </footer>
+</body>
+</html>

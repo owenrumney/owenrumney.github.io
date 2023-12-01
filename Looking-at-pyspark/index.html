@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<!-- Begin Jekyll SEO tag v2.6.1 -->
+<title>Quick introduction to pyspark | Owen Rumney</title>
+<meta name="generator" content="Jekyll v4.2.1" />
+<meta property="og:title" content="Quick introduction to pyspark" />
+<meta name="author" content="Owen Rumney" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="All the work I have been doing with AWS has been using Python, specifically boto3 the rework of boto." />
+<meta property="og:description" content="All the work I have been doing with AWS has been using Python, specifically boto3 the rework of boto." />
+<link rel="canonical" href="https://www.owenrumney.co.uk/Looking-at-pyspark/" />
+<meta property="og:url" content="https://www.owenrumney.co.uk/Looking-at-pyspark/" />
+<meta property="og:site_name" content="Owen Rumney" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2015-01-13T00:00:00+00:00" />
+<script type="application/ld+json">
+{"dateModified":"2015-01-13T00:00:00+00:00","datePublished":"2015-01-13T00:00:00+00:00","author":{"@type":"Person","name":"Owen Rumney"},"description":"All the work I have been doing with AWS has been using Python, specifically boto3 the rework of boto.","mainEntityOfPage":{"@type":"WebPage","@id":"https://www.owenrumney.co.uk/Looking-at-pyspark/"},"url":"https://www.owenrumney.co.uk/Looking-at-pyspark/","@type":"BlogPosting","headline":"Quick introduction to pyspark","@context":"https://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+
+
+<meta name="keywords" content="python,spark" />
+
+<link rel="shortcut icon" href="/favicon.ico" />
+<link rel="apple-touch-icon" href="/favicon.ico"/>
+<link rel="stylesheet" type="text/css" href="/assets/css/styles.css" />
+<link rel="stylesheet" type="text/css" href="/assets/css/prism.css" />
+<script src="/assets/js/prism.js"></script>
+
+
+
+</head>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-TLCVNKXMFJ"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-TLCVNKXMFJ');
+</script>
+
+<body>
+    <div class="wrapper">
+        <header class="wrapper-header">
+            <div class="header">
+  <nav class="float-right">
+  
+  <a href="https://github.com/owenrumney" target="_blank"
+    ><img
+      src="/assets/images/github.svg"
+      style="color: white; display: inline-block"
+      height="30px"
+      alt="GitHub"
+  /></a>
+  
+  <a href="https://linkedin.com/in/owenrumney" target="_blank"
+    ><img
+      src="/assets/images/linkedin.svg"
+      style="color: white; display: inline-block"
+      height="30px"
+      alt="LinkedIn"
+  /></a>
+  
+  <a href="https://cv.owenrumney.co.uk" target="_blank"
+    ><img
+      src="/assets/images/resume.svg"
+      style="color: white; display: inline-block"
+      height="32px"
+      alt="Resume"
+  /></a>
+  
+</nav>
+
+  <a href="https://www.owenrumney.co.uk" target="_blank"><h1>Owen Rumney</h1></a>
+  <br />
+  <h5><i>Software Engineer</i></h5>
+  <br />
+
+  <hr />
+</div>
+
+        </header>
+
+        <main class="wrapper-main">
+            <div class="main-content">
+            <div class="post-info">
+    <h2>Quick introduction to pyspark</h2>
+    <p>13 Jan 2015 - Owen Rumney</p>
+</div>
+
+<div class="post-content">
+<p>All the work I have been doing with AWS has been using Python, specifically <a href="http://boto3.readthedocs.org/en/latest/">boto3</a> the rework of boto.</p>
+
+<p>One of the intentions is to limit bandwidth when transferring data to S3 the idea is to send periodic snapshots then daily deltas to merge and form a <strong><em>latest</em></strong> folder so a diff mechanism is needed - I originally implemented this in Scala as a Spark process but in an effort to settle on one language I’m looking to redo in Python using <a href="https://spark.apache.org/docs/0.9.0/python-programming-guide.html">pyspark</a></p>
+
+<p>I’m using my Macbook and to keep things quick and easy I’m going to download a package with Hadoop and Spark then dump it in <code class="language-plaintext highlighter-rouge">/usr/share</code></p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>wget http://archive.apache.org/dist/spark/spark-1.0.2/spark-1.0.2-bin-hadoop2.tgz
+<span class="nb">tar</span> <span class="nt">-xvf</span> spark-1.0.2-bin-hadoop2.tgz
+<span class="nb">mv </span>spark-1.0.2-bin-hadoop2 /usr/share/spark-hadoop
+
+</code></pre></div></div>
+
+<p>I’m going to create a folder to do my dev in under my home folder, to keep things clean I like to use <a href="https://pypi.python.org/pypi/virtualenv">virtualenv</a></p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">cd</span> ~/dev
+virtualenv pyspark
+<span class="nb">cd </span>pyspark
+</code></pre></div></div>
+
+<p>To start pyspark with IPYTHON we need to start it with some IPYTHON_OPTS</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">IPYTHON_OPTS</span><span class="o">=</span><span class="s2">"notebook"</span> /usr/share/spark-hadoop/bin/pyspark
+</code></pre></div></div>
+
+<p>This opens IPython notebook in the default browser.</p>
+
+<p>Finally, a quick and dirty demo with word count</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">file</span> <span class="o">=</span> <span class="n">sc</span><span class="p">.</span><span class="n">textFile</span><span class="p">(</span><span class="s">"/data/bigtextfile.txt"</span><span class="p">)</span>
+<span class="n">counts</span> <span class="o">=</span> <span class="nb">file</span><span class="p">.</span><span class="n">flatMap</span><span class="p">(</span><span class="k">lambda</span> <span class="n">line</span><span class="p">:</span> <span class="n">line</span><span class="p">.</span><span class="n">split</span><span class="p">(</span><span class="s">" "</span><span class="p">))</span> \
+             <span class="p">.</span><span class="nb">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">word</span><span class="p">:</span> <span class="p">(</span><span class="n">word</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span> \
+             <span class="p">.</span><span class="n">reduceByKey</span><span class="p">(</span><span class="k">lambda</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">:</span> <span class="n">a</span> <span class="o">+</span> <span class="n">b</span><span class="p">)</span>
+<span class="n">counts</span><span class="p">.</span><span class="n">saveAsTextFile</span><span class="p">(</span><span class="s">"/data/bigtextfile.txt"</span><span class="p">)</span>
+</code></pre></div></div>
+
+</div>
+
+            </div>
+        </main>
+    </div>
+
+    <footer class="wrapper-footer">
+        <div class="footer">
+    <span class="footer-text float-left">This work is licensed under <a rel="license" href="https://www.gnu.org/licenses/gpl-3.0.en.html" target="_blank">GPLv3</a></span>
+    <span class="footer-text float-right">
+    Site Updated: 2023-12-01  (<a href="/feed.xml" target="_blank">RSS</a>)
+  </span>
+</div>
+    </footer>
+</body>
+</html>

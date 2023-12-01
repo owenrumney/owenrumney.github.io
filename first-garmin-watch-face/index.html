@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<!-- Begin Jekyll SEO tag v2.6.1 -->
+<title>First go at creating a Garmin watch face | Owen Rumney</title>
+<meta name="generator" content="Jekyll v4.2.1" />
+<meta property="og:title" content="First go at creating a Garmin watch face" />
+<meta name="author" content="Owen Rumney" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="For a while Garmin have been adding “wearable technology” functionality to their watches - notifications from the phone etc. I got a Garmin Fenix 3 for Christmas and had a play with the vast number of watch faces and widgets that were available." />
+<meta property="og:description" content="For a while Garmin have been adding “wearable technology” functionality to their watches - notifications from the phone etc. I got a Garmin Fenix 3 for Christmas and had a play with the vast number of watch faces and widgets that were available." />
+<link rel="canonical" href="https://www.owenrumney.co.uk/first-garmin-watch-face/" />
+<meta property="og:url" content="https://www.owenrumney.co.uk/first-garmin-watch-face/" />
+<meta property="og:site_name" content="Owen Rumney" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2016-01-03T00:00:00+00:00" />
+<script type="application/ld+json">
+{"dateModified":"2016-01-03T00:00:00+00:00","datePublished":"2016-01-03T00:00:00+00:00","author":{"@type":"Person","name":"Owen Rumney"},"description":"For a while Garmin have been adding “wearable technology” functionality to their watches - notifications from the phone etc. I got a Garmin Fenix 3 for Christmas and had a play with the vast number of watch faces and widgets that were available.","mainEntityOfPage":{"@type":"WebPage","@id":"https://www.owenrumney.co.uk/first-garmin-watch-face/"},"url":"https://www.owenrumney.co.uk/first-garmin-watch-face/","@type":"BlogPosting","headline":"First go at creating a Garmin watch face","@context":"https://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+
+
+<meta name="keywords" content="programming" />
+
+<link rel="shortcut icon" href="/favicon.ico" />
+<link rel="apple-touch-icon" href="/favicon.ico"/>
+<link rel="stylesheet" type="text/css" href="/assets/css/styles.css" />
+<link rel="stylesheet" type="text/css" href="/assets/css/prism.css" />
+<script src="/assets/js/prism.js"></script>
+
+
+
+</head>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-TLCVNKXMFJ"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-TLCVNKXMFJ');
+</script>
+
+<body>
+    <div class="wrapper">
+        <header class="wrapper-header">
+            <div class="header">
+  <nav class="float-right">
+  
+  <a href="https://github.com/owenrumney" target="_blank"
+    ><img
+      src="/assets/images/github.svg"
+      style="color: white; display: inline-block"
+      height="30px"
+      alt="GitHub"
+  /></a>
+  
+  <a href="https://linkedin.com/in/owenrumney" target="_blank"
+    ><img
+      src="/assets/images/linkedin.svg"
+      style="color: white; display: inline-block"
+      height="30px"
+      alt="LinkedIn"
+  /></a>
+  
+  <a href="https://cv.owenrumney.co.uk" target="_blank"
+    ><img
+      src="/assets/images/resume.svg"
+      style="color: white; display: inline-block"
+      height="32px"
+      alt="Resume"
+  /></a>
+  
+</nav>
+
+  <a href="https://www.owenrumney.co.uk" target="_blank"><h1>Owen Rumney</h1></a>
+  <br />
+  <h5><i>Software Engineer</i></h5>
+  <br />
+
+  <hr />
+</div>
+
+        </header>
+
+        <main class="wrapper-main">
+            <div class="main-content">
+            <div class="post-info">
+    <h2>First go at creating a Garmin watch face</h2>
+    <p>03 Jan 2016 - Owen Rumney</p>
+</div>
+
+<div class="post-content">
+<p>For a while Garmin have been adding “wearable technology” functionality to their watches - notifications from the phone etc. I got a Garmin Fenix 3 for Christmas and had a play with the vast number of watch faces and widgets that were available.</p>
+
+<p>The recent updates have really added some great functionality and I ended up settling on the out of the box digital face as my normal watch face but I still wanted to have a go at creating my own watch.</p>
+
+<p>###Monkey C
+The programming language used to develop the faces, apps, widgets and data fields is called Monkey C and the IDE is mostly intended to be Eclipse.</p>
+
+<p>Its almost certainly going to be worth your time looking at the Garmin developer site to get the full over view of whats required, but I’m covering the headlines below.</p>
+
+<p>####Getting the SDK
+First you need to download the <a href="http://developer.garmin.com/connect-iq/sdk/">Garmin SDK from here.</a> I’m using a Macbook so I’ve dropped it in /usr/local/garmin-sdk.</p>
+
+<p>####Eclipse Add in
+If you look at the <a href="http://developer.garmin.com/connect-iq/getting-started/">getting started pages here</a> you’ll get all the information about adding the Eclipse add in which will give the you project template and intellisense as well as access to some richer wizards for interacting with the simulator.</p>
+
+<p>I’m not very comfortable using Eclipse so I was pleased to see that there is an Intellij plugin that someone had started.</p>
+
+<p>####Intellij Plug in
+The IntelliJ plugin is added in the normal way, <a href="https://plugins.jetbrains.com/plugin/8253?pr=idea">the details about it are here</a>.</p>
+
+<p>At the time of writing this it was fairly basic and doesn’t have many features, I had to rely on the API docs to get the message signatures of everything I needed to use.</p>
+
+<p>####API Docs
+<a href="http://developer.garmin.com/connect-iq/api-docs/">The API docs</a> are pretty good for getting the gist of what you want to do. You need to know what you want to do and see if you can rather, but thats no different to any API I guess.</p>
+
+<p>###My First Watch face
+And so to my first watch face. I wanted to have a clean digital watch without the clutter of bars and tickers. I did want to know my relative step progress and the current battery level though, I’ve been caught out a few too many times.</p>
+
+<p>My understanding from the docs is that your watch face updates minutely in low power mode until the gesture of looking at the watch is detected then it becomes every second. There are some methods which are called during this state change but I didn’t have any need for them.</p>
+
+<p>I’m loading the components programatically so I don’t need much in my layouts file</p>
+
+<div class="language-xml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nt">&lt;layout</span> <span class="na">id=</span><span class="s">"WatchFace"</span><span class="nt">&gt;</span>
+<span class="nt">&lt;/layout&gt;</span>
+</code></pre></div></div>
+
+<p>Your watch face must extend the <code class="language-plaintext highlighter-rouge">Ui.WatchFace</code> class</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">class</span> <span class="nc">FirstwatchfaceView</span> <span class="kd">extends</span> <span class="nc">Ui</span><span class="o">.</span><span class="na">WatchFace</span> <span class="o">{</span>
+
+  <span class="n">function</span> <span class="nf">initialize</span><span class="o">()</span> <span class="o">{</span>
+    <span class="nc">WatchFace</span><span class="o">.</span><span class="na">initialize</span><span class="o">();</span>
+
+  <span class="n">function</span> <span class="nf">onLayout</span><span class="o">(</span><span class="n">dc</span><span class="o">)</span> <span class="o">{</span>
+      <span class="n">setLayout</span><span class="o">(</span><span class="nc">Rez</span><span class="o">.</span><span class="na">Layouts</span><span class="o">.</span><span class="na">WatchFace</span><span class="o">(</span><span class="n">dc</span><span class="o">));</span>
+
+  <span class="n">function</span> <span class="nf">onUpdate</span><span class="o">(</span><span class="n">dc</span><span class="o">)</span> <span class="o">{</span>
+    <span class="c1">// clear the display</span>
+    <span class="n">dc</span><span class="o">.</span><span class="na">clear</span><span class="o">();</span>
+    <span class="kt">var</span> <span class="n">font</span> <span class="o">=</span> <span class="nc">Gfx</span><span class="o">.</span><span class="na">FONT_NUMBER_THAI_HOT</span><span class="o">;</span>
+      <span class="c1">// get the info needed</span>
+    <span class="kt">var</span> <span class="n">activity</span> <span class="o">=</span> <span class="nc">ActivityMonitor</span><span class="o">.</span><span class="na">getInfo</span><span class="o">();</span>
+    <span class="kt">var</span> <span class="n">stats</span> <span class="o">=</span> <span class="nc">Sys</span><span class="o">.</span><span class="na">getSystemStats</span><span class="o">()</span>
+    <span class="kt">var</span> <span class="n">clockTime</span> <span class="o">=</span> <span class="nc">Sys</span><span class="o">.</span><span class="na">getClockTime</span><span class="o">();</span>
+      <span class="kt">var</span> <span class="n">today</span> <span class="o">=</span> <span class="nc">Time</span><span class="o">.</span><span class="na">today</span><span class="o">();</span>
+    <span class="kt">var</span> <span class="n">dateInfo</span> <span class="o">=</span> <span class="nc">Time</span><span class="o">.</span><span class="na">Gregorian</span><span class="o">.</span><span class="na">info</span><span class="o">(</span><span class="n">today</span><span class="o">,</span> <span class="nc">Time</span><span class="o">.</span><span class="na">FORMAT_MEDIUM</span><span class="o">);</span>
+    <span class="kt">var</span> <span class="n">timeString</span> <span class="o">=</span> <span class="nc">Lang</span><span class="o">.</span><span class="na">format</span><span class="o">(</span><span class="s">"$1$ $2$"</span><span class="o">,</span> <span class="o">[</span><span class="n">clockTime</span><span class="o">.</span><span class="na">hour</span><span class="o">,</span> <span class="n">clockTime</span><span class="o">.</span><span class="na">min</span><span class="o">.</span><span class="na">format</span><span class="o">(</span><span class="s">"%02d"</span><span class="o">)])</span>
+    <span class="c1">// get the text size to work out where to position it</span>
+    <span class="kt">var</span> <span class="n">textDim</span> <span class="o">=</span> <span class="n">dc</span><span class="o">.</span><span class="na">getTextDimensions</span><span class="o">(</span><span class="n">timeString</span><span class="o">,</span> <span class="n">font</span><span class="o">);</span>
+    <span class="kt">var</span> <span class="n">x</span> <span class="o">=</span> <span class="o">(</span><span class="n">dc</span><span class="o">.</span><span class="na">getWidth</span><span class="o">()</span> <span class="o">/</span> <span class="mi">2</span><span class="o">);</span>
+    <span class="kt">var</span> <span class="n">y</span> <span class="o">=</span> <span class="o">(</span><span class="n">dc</span><span class="o">.</span><span class="na">getHeight</span><span class="o">()</span> <span class="o">/</span><span class="mi">2</span><span class="o">)</span> <span class="o">-</span> <span class="n">textDim</span><span class="o">[</span><span class="mi">1</span><span class="o">]</span> <span class="o">/</span><span class="mi">2</span><span class="o">;</span>
+    <span class="kt">var</span> <span class="n">stepsX</span> <span class="o">=</span> <span class="n">x</span> <span class="o">-</span> <span class="n">textDim</span><span class="o">[</span><span class="mi">0</span><span class="o">]/</span><span class="mi">2</span> <span class="o">;</span>
+    <span class="kt">var</span> <span class="n">batteryPercent</span> <span class="o">=</span> <span class="nc">Lang</span><span class="o">.</span><span class="na">format</span><span class="o">(</span><span class="s">"$1$%"</span><span class="o">,</span> <span class="o">[</span><span class="n">stats</span><span class="o">.</span><span class="na">battery</span><span class="o">.</span><span class="na">format</span><span class="o">(</span><span class="s">"%02d"</span><span class="o">)]);</span>
+    <span class="kt">var</span> <span class="n">date</span> <span class="o">=</span> <span class="nc">Lang</span><span class="o">.</span><span class="na">format</span><span class="o">(</span><span class="s">"$1$ $2$"</span><span class="o">,</span> <span class="o">[</span><span class="n">dateInfo</span><span class="o">.</span><span class="na">day</span><span class="o">,</span> <span class="n">dateInfo</span><span class="o">.</span><span class="na">month</span><span class="o">]);</span>
+    <span class="kt">var</span> <span class="n">percent</span> <span class="o">=</span>  <span class="o">(</span><span class="n">activity</span><span class="o">.</span><span class="na">steps</span><span class="o">*</span><span class="mi">100</span><span class="o">)/</span><span class="n">activity</span><span class="o">.</span><span class="na">stepGoal</span>
+    <span class="c1">// set the whole screen black</span>
+      <span class="n">dc</span><span class="o">.</span><span class="na">setColor</span><span class="o">(</span><span class="nc">Gfx</span><span class="o">.</span><span class="na">COLOR_BLACK</span><span class="o">,</span> <span class="nc">Gfx</span><span class="o">.</span><span class="na">COLOR_BLACK</span><span class="o">);</span>
+      <span class="n">dc</span><span class="o">.</span><span class="na">fillRectangle</span><span class="o">(</span><span class="mi">0</span><span class="o">,</span> <span class="mi">0</span><span class="o">,</span> <span class="n">dc</span><span class="o">.</span><span class="na">getWidth</span><span class="o">(),</span> <span class="n">dc</span><span class="o">.</span><span class="na">getHeight</span><span class="o">())</span>
+    <span class="k">if</span> <span class="o">(</span><span class="n">percent</span> <span class="o">&gt;</span> <span class="mi">100</span><span class="o">)</span> <span class="o">{</span>
+       <span class="n">dc</span><span class="o">.</span><span class="na">setColor</span><span class="o">(</span><span class="nc">Gfx</span><span class="o">.</span><span class="na">COLOR_GREEN</span><span class="o">,</span> <span class="nc">Gfx</span><span class="o">.</span><span class="na">COLOR_BLACK</span><span class="o">);</span>
+         <span class="n">dc</span><span class="o">.</span><span class="na">drawText</span><span class="o">(</span><span class="n">x</span><span class="o">,</span><span class="n">y</span><span class="o">,</span> <span class="n">font</span><span class="o">,</span> <span class="n">timeString</span><span class="o">,</span> <span class="nc">Gfx</span><span class="o">.</span><span class="na">TEXT_JUSTIFY_CENTER</span><span class="o">);</span>
+      <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+         <span class="n">dc</span><span class="o">.</span><span class="na">setColor</span><span class="o">(</span><span class="nc">Gfx</span><span class="o">.</span><span class="na">COLOR_RED</span><span class="o">,</span> <span class="nc">Gfx</span><span class="o">.</span><span class="na">COLOR_BLACK</span><span class="o">);</span>
+         <span class="n">dc</span><span class="o">.</span><span class="na">fillRectangle</span><span class="o">(</span><span class="n">stepsX</span><span class="o">,</span> <span class="n">y</span><span class="o">+</span><span class="mi">1</span><span class="o">,</span> <span class="n">min</span><span class="o">(</span><span class="n">percent</span><span class="o">,</span> <span class="n">textDim</span><span class="o">[</span><span class="mi">0</span><span class="o">]),</span> <span class="n">textDim</span><span class="o">[</span><span class="mi">1</span><span class="o">]);</span>
+         <span class="n">dc</span><span class="o">.</span><span class="na">setColor</span><span class="o">(</span><span class="nc">Gfx</span><span class="o">.</span><span class="na">COLOR_WHITE</span><span class="o">,</span> <span class="nc">Gfx</span><span class="o">.</span><span class="na">COLOR_BLACK</span><span class="o">);</span>
+       <span class="n">dc</span><span class="o">.</span><span class="na">fillRectangle</span><span class="o">(</span><span class="n">stepsX</span> <span class="o">+</span> <span class="n">percent</span><span class="o">,</span> <span class="n">y</span><span class="o">+</span><span class="mi">1</span><span class="o">,</span> <span class="n">textDim</span><span class="o">[</span><span class="mi">0</span><span class="o">]-</span><span class="n">percent</span><span class="o">,</span> <span class="n">textDim</span><span class="o">[</span><span class="mi">1</span><span class="o">]);</span>
+       <span class="n">dc</span><span class="o">.</span><span class="na">setColor</span><span class="o">(</span><span class="nc">Gfx</span><span class="o">.</span><span class="na">COLOR_TRANSPARENT</span><span class="o">,</span> <span class="nc">Gfx</span><span class="o">.</span><span class="na">COLOR_BLACK</span><span class="o">);</span>
+       <span class="n">dc</span><span class="o">.</span><span class="na">drawText</span><span class="o">(</span><span class="n">x</span><span class="o">,</span><span class="n">y</span><span class="o">,</span> <span class="n">font</span><span class="o">,</span> <span class="n">timeString</span><span class="o">,</span> <span class="nc">Gfx</span><span class="o">.</span><span class="na">TEXT_JUSTIFY_CENTER</span><span class="o">);</span>
+    <span class="o">}</span>
+    <span class="n">dc</span><span class="o">.</span><span class="na">setColor</span><span class="o">(</span><span class="nc">Gfx</span><span class="o">.</span><span class="na">COLOR_WHITE</span><span class="o">,</span> <span class="nc">Gfx</span><span class="o">.</span><span class="na">COLOR_BLACK</span><span class="o">);</span>
+    <span class="n">dc</span><span class="o">.</span><span class="na">drawText</span><span class="o">(</span><span class="n">x</span><span class="o">,</span> <span class="o">(</span><span class="n">dc</span><span class="o">.</span><span class="na">getHeight</span><span class="o">()</span> <span class="o">-</span> <span class="mi">10</span> <span class="o">-</span> <span class="o">(</span><span class="n">dc</span><span class="o">.</span><span class="na">getFontHeight</span><span class="o">(</span><span class="nc">Gfx</span><span class="o">.</span><span class="na">FONT_TINY</span><span class="o">))),</span> <span class="nc">Gfx</span><span class="o">.</span><span class="na">FONT_TIN</span> <span class="n">batteryPercent</span><span class="o">,</span> <span class="nc">Gfx</span><span class="o">.</span><span class="na">TEXT_JUSTIFY_CENTER</span><span class="o">);</span>
+    <span class="n">dc</span><span class="o">.</span><span class="na">drawText</span><span class="o">(</span><span class="n">x</span><span class="o">,</span> <span class="o">(</span><span class="mi">10</span> <span class="o">+</span> <span class="n">dc</span><span class="o">.</span><span class="na">getFontHeight</span><span class="o">(</span><span class="nc">Gfx</span><span class="o">.</span><span class="na">FONT_TINY</span><span class="o">)),</span> <span class="nc">Gfx</span><span class="o">.</span><span class="na">FONT_TINY</span><span class="o">,</span> <span class="n">date</span> <span class="nc">Gfx</span><span class="o">.</span><span class="na">TEXT_JSTIFY_CENTER</span><span class="o">);</span> <span class="o">}</span>
+
+<span class="n">function</span> <span class="nf">min</span><span class="o">(</span><span class="n">a</span><span class="o">,</span> <span class="n">b</span><span class="o">)</span> <span class="o">{</span>
+  <span class="k">if</span> <span class="o">(</span><span class="n">a</span> <span class="o">&gt;</span> <span class="n">b</span><span class="o">)</span> <span class="o">{</span>
+     <span class="k">return</span> <span class="n">b</span><span class="o">;</span>
+   <span class="o">}</span>
+   <span class="k">return</span> <span class="n">a</span><span class="o">;</span>
+<span class="o">}</span>
+
+</code></pre></div></div>
+
+<p>Running in IntelliJ for me is a case of Shift+F10 and the Run Configuration loads the simulator.</p>
+
+<p>In the simulator you can set the levels of activity and change properties of the device such as battery status and GPS etc.</p>
+
+<p><img src="../images/steps_in_progress.png" alt="Steps in progres" />
+<em>Daily steps in progress</em></p>
+
+<p><img src="../images/steps_complete.png" alt="Steps in progres" />
+<em>Daily steps in completed</em></p>
+
+</div>
+
+            </div>
+        </main>
+    </div>
+
+    <footer class="wrapper-footer">
+        <div class="footer">
+    <span class="footer-text float-left">This work is licensed under <a rel="license" href="https://www.gnu.org/licenses/gpl-3.0.en.html" target="_blank">GPLv3</a></span>
+    <span class="footer-text float-right">
+    Site Updated: 2023-12-01  (<a href="/feed.xml" target="_blank">RSS</a>)
+  </span>
+</div>
+    </footer>
+</body>
+</html>

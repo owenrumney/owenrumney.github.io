@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<!-- Begin Jekyll SEO tag v2.6.1 -->
+<title>Databricks Single SignOn with Azure Active Directory | Owen Rumney</title>
+<meta name="generator" content="Jekyll v4.2.1" />
+<meta property="og:title" content="Databricks Single SignOn with Azure Active Directory" />
+<meta name="author" content="Owen Rumney" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="Step by step instructions for configuring Azure Active Directory to work with Databricks for Single SignOn" />
+<meta property="og:description" content="Step by step instructions for configuring Azure Active Directory to work with Databricks for Single SignOn" />
+<link rel="canonical" href="https://www.owenrumney.co.uk/databricks_with_azure_ad/" />
+<meta property="og:url" content="https://www.owenrumney.co.uk/databricks_with_azure_ad/" />
+<meta property="og:site_name" content="Owen Rumney" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2019-05-23T00:00:00+00:00" />
+<script type="application/ld+json">
+{"dateModified":"2019-05-23T00:00:00+00:00","datePublished":"2019-05-23T00:00:00+00:00","author":{"@type":"Person","name":"Owen Rumney"},"description":"Step by step instructions for configuring Azure Active Directory to work with Databricks for Single SignOn","mainEntityOfPage":{"@type":"WebPage","@id":"https://www.owenrumney.co.uk/databricks_with_azure_ad/"},"url":"https://www.owenrumney.co.uk/databricks_with_azure_ad/","@type":"BlogPosting","headline":"Databricks Single SignOn with Azure Active Directory","@context":"https://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+
+
+<meta name="keywords" content="azure,sysadmin" />
+
+<link rel="shortcut icon" href="/favicon.ico" />
+<link rel="apple-touch-icon" href="/favicon.ico"/>
+<link rel="stylesheet" type="text/css" href="/assets/css/styles.css" />
+<link rel="stylesheet" type="text/css" href="/assets/css/prism.css" />
+<script src="/assets/js/prism.js"></script>
+
+
+
+</head>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-TLCVNKXMFJ"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-TLCVNKXMFJ');
+</script>
+
+<body>
+    <div class="wrapper">
+        <header class="wrapper-header">
+            <div class="header">
+  <nav class="float-right">
+  
+  <a href="https://github.com/owenrumney" target="_blank"
+    ><img
+      src="/assets/images/github.svg"
+      style="color: white; display: inline-block"
+      height="30px"
+      alt="GitHub"
+  /></a>
+  
+  <a href="https://linkedin.com/in/owenrumney" target="_blank"
+    ><img
+      src="/assets/images/linkedin.svg"
+      style="color: white; display: inline-block"
+      height="30px"
+      alt="LinkedIn"
+  /></a>
+  
+  <a href="https://cv.owenrumney.co.uk" target="_blank"
+    ><img
+      src="/assets/images/resume.svg"
+      style="color: white; display: inline-block"
+      height="32px"
+      alt="Resume"
+  /></a>
+  
+</nav>
+
+  <a href="https://www.owenrumney.co.uk" target="_blank"><h1>Owen Rumney</h1></a>
+  <br />
+  <h5><i>Software Engineer</i></h5>
+  <br />
+
+  <hr />
+</div>
+
+        </header>
+
+        <main class="wrapper-main">
+            <div class="main-content">
+            <div class="post-info">
+    <h2>Databricks Single SignOn with Azure Active Directory</h2>
+    <p>23 May 2019 - Owen Rumney</p>
+</div>
+
+<div class="post-content">
+<h2 id="overview">Overview</h2>
+
+<p>At my current workplace we are using Databricks with much success. Having recently activated the Security Operations Package I was keen to implement the Single SignOn (SSO) functionality.</p>
+
+<p>The documentation provided by Databricks doesn’t seem to cover integrating with Azure Active Directory as a SAML 2.0 Identity Provider and it took some effort to work out how to do it.</p>
+
+<h2 id="simple-steps">Simple Steps</h2>
+
+<ol>
+  <li>
+    <p>Log into Azure Portal and from the menu on the left, select <code class="language-plaintext highlighter-rouge">Azure Active Directory</code> then <code class="language-plaintext highlighter-rouge">Enterprise applications</code> from the secondary menu.
+<img src="../images/azure_ad_enterprise_apps.png" alt="Azure Active Directory - Enterprise App" /></p>
+  </li>
+  <li>
+    <p>Select <code class="language-plaintext highlighter-rouge">New Application</code> to create a new Enterprise application
+<img src="../images/azure_ad_new_app.png" alt="Azure Active Directory - New Ap" /></p>
+  </li>
+</ol>
+
+<p>3) Databricks isn’t one of the Gallery Applications at the time of writing, so select <code class="language-plaintext highlighter-rouge">Non-Gallery Application</code> from the available list.
+   <img src="../images/azure_ad_non_gallery.png" alt="Azure Active Directory - Non Gallery Applicatio" /></p>
+
+<ol>
+  <li>
+    <p>This is where the Databricks instructions is unclear, you need to use your Databricks URL as the <code class="language-plaintext highlighter-rouge">Identity Provider Entity ID</code>.
+<img src="../images/azure_ad_basic_saml.png" alt="Azure Active Directory - Basic SAML Setting" /></p>
+  </li>
+  <li>
+    <p>When you’ve completed and saved the basic settings, you’ll be able to download the x.509 certificate and have access to the Login URL to use in the Databricks Admin Console. Download the cert and open with a text editor to extract the certificate content
+<img src="../images/azure_ad_cert_and_login.png" alt="Azure Active Directory - Cert and Logi" /></p>
+  </li>
+  <li>
+    <p>You can now take these details over to the Databricks admin console to configure SSO. Enter the details into the Single Sign On tab in the <code class="language-plaintext highlighter-rouge">Admin Console</code> page. Your <code class="language-plaintext highlighter-rouge">Identity Provider Entity ID</code> is the root of your Databricks cloud URL.</p>
+  </li>
+</ol>
+
+<p><img src="../images/databricks_single_signon.png" alt="Databricks Admin Console - SS" /></p>
+
+<ol>
+  <li>You can now log out, then log in using Single SignOn through Azure which should get you straight back in.
+<img src="../images/databricks_single_signon_login.png" alt="Databricks Admin Console - SSO Logi" /></li>
+</ol>
+
+<h3 id="a-note-on-allow-user-creation">A Note on Allow User Creation</h3>
+
+<p>If you enable <code class="language-plaintext highlighter-rouge">Allow auto user creation</code>, when a user logs in, it will create the user for them automatically. This is fine if you’ve configured Azure Active Directory to specify users who have a Role to use the <code class="language-plaintext highlighter-rouge">Enterprise Application</code>. For our use case, I’ve gone with this option disabled and enabled open access at the Active Directory end. This means that unknown (from a Databricks perspective) but otherwise authenticated users don’t have access to the environment</p>
+
+</div>
+
+            </div>
+        </main>
+    </div>
+
+    <footer class="wrapper-footer">
+        <div class="footer">
+    <span class="footer-text float-left">This work is licensed under <a rel="license" href="https://www.gnu.org/licenses/gpl-3.0.en.html" target="_blank">GPLv3</a></span>
+    <span class="footer-text float-right">
+    Site Updated: 2023-12-01  (<a href="/feed.xml" target="_blank">RSS</a>)
+  </span>
+</div>
+    </footer>
+</body>
+</html>

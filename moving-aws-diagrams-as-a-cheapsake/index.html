@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<!-- Begin Jekyll SEO tag v2.6.1 -->
+<title>Moving AWS Diagrams, aka Docker for cheapskates | Owen Rumney</title>
+<meta name="generator" content="Jekyll v4.2.1" />
+<meta property="og:title" content="Moving AWS Diagrams, aka Docker for cheapskates" />
+<meta name="author" content="Owen Rumney" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="Fargate with an ALB started to get a bit expensive so I needed to find a new way to host my aws diagram tool." />
+<meta property="og:description" content="Fargate with an ALB started to get a bit expensive so I needed to find a new way to host my aws diagram tool." />
+<link rel="canonical" href="https://www.owenrumney.co.uk/moving-aws-diagrams-as-a-cheapsake/" />
+<meta property="og:url" content="https://www.owenrumney.co.uk/moving-aws-diagrams-as-a-cheapsake/" />
+<meta property="og:site_name" content="Owen Rumney" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2020-01-11T00:00:00+00:00" />
+<script type="application/ld+json">
+{"dateModified":"2020-01-11T00:00:00+00:00","datePublished":"2020-01-11T00:00:00+00:00","author":{"@type":"Person","name":"Owen Rumney"},"description":"Fargate with an ALB started to get a bit expensive so I needed to find a new way to host my aws diagram tool.","mainEntityOfPage":{"@type":"WebPage","@id":"https://www.owenrumney.co.uk/moving-aws-diagrams-as-a-cheapsake/"},"url":"https://www.owenrumney.co.uk/moving-aws-diagrams-as-a-cheapsake/","@type":"BlogPosting","headline":"Moving AWS Diagrams, aka Docker for cheapskates","@context":"https://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+
+
+<meta name="keywords" content="aws,programming,docker,tools" />
+
+<link rel="shortcut icon" href="/favicon.ico" />
+<link rel="apple-touch-icon" href="/favicon.ico"/>
+<link rel="stylesheet" type="text/css" href="/assets/css/styles.css" />
+<link rel="stylesheet" type="text/css" href="/assets/css/prism.css" />
+<script src="/assets/js/prism.js"></script>
+
+
+
+</head>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-TLCVNKXMFJ"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-TLCVNKXMFJ');
+</script>
+
+<body>
+    <div class="wrapper">
+        <header class="wrapper-header">
+            <div class="header">
+  <nav class="float-right">
+  
+  <a href="https://github.com/owenrumney" target="_blank"
+    ><img
+      src="/assets/images/github.svg"
+      style="color: white; display: inline-block"
+      height="30px"
+      alt="GitHub"
+  /></a>
+  
+  <a href="https://linkedin.com/in/owenrumney" target="_blank"
+    ><img
+      src="/assets/images/linkedin.svg"
+      style="color: white; display: inline-block"
+      height="30px"
+      alt="LinkedIn"
+  /></a>
+  
+  <a href="https://cv.owenrumney.co.uk" target="_blank"
+    ><img
+      src="/assets/images/resume.svg"
+      style="color: white; display: inline-block"
+      height="32px"
+      alt="Resume"
+  /></a>
+  
+</nav>
+
+  <a href="https://www.owenrumney.co.uk" target="_blank"><h1>Owen Rumney</h1></a>
+  <br />
+  <h5><i>Software Engineer</i></h5>
+  <br />
+
+  <hr />
+</div>
+
+        </header>
+
+        <main class="wrapper-main">
+            <div class="main-content">
+            <div class="post-info">
+    <h2>Moving AWS Diagrams, aka Docker for cheapskates</h2>
+    <p>11 Jan 2020 - Owen Rumney</p>
+</div>
+
+<div class="post-content">
+<p>Last year I created a diagram tool specifically for AWS diagrams. It was essentially a hack of the underlying code draw.io uses.</p>
+
+<p>The reality is, if you’re going to be doing diagrams you might as well use the proper draw.io app but I wanted to provide a way that didn’t need signup or any personal data being handed over. (I did add analytics so I could see if it was being used).</p>
+
+<h2 id="the-setup">The Setup</h2>
+
+<p>I have been running the application (Java and HTML/JS/CSS) as a Docker container in Amazon Fargate for the past 6 months or so, this was with a Amazon Application Load Balancer sitting infront providing an HTTP endpoint. I got a load of AWS credits around the same time, so money was no object.</p>
+
+<h2 id="the-now-setup">The Now Setup</h2>
+
+<p>Fast forward to 2020 and my credits have all gone/expired so I am footing the bill for the ALB and the Fargate usage. The docker container doesn’t cost too much but the ALB is expensive enough to want to find an alternative to not kill off the project</p>
+
+<h2 id="the-solution">The Solution</h2>
+
+<p>Bearing in mind I have a Dockerfile already created and a dockerhub account, I decided the best way was going to be find a cheap and cheerful box to run docker on and expose the service using Nginx sitting alongside.</p>
+
+<p>While looking into this, I discovered I can run a DigitalOcean droplet for $5/month - given the amount of traffic I’m getting, the one droplet will do for now. I can review if need be in the future.</p>
+
+<p>I also discovered that while I planned to use nginx, <a href="https://github.com/jwilder/nginx-proxy">Jason Wilder</a> has created an automated image which used docker-gen to grab starting containers and add them to the nginx config automagically.</p>
+
+<p>The last thing I wanted was to be able to get SSL/TLS certificate through Letsencrypt - here I used the letsencrypt companion from <a href="https://github.com/JrCs/docker-letsencrypt-nginx-proxy-companion">JrCs</a></p>
+
+<h3 id="digital-ocean-droplet">Digital Ocean Droplet</h3>
+
+<p>The droplet is a cheap and cheerful Ubuntu instance that I installed docker and docker compose onto. I’ll cover that in a separate post.</p>
+
+<p>The droplet has a Firewall assigned which is allowing port 80 and 443 traffic, but nothing else.</p>
+
+<h3 id="nginx-docker-compose">Nginx Docker Compose</h3>
+
+<p>I am using Docker Compose to create the containers on the box so I need a docker compose file for nginx and lets encrypt companion.</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="ss">version: </span><span class="s1">'2'</span>
+
+<span class="ss">services:
+  </span><span class="n">nginx</span><span class="o">-</span><span class="ss">proxy:
+    restart: </span><span class="n">always</span>
+    <span class="ss">image: </span><span class="n">jwilder</span><span class="o">/</span><span class="n">nginx</span><span class="o">-</span><span class="n">proxy</span>
+    <span class="ss">ports:
+      </span><span class="o">-</span> <span class="s2">"80:80"</span>
+      <span class="o">-</span> <span class="s2">"443:443"</span>
+    <span class="ss">volumes:
+      </span><span class="o">-</span> <span class="s2">"/etc/nginx/vhost.d"</span>
+      <span class="o">-</span> <span class="s2">"/usr/share/nginx/html"</span>
+      <span class="o">-</span> <span class="s2">"/var/run/docker.sock:/tmp/docker.sock:ro"</span>
+      <span class="o">-</span> <span class="s2">"/etc/nginx/certs"</span>
+
+  <span class="n">letsencrypt</span><span class="o">-</span><span class="n">nginx</span><span class="o">-</span><span class="n">proxy</span><span class="o">-</span><span class="ss">companion:
+    restart: </span><span class="n">always</span>
+    <span class="ss">image: </span><span class="n">jrcs</span><span class="o">/</span><span class="n">letsencrypt</span><span class="o">-</span><span class="n">nginx</span><span class="o">-</span><span class="n">proxy</span><span class="o">-</span><span class="n">companion</span>
+    <span class="ss">volumes:
+      </span><span class="o">-</span> <span class="s2">"/var/run/docker.sock:/var/run/docker.sock:ro"</span>
+    <span class="ss">volumes_from:
+      </span><span class="o">-</span> <span class="s2">"nginx-proxy"</span>
+</code></pre></div></div>
+
+<p>This creates the services for the reverse proxy and letsencrypt companion. The mounted Docker socket allows the instances to see new containers start and the shared volumes allow for the lets encrypt container to create files for the nginx-proxy to consume.</p>
+
+<h3 id="nginx-for-aws-backend">Nginx for AWS Backend</h3>
+
+<p>AWS Backend is the name I gave the backend for the AWS diagram tool. In hindsight, it sounds a lot loftier a name that it actually does.</p>
+
+<p>The solution is comprised of a <code class="language-plaintext highlighter-rouge">jar</code> and some html. The docker file is fairly basic too</p>
+
+<div class="language-docker highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">FROM</span><span class="s"> amazoncorretto:8</span>
+<span class="c"># copy WAR into image</span>
+<span class="k">COPY</span><span class="s"> www /editor</span>
+<span class="k">COPY</span><span class="s"> index.html /index.html</span>
+<span class="k">COPY</span><span class="s"> jars/mxPdf.jar /mxPdf.jar</span>
+<span class="k">COPY</span><span class="s"> backend/target/backend-1.0-SNAPSHOT-jar-with-dependencies.jar /backend.jar</span>
+
+<span class="c"># expose port of the container</span>
+<span class="k">EXPOSE</span><span class="s"> 8080</span>
+
+<span class="c"># run application with this command line</span>
+<span class="k">CMD</span><span class="s"> ["/usr/bin/java", "-jar", "backend.jar", "-cp", "/*"]</span>
+</code></pre></div></div>
+
+<p>To build this locally;</p>
+
+<ol>
+  <li>Login to Docker</li>
+</ol>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>docker login <span class="nt">-u</span> owenrumney<span class="sb">`</span>
+</code></pre></div></div>
+
+<ol>
+  <li>Build the image</li>
+</ol>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>docker build <span class="nt">-t</span> owenrumney/awsbackend <span class="nb">.</span>
+</code></pre></div></div>
+
+<ol>
+  <li>Push to <code class="language-plaintext highlighter-rouge">Dockerhub</code></li>
+</ol>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>docker push owenrumney/awsbackend
+</code></pre></div></div>
+
+<p>Now the image is available for use, I can add another compose file.</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="ss">version: </span><span class="s1">'2'</span>
+
+<span class="ss">services:
+  awsbackend:
+    restart: </span><span class="n">always</span>
+    <span class="ss">image: </span><span class="n">owenrumney</span><span class="o">/</span><span class="n">awsbackend</span><span class="ss">:latest</span>
+    <span class="ss">environment:
+      </span><span class="o">-</span> <span class="no">VIRTUAL_HOST</span><span class="o">=</span><span class="n">www</span><span class="p">.</span><span class="nf">awsdiagrams</span><span class="p">.</span><span class="nf">io</span>
+      <span class="o">-</span> <span class="no">VIRTUAL_PORT</span><span class="o">=</span><span class="mi">8080</span>
+      <span class="o">-</span> <span class="no">LETSENCRYPT_HOST</span><span class="o">=</span><span class="n">www</span><span class="p">.</span><span class="nf">awsdiagrams</span><span class="p">.</span><span class="nf">io</span>
+</code></pre></div></div>
+
+<p>The environment variables are uses by the proxy and the companion to create the certs and to configure the nginx routing.</p>
+
+<p>You can see the finished result running at <a href="https://www.awsdiagrams.io/editor">AWS Diagrams</a></p>
+
+</div>
+
+            </div>
+        </main>
+    </div>
+
+    <footer class="wrapper-footer">
+        <div class="footer">
+    <span class="footer-text float-left">This work is licensed under <a rel="license" href="https://www.gnu.org/licenses/gpl-3.0.en.html" target="_blank">GPLv3</a></span>
+    <span class="footer-text float-right">
+    Site Updated: 2023-12-01  (<a href="/feed.xml" target="_blank">RSS</a>)
+  </span>
+</div>
+    </footer>
+</body>
+</html>

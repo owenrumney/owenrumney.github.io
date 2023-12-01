@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<!-- Begin Jekyll SEO tag v2.6.1 -->
+<title>Refreshing AWS credentials in Python | Owen Rumney</title>
+<meta name="generator" content="Jekyll v4.2.1" />
+<meta property="og:title" content="Refreshing AWS credentials in Python" />
+<meta name="author" content="Owen Rumney" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="Handling refreshing credentials in python code using boto3 and botocore" />
+<meta property="og:description" content="Handling refreshing credentials in python code using boto3 and botocore" />
+<link rel="canonical" href="https://www.owenrumney.co.uk/implementing-refreshingawscredentials-python/" />
+<meta property="og:url" content="https://www.owenrumney.co.uk/implementing-refreshingawscredentials-python/" />
+<meta property="og:site_name" content="Owen Rumney" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2019-01-15T00:00:00+00:00" />
+<script type="application/ld+json">
+{"dateModified":"2019-01-15T00:00:00+00:00","datePublished":"2019-01-15T00:00:00+00:00","author":{"@type":"Person","name":"Owen Rumney"},"description":"Handling refreshing credentials in python code using boto3 and botocore","mainEntityOfPage":{"@type":"WebPage","@id":"https://www.owenrumney.co.uk/implementing-refreshingawscredentials-python/"},"url":"https://www.owenrumney.co.uk/implementing-refreshingawscredentials-python/","@type":"BlogPosting","headline":"Refreshing AWS credentials in Python","@context":"https://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+
+
+<meta name="keywords" content="aws,python,programming" />
+
+<link rel="shortcut icon" href="/favicon.ico" />
+<link rel="apple-touch-icon" href="/favicon.ico"/>
+<link rel="stylesheet" type="text/css" href="/assets/css/styles.css" />
+<link rel="stylesheet" type="text/css" href="/assets/css/prism.css" />
+<script src="/assets/js/prism.js"></script>
+
+
+
+</head>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-TLCVNKXMFJ"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-TLCVNKXMFJ');
+</script>
+
+<body>
+    <div class="wrapper">
+        <header class="wrapper-header">
+            <div class="header">
+  <nav class="float-right">
+  
+  <a href="https://github.com/owenrumney" target="_blank"
+    ><img
+      src="/assets/images/github.svg"
+      style="color: white; display: inline-block"
+      height="30px"
+      alt="GitHub"
+  /></a>
+  
+  <a href="https://linkedin.com/in/owenrumney" target="_blank"
+    ><img
+      src="/assets/images/linkedin.svg"
+      style="color: white; display: inline-block"
+      height="30px"
+      alt="LinkedIn"
+  /></a>
+  
+  <a href="https://cv.owenrumney.co.uk" target="_blank"
+    ><img
+      src="/assets/images/resume.svg"
+      style="color: white; display: inline-block"
+      height="32px"
+      alt="Resume"
+  /></a>
+  
+</nav>
+
+  <a href="https://www.owenrumney.co.uk" target="_blank"><h1>Owen Rumney</h1></a>
+  <br />
+  <h5><i>Software Engineer</i></h5>
+  <br />
+
+  <hr />
+</div>
+
+        </header>
+
+        <main class="wrapper-main">
+            <div class="main-content">
+            <div class="post-info">
+    <h2>Refreshing AWS credentials in Python</h2>
+    <p>15 Jan 2019 - Owen Rumney</p>
+</div>
+
+<div class="post-content">
+<p>In a recent post I covered an <a href="/implementing-refreshingawscredentials/">using RefreshingAWSCredentials within .NET AWS SDK</a> to solve an issue with the way my current organisation has configured SingleSignOn (SSO) and temporary credentials.</p>
+
+<p>Essentially, the solution involves a background process updating a credenial file then using a time limited <code class="language-plaintext highlighter-rouge">AWSCredential</code> object to refresh the credentials.</p>
+
+<h2 id="next">Next…</h2>
+
+<p>The next issue to surface was satisfying the same requirement but for the Python based component of the 3rd party solution.</p>
+
+<h2 id="refreshing-credential-file">Refreshing Credential File</h2>
+
+<p>In this case, on RedHat instance, there is a cron job executing a Python script which handles the SSO process and writes the updated credentials and session token to a file which can be used by the 3rd party component.</p>
+
+<h2 id="refreshing-the-credentials-in-code">Refreshing the Credentials in code</h2>
+
+<p>The exising code creates a session then creates the required resources. This works fine for the first hour till the temporary credentials expire.</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">from</span> <span class="nn">botocore.session</span> <span class="kn">import</span> <span class="n">get_session</span>
+
+<span class="n">queues</span><span class="p">[</span><span class="s">'incoming'</span><span class="p">]</span> <span class="o">=</span> <span class="n">session</span><span class="p">.</span><span class="n">resource</span><span class="p">(</span><span class="s">'sqs'</span><span class="p">,</span> <span class="n">region</span><span class="p">).</span><span class="n">get_queue_by_name</span><span class="p">(</span><span class="n">QueueName</span><span class="o">=</span><span class="s">'incoming_queue'</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p>There is only a small amount of work to make this refreshing against the externally updated credential file. For this we’ll make use of the <code class="language-plaintext highlighter-rouge">RefreshableCredentials</code> from <code class="language-plaintext highlighter-rouge">botocore.credentials</code>.</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">from</span> <span class="nn">botocore.credentials</span> <span class="kn">import</span> <span class="n">RefreshableCredentials</span>
+<span class="kn">from</span> <span class="nn">botocore.session</span> <span class="kn">import</span> <span class="n">get_session</span>
+<span class="kn">from</span> <span class="nn">configparser</span> <span class="kn">import</span> <span class="n">ConfigParser</span>
+<span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span><span class="p">,</span> <span class="n">timedelta</span><span class="p">,</span> <span class="n">timezone</span>
+
+<span class="k">def</span> <span class="nf">refresh_external_credentials</span><span class="p">():</span>
+    <span class="n">config</span> <span class="o">=</span> <span class="n">ConfigParser</span><span class="p">()</span>
+    <span class="n">config</span><span class="p">.</span><span class="n">read</span><span class="p">(</span><span class="n">credential_file_path</span><span class="p">)</span>
+    <span class="n">profile</span> <span class="o">=</span> <span class="n">config</span><span class="p">.</span><span class="n">get</span><span class="p">(</span><span class="n">profile_name</span><span class="p">)</span>
+    <span class="n">expiry</span> <span class="o">=</span> <span class="p">(</span><span class="n">datetime</span><span class="p">.</span><span class="n">now</span><span class="p">(</span><span class="n">timezone</span><span class="p">.</span><span class="n">utc</span><span class="p">)</span> <span class="o">+</span> <span class="n">timedelta</span><span class="p">(</span><span class="n">minutes</span><span class="o">=</span><span class="n">refresh_minutes</span><span class="p">))</span>
+    <span class="k">return</span> <span class="p">{</span>
+        <span class="s">"access_key"</span><span class="p">:</span> <span class="n">profile</span><span class="p">.</span><span class="n">get</span><span class="p">(</span><span class="s">'aws_access_key_id'</span><span class="p">),</span>
+        <span class="s">"secret_key"</span><span class="p">:</span> <span class="n">profile</span><span class="p">.</span><span class="n">get</span><span class="p">(</span><span class="s">'aws_secret_access_key'</span><span class="p">),</span>
+        <span class="s">"token"</span><span class="p">:</span> <span class="n">profile</span><span class="p">.</span><span class="n">get</span><span class="p">(</span><span class="s">'aws_session_token'</span><span class="p">),</span>
+        <span class="s">"expiry_time"</span><span class="p">:</span> <span class="n">expiry</span><span class="p">.</span><span class="n">isoformat</span><span class="p">()</span>
+    <span class="p">}</span>
+</code></pre></div></div>
+
+<p>There are a few config entries here.</p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">credential_file_path</code> is the location of the credential file that is getting externally updated</li>
+  <li><code class="language-plaintext highlighter-rouge">profile_name</code> is the profile in the credential file that you want to use</li>
+  <li><code class="language-plaintext highlighter-rouge">refresh_minutes</code> is the time before the AWS credential will expire and the <code class="language-plaintext highlighter-rouge">refresh_external_credentials()</code> function will get called.</li>
+</ul>
+
+<p>We now need to create the credential object for a session which will then be able to auto refresh.</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">session_credentials</span> <span class="o">=</span> <span class="n">RefreshableCredentials</span><span class="p">.</span><span class="n">create_from_metadata</span><span class="p">(</span>
+    <span class="n">metadata</span> <span class="o">=</span> <span class="n">refresh_external_credentials</span><span class="p">(),</span>
+    <span class="n">refresh_using</span> <span class="o">=</span> <span class="n">refresh_external_credentials</span><span class="p">,</span>
+    <span class="n">method</span> <span class="o">=</span> <span class="s">'sts-assume-role'</span>
+<span class="p">)</span>
+</code></pre></div></div>
+
+<p>Going back to the original code, the new <code class="language-plaintext highlighter-rouge">session_credentials</code> can be plugged in to provide long life application against temporary tokens.</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">boto3</span>
+
+<span class="c1"># ideally taken from config
+</span><span class="n">region</span> <span class="o">=</span> <span class="s">'eu-west-1'</span>
+<span class="n">incoming_queue_name</span> <span class="o">=</span> <span class="s">'incoming_queue'</span>
+
+<span class="n">session</span> <span class="o">=</span> <span class="n">get_session</span><span class="p">()</span>
+<span class="n">session</span><span class="p">.</span><span class="n">_credentials</span> <span class="o">=</span> <span class="n">session_credentials</span>
+<span class="n">autorefresh_session</span> <span class="o">=</span> <span class="n">boto3</span><span class="p">.</span><span class="n">Session</span><span class="p">(</span><span class="n">botocore_session</span><span class="o">=</span><span class="n">session</span><span class="p">)</span>
+
+<span class="n">queues</span><span class="p">[</span><span class="s">'incoming'</span><span class="p">]</span> <span class="o">=</span> <span class="n">autorefresh_session</span><span class="p">.</span><span class="n">resource</span><span class="p">(</span><span class="s">'sqs'</span><span class="p">,</span> <span class="n">region</span><span class="p">).</span><span class="n">get_queue_by_name</span><span class="p">(</span><span class="n">QueueName</span><span class="o">=</span><span class="n">incoming_queue_name</span><span class="p">)</span>
+
+</code></pre></div></div>
+
+</div>
+
+            </div>
+        </main>
+    </div>
+
+    <footer class="wrapper-footer">
+        <div class="footer">
+    <span class="footer-text float-left">This work is licensed under <a rel="license" href="https://www.gnu.org/licenses/gpl-3.0.en.html" target="_blank">GPLv3</a></span>
+    <span class="footer-text float-right">
+    Site Updated: 2023-12-01  (<a href="/feed.xml" target="_blank">RSS</a>)
+  </span>
+</div>
+    </footer>
+</body>
+</html>

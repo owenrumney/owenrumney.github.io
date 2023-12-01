@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<!-- Begin Jekyll SEO tag v2.6.1 -->
+<title>SharePoint 2010/2013 Developer Dashboard | Owen Rumney</title>
+<meta name="generator" content="Jekyll v4.2.1" />
+<meta property="og:title" content="SharePoint 2010/2013 Developer Dashboard" />
+<meta name="author" content="Owen Rumney" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="The SharePoint developer dashboard, when switched on, will render at the bottom of the page in SharePoint 2010 and appear as an icon in the top right hand corner of SharePoint 2013. If the DisplayLevel is set to OnDemand for SharePoint 2010 then the behaviour will be as SharePoint 2013, that is the developer dashboard will be visible at the click of the icon on the ribbon." />
+<meta property="og:description" content="The SharePoint developer dashboard, when switched on, will render at the bottom of the page in SharePoint 2010 and appear as an icon in the top right hand corner of SharePoint 2013. If the DisplayLevel is set to OnDemand for SharePoint 2010 then the behaviour will be as SharePoint 2013, that is the developer dashboard will be visible at the click of the icon on the ribbon." />
+<link rel="canonical" href="https://www.owenrumney.co.uk/SharePoint-2010-2013-Developer-Dashboard/" />
+<meta property="og:url" content="https://www.owenrumney.co.uk/SharePoint-2010-2013-Developer-Dashboard/" />
+<meta property="og:site_name" content="Owen Rumney" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2014-01-16T00:00:00+00:00" />
+<script type="application/ld+json">
+{"dateModified":"2014-01-16T00:00:00+00:00","datePublished":"2014-01-16T00:00:00+00:00","author":{"@type":"Person","name":"Owen Rumney"},"description":"The SharePoint developer dashboard, when switched on, will render at the bottom of the page in SharePoint 2010 and appear as an icon in the top right hand corner of SharePoint 2013. If the DisplayLevel is set to OnDemand for SharePoint 2010 then the behaviour will be as SharePoint 2013, that is the developer dashboard will be visible at the click of the icon on the ribbon.","mainEntityOfPage":{"@type":"WebPage","@id":"https://www.owenrumney.co.uk/SharePoint-2010-2013-Developer-Dashboard/"},"url":"https://www.owenrumney.co.uk/SharePoint-2010-2013-Developer-Dashboard/","@type":"BlogPosting","headline":"SharePoint 2010/2013 Developer Dashboard","@context":"https://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+
+
+<meta name="keywords" content="sharepoint" />
+
+<link rel="shortcut icon" href="/favicon.ico" />
+<link rel="apple-touch-icon" href="/favicon.ico"/>
+<link rel="stylesheet" type="text/css" href="/assets/css/styles.css" />
+<link rel="stylesheet" type="text/css" href="/assets/css/prism.css" />
+<script src="/assets/js/prism.js"></script>
+
+
+
+</head>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-TLCVNKXMFJ"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-TLCVNKXMFJ');
+</script>
+
+<body>
+    <div class="wrapper">
+        <header class="wrapper-header">
+            <div class="header">
+  <nav class="float-right">
+  
+  <a href="https://github.com/owenrumney" target="_blank"
+    ><img
+      src="/assets/images/github.svg"
+      style="color: white; display: inline-block"
+      height="30px"
+      alt="GitHub"
+  /></a>
+  
+  <a href="https://linkedin.com/in/owenrumney" target="_blank"
+    ><img
+      src="/assets/images/linkedin.svg"
+      style="color: white; display: inline-block"
+      height="30px"
+      alt="LinkedIn"
+  /></a>
+  
+  <a href="https://cv.owenrumney.co.uk" target="_blank"
+    ><img
+      src="/assets/images/resume.svg"
+      style="color: white; display: inline-block"
+      height="32px"
+      alt="Resume"
+  /></a>
+  
+</nav>
+
+  <a href="https://www.owenrumney.co.uk" target="_blank"><h1>Owen Rumney</h1></a>
+  <br />
+  <h5><i>Software Engineer</i></h5>
+  <br />
+
+  <hr />
+</div>
+
+        </header>
+
+        <main class="wrapper-main">
+            <div class="main-content">
+            <div class="post-info">
+    <h2>SharePoint 2010/2013 Developer Dashboard</h2>
+    <p>16 Jan 2014 - Owen Rumney</p>
+</div>
+
+<div class="post-content">
+<p>The SharePoint developer dashboard, when switched on, will render at the bottom of the page in SharePoint 2010 and appear as an icon in the top right hand corner of SharePoint 2013.
+If the DisplayLevel is set to OnDemand for SharePoint 2010 then the behaviour will be as SharePoint 2013, that is the developer dashboard will be visible at the click of the icon on the ribbon.</p>
+
+<p><img src="../images/devdash.png" alt="SharePoint Developer Dashboar" title="SharePoint Developer Dashboard" /></p>
+
+<p>####Activating in PowerShell</p>
+
+<div class="language-powershell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$d</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="n">Microsoft.SharePoint.Administration.SPWebService</span><span class="p">]::</span><span class="n">ContentService.DeveloperDashboardSettings</span><span class="w">
+</span><span class="nv">$d</span><span class="o">.</span><span class="nf">DisplayLevel</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">'OnDemand'</span><span class="w">
+</span><span class="nv">$d</span><span class="o">.</span><span class="nf">TraceEnabled</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="bp">$true</span><span class="w">
+</span><span class="n">\</span><span class="nv">$d</span><span class="o">.</span><span class="nf">Update</span><span class="p">()</span><span class="w">
+
+</span></code></pre></div></div>
+
+<p>####Activatin using command line and stsadm</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>stsadm <span class="nt">-o</span> setproperty <span class="nt">-pn</span> developer-dashboard <span class="nt">-pv</span> OnDemand
+
+</code></pre></div></div>
+
+</div>
+
+            </div>
+        </main>
+    </div>
+
+    <footer class="wrapper-footer">
+        <div class="footer">
+    <span class="footer-text float-left">This work is licensed under <a rel="license" href="https://www.gnu.org/licenses/gpl-3.0.en.html" target="_blank">GPLv3</a></span>
+    <span class="footer-text float-right">
+    Site Updated: 2023-12-01  (<a href="/feed.xml" target="_blank">RSS</a>)
+  </span>
+</div>
+    </footer>
+</body>
+</html>

@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<!-- Begin Jekyll SEO tag v2.6.1 -->
+<title>Using Docker Multi stage build | Owen Rumney</title>
+<meta name="generator" content="Jekyll v4.2.1" />
+<meta property="og:title" content="Using Docker Multi stage build" />
+<meta name="author" content="Owen Rumney" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="A walkthrough of using Docker multi stage build Docker files to build an image containing an example Go application" />
+<meta property="og:description" content="A walkthrough of using Docker multi stage build Docker files to build an image containing an example Go application" />
+<link rel="canonical" href="https://www.owenrumney.co.uk/using-docker-as-a-build-env/" />
+<meta property="og:url" content="https://www.owenrumney.co.uk/using-docker-as-a-build-env/" />
+<meta property="og:site_name" content="Owen Rumney" />
+<meta property="og:image" content="https://www.owenrumney.co.uk/assets/img/owen.png" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2020-01-25T12:10:59+00:00" />
+<script type="application/ld+json">
+{"dateModified":"2020-01-25T12:10:59+00:00","datePublished":"2020-01-25T12:10:59+00:00","author":{"@type":"Person","name":"Owen Rumney"},"description":"A walkthrough of using Docker multi stage build Docker files to build an image containing an example Go application","mainEntityOfPage":{"@type":"WebPage","@id":"https://www.owenrumney.co.uk/using-docker-as-a-build-env/"},"url":"https://www.owenrumney.co.uk/using-docker-as-a-build-env/","@type":"BlogPosting","image":"https://www.owenrumney.co.uk/assets/img/owen.png","headline":"Using Docker Multi stage build","@context":"https://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+
+
+<meta name="keywords" content="go,docker,programming" />
+
+<link rel="shortcut icon" href="/favicon.ico" />
+<link rel="apple-touch-icon" href="/favicon.ico"/>
+<link rel="stylesheet" type="text/css" href="/assets/css/styles.css" />
+<link rel="stylesheet" type="text/css" href="/assets/css/prism.css" />
+<script src="/assets/js/prism.js"></script>
+
+
+
+</head>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-TLCVNKXMFJ"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-TLCVNKXMFJ');
+</script>
+
+<body>
+    <div class="wrapper">
+        <header class="wrapper-header">
+            <div class="header">
+  <nav class="float-right">
+  
+  <a href="https://github.com/owenrumney" target="_blank"
+    ><img
+      src="/assets/images/github.svg"
+      style="color: white; display: inline-block"
+      height="30px"
+      alt="GitHub"
+  /></a>
+  
+  <a href="https://linkedin.com/in/owenrumney" target="_blank"
+    ><img
+      src="/assets/images/linkedin.svg"
+      style="color: white; display: inline-block"
+      height="30px"
+      alt="LinkedIn"
+  /></a>
+  
+  <a href="https://cv.owenrumney.co.uk" target="_blank"
+    ><img
+      src="/assets/images/resume.svg"
+      style="color: white; display: inline-block"
+      height="32px"
+      alt="Resume"
+  /></a>
+  
+</nav>
+
+  <a href="https://www.owenrumney.co.uk" target="_blank"><h1>Owen Rumney</h1></a>
+  <br />
+  <h5><i>Software Engineer</i></h5>
+  <br />
+
+  <hr />
+</div>
+
+        </header>
+
+        <main class="wrapper-main">
+            <div class="main-content">
+            <div class="post-info">
+    <h2>Using Docker Multi stage build</h2>
+    <p>25 Jan 2020 - Owen Rumney</p>
+</div>
+
+<div class="post-content">
+<p>I have been using using Docker and Kubernetes off and on for work and personal for a few years now, but I was recently shown a feature in the Docker file that I wasn’t aware of.</p>
+
+<p>A bit of background - I was building a Go application that would sit alongside Squid to perform some updates. Although I was building the appliction with <code class="language-plaintext highlighter-rouge">GOOS</code> configured, the created Docker image would only work on my Macbook. Setting <code class="language-plaintext highlighter-rouge">GOARCH</code> also fixed it, but this is more interesting and certainly more portable solution.</p>
+
+<h2 id="multi-stage">Multi Stage</h2>
+
+<p>Since version <a href="https://docs.docker.com/engine/#17061-ee-1">17.06.1-ee-1</a>, Docker has added support for multi stage build in the Docker file. This means you can build your code in on container and make it available to other image builds. The obvious benefit of this for my case is that the target base image can be used as the build env too.</p>
+
+<h2 id="an-example">An Example</h2>
+
+<p>I wanted to provide a very basic example, so I thought I would create a dummy application that I could build the Dockerfile for.</p>
+
+<h3 id="the-application">The Application</h3>
+
+<p>The application is going to provide a simple web server that when passed a status code in the path with return a response with that code. This could be potentially useful if you want to test getting various status codes in the wild.</p>
+
+<p>I am writing the application in Go because that is the language I have started using at work - so its all good practice.</p>
+
+<h4 id="http-server">HTTP Server</h4>
+
+<p>The application creates an HTTP server to listen on port 8080 and return the response with an appropriate status code.</p>
+
+<div class="language-go highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">package</span> <span class="n">example</span>
+
+<span class="k">import</span> <span class="p">(</span>
+	<span class="s">"fmt"</span>
+	<span class="s">"net/http"</span>
+	<span class="s">"os"</span>
+	<span class="s">"strconv"</span>
+<span class="p">)</span>
+
+<span class="k">func</span> <span class="n">StartServer</span><span class="p">(</span><span class="n">stop</span> <span class="k">chan</span> <span class="kt">bool</span><span class="p">)</span> <span class="p">{</span>
+	<span class="n">start</span> <span class="o">:=</span> <span class="nb">make</span><span class="p">(</span><span class="k">chan</span> <span class="kt">bool</span><span class="p">,</span> <span class="m">1</span><span class="p">)</span>
+
+	<span class="n">http</span><span class="o">.</span><span class="n">HandleFunc</span><span class="p">(</span><span class="s">"/"</span><span class="p">,</span> <span class="n">HttpCodeServer</span><span class="p">)</span><span class="m">3</span>
+
+	<span class="k">go</span> <span class="k">func</span><span class="p">()</span> <span class="p">{</span>
+		<span class="k">for</span> <span class="p">{</span>
+			<span class="k">select</span> <span class="p">{</span>
+			<span class="k">case</span> <span class="o">&lt;-</span><span class="n">start</span><span class="o">:</span>
+				<span class="nb">println</span><span class="p">(</span><span class="n">fmt</span><span class="o">.</span><span class="n">Sprintf</span><span class="p">(</span><span class="s">"Starting the service on %s"</span><span class="p">,</span> <span class="n">port</span><span class="p">))</span>
+				<span class="n">err</span> <span class="o">:=</span> <span class="n">http</span><span class="o">.</span><span class="n">ListenAndServe</span><span class="p">(</span><span class="s">"0.0.0.0:8080"</span><span class="p">,</span> <span class="no">nil</span><span class="p">)</span>
+				<span class="k">if</span> <span class="n">err</span> <span class="o">!=</span> <span class="no">nil</span> <span class="p">{</span>
+					<span class="nb">println</span><span class="p">(</span><span class="s">"Restarting the server..."</span><span class="p">)</span>
+					<span class="n">start</span> <span class="o">&lt;-</span> <span class="no">true</span>
+				<span class="p">}</span>
+			<span class="k">case</span> <span class="o">&lt;-</span><span class="n">stop</span><span class="o">:</span>
+				<span class="k">break</span>
+			<span class="p">}</span>
+
+		<span class="p">}</span>
+	<span class="p">}()</span>
+	<span class="nb">println</span><span class="p">(</span><span class="s">"Starting the server..."</span><span class="p">)</span>
+	<span class="n">start</span> <span class="o">&lt;-</span> <span class="no">true</span>
+<span class="p">}</span>
+
+
+<span class="k">func</span> <span class="n">HttpCodeServer</span><span class="p">(</span><span class="n">w</span> <span class="n">http</span><span class="o">.</span><span class="n">ResponseWriter</span><span class="p">,</span> <span class="n">r</span> <span class="o">*</span><span class="n">http</span><span class="o">.</span><span class="n">Request</span><span class="p">)</span> <span class="p">{</span>
+	<span class="n">statusCode</span><span class="p">,</span> <span class="n">err</span> <span class="o">:=</span> <span class="n">strconv</span><span class="o">.</span><span class="n">Atoi</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">URL</span><span class="o">.</span><span class="n">Path</span><span class="p">[</span><span class="m">1</span><span class="o">:</span><span class="p">])</span>
+	<span class="k">if</span> <span class="n">err</span> <span class="o">!=</span> <span class="no">nil</span> <span class="p">{</span>
+		<span class="n">fmt</span><span class="o">.</span><span class="n">Fprintf</span><span class="p">(</span><span class="n">w</span><span class="p">,</span> <span class="s">"Couldn't handle status code %s!"</span><span class="p">,</span> <span class="n">r</span><span class="o">.</span><span class="n">URL</span><span class="o">.</span><span class="n">Path</span><span class="p">[</span><span class="m">1</span><span class="o">:</span><span class="p">])</span>
+	<span class="p">}</span>
+	<span class="n">w</span><span class="o">.</span><span class="n">WriteHeader</span><span class="p">(</span><span class="n">statusCode</span><span class="p">)</span>
+<span class="p">}</span>
+
+</code></pre></div></div>
+
+<h4 id="main-command">Main command</h4>
+
+<p>The application needs an entry point, this is found in <code class="language-plaintext highlighter-rouge">main.go</code> under <code class="language-plaintext highlighter-rouge">cmd/httpcodes</code> path.</p>
+
+<div class="language-go highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">package</span> <span class="n">main</span>
+
+<span class="k">import</span> <span class="p">(</span>
+	<span class="s">"httpcodes/internal/app/example"</span>
+	<span class="s">"os"</span>
+	<span class="s">"os/signal"</span>
+
+<span class="p">)</span>
+
+<span class="k">func</span> <span class="n">main</span><span class="p">()</span> <span class="p">{</span>
+	<span class="n">stopServer</span> <span class="o">:=</span> <span class="nb">make</span><span class="p">(</span><span class="k">chan</span> <span class="kt">bool</span><span class="p">,</span> <span class="m">1</span><span class="p">)</span>
+	<span class="n">stop</span> <span class="o">:=</span> <span class="nb">make</span><span class="p">(</span><span class="k">chan</span> <span class="n">os</span><span class="o">.</span><span class="n">Signal</span><span class="p">,</span> <span class="m">1</span><span class="p">)</span>
+	<span class="n">signal</span><span class="o">.</span><span class="n">Notify</span><span class="p">(</span><span class="n">stop</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">Interrupt</span><span class="p">)</span>
+
+	<span class="k">go</span> <span class="k">func</span><span class="p">()</span> <span class="p">{</span>
+		<span class="n">stopServer</span> <span class="o">&lt;-</span> <span class="o">&lt;-</span><span class="n">stop</span> <span class="o">==</span> <span class="n">os</span><span class="o">.</span><span class="n">Interrupt</span>
+	<span class="p">}()</span>
+	<span class="n">httpcodes</span><span class="o">.</span><span class="n">StartServer</span><span class="p">(</span><span class="n">stopServer</span><span class="p">)</span>
+	<span class="o">&lt;-</span><span class="n">stop</span>
+<span class="p">}</span>
+</code></pre></div></div>
+<p>This code starts the httpcodes server which will do the listening. A channel is used to stop the server when the application recieves a <code class="language-plaintext highlighter-rouge">SIGINT</code>.</p>
+
+<h3 id="folder-structure">Folder Structure</h3>
+
+<p>I have followed the folder structure laid down in the <a href="https://github.com/golang-standards/project-layout">Go project layout guide</a>.</p>
+
+<p>This puts the <code class="language-plaintext highlighter-rouge">Dockerfile</code> into the <code class="language-plaintext highlighter-rouge">build/packages</code> structure.</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>.
+├── build
+│   └── package
+│       └── httpcodes
+│           └── Dockerfile
+├── cmd
+│   └── httpcodes
+│       └── main.go
+└── internal
+    └── app
+        └── httpcodes
+            └── server.go
+</code></pre></div></div>
+
+<h3 id="dockerfile">Dockerfile</h3>
+
+<p>This was the original point of the post, the <code class="language-plaintext highlighter-rouge">Dockerfile</code>.</p>
+
+<div class="language-docker highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">FROM</span><span class="s"> golang:alpine AS builder</span>
+
+<span class="k">ENV</span><span class="s"> SRCPATH $GOPATH/src/httpcodes</span>
+<span class="k">COPY</span><span class="s"> ./ $SRCPATH</span>
+<span class="k">RUN </span>go <span class="nb">install </span>httpcodes/cmd/httpcodes
+
+<span class="k">FROM</span><span class="s"> alpine:3.11.3</span>
+
+<span class="k">EXPOSE</span><span class="s"> 8080</span>
+
+<span class="k">RUN </span><span class="nb">mkdir</span> <span class="nt">-p</span> /app
+<span class="k">COPY</span><span class="s"> --from=builder /go/bin/httpcodes /app/</span>
+<span class="k">RUN </span><span class="nb">chmod</span> +x /app/httpcodes
+
+<span class="k">CMD</span><span class="s"> ["./app/httpcodes"]</span>
+</code></pre></div></div>
+
+<p>I have kept it deliberately straight forward to highlight the main point.</p>
+
+<p>At the top I am using <code class="language-plaintext highlighter-rouge">golang:alpine</code> which has all the required packages already installed to build my application. Notice that I mark this <code class="language-plaintext highlighter-rouge">AS builder</code>.</p>
+
+<p>Now, when I create the actually build of the main image, in the <code class="language-plaintext highlighter-rouge">COPY</code> command you can see that the <code class="language-plaintext highlighter-rouge">--from=builder</code> attribute is used. This attribute is telling the second image to grab the <code class="language-plaintext highlighter-rouge">/go/bin/httpcodes</code> binary from the output of the first stage and copy them to the <code class="language-plaintext highlighter-rouge">/app</code> folder.</p>
+
+<h3 id="building-and-running">Building and Running</h3>
+
+<p>All that is left now is to build and run. From the root of the project run;</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>docker build -t httpcodes -f build/package/httpcodes/Dockerfile .
+</code></pre></div></div>
+
+<p>This will build the project and you can now run it with;</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>docker run -d -p 8080:8080 httpcodes
+</code></pre></div></div>
+
+<p>This command will start the image with port <code class="language-plaintext highlighter-rouge">8080</code> mapped to the host machine so we can access it. The <code class="language-plaintext highlighter-rouge">-d</code> just runs it in detached mode.</p>
+
+<h3 id="testing">Testing</h3>
+
+<p>To test, execute a curl command against <code class="language-plaintext highlighter-rouge">localhost:8080/</code> passing a status code.</p>
+
+<p>for example;</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>curl -v http://localhost:8080/502
+</code></pre></div></div>
+
+<p>This should return a verbose message saying we got a <code class="language-plaintext highlighter-rouge">502</code></p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">*</span>   Trying 127.0.0.1...
+<span class="k">*</span> TCP_NODELAY <span class="nb">set</span>
+<span class="k">*</span> Connected to localhost <span class="o">(</span>127.0.0.1<span class="o">)</span> port 8080 <span class="o">(</span><span class="c">#0)</span>
+<span class="o">&gt;</span> GET /502 HTTP/1.1
+<span class="o">&gt;</span> Host: localhost:8080
+<span class="o">&gt;</span> User-Agent: curl/7.64.1
+<span class="o">&gt;</span> Accept: <span class="k">*</span>/<span class="k">*</span>
+<span class="o">&gt;</span>
+&lt; HTTP/1.1 502 Bad Gateway
+&lt; Date: Sat, 25 Jan 2020 13:02:31 GMT
+&lt; Content-Length: 0
+&lt;
+<span class="k">*</span> Connection <span class="c">#0 to host localhost left intact</span>
+<span class="k">*</span> Closing connection 0
+</code></pre></div></div>
+
+</div>
+
+            </div>
+        </main>
+    </div>
+
+    <footer class="wrapper-footer">
+        <div class="footer">
+    <span class="footer-text float-left">This work is licensed under <a rel="license" href="https://www.gnu.org/licenses/gpl-3.0.en.html" target="_blank">GPLv3</a></span>
+    <span class="footer-text float-right">
+    Site Updated: 2023-12-01  (<a href="/feed.xml" target="_blank">RSS</a>)
+  </span>
+</div>
+    </footer>
+</body>
+</html>

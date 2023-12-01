@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<!-- Begin Jekyll SEO tag v2.6.1 -->
+<title>CIDR Cheatsheet for available IP Address | Owen Rumney</title>
+<meta name="generator" content="Jekyll v4.2.1" />
+<meta property="og:title" content="CIDR Cheatsheet for available IP Address" />
+<meta name="author" content="Owen Rumney" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="Simple post with a cheatsheet table for CIDR block mask and available IP numbers" />
+<meta property="og:description" content="Simple post with a cheatsheet table for CIDR block mask and available IP numbers" />
+<link rel="canonical" href="https://www.owenrumney.co.uk/cidr-ips-cheatsheet/" />
+<meta property="og:url" content="https://www.owenrumney.co.uk/cidr-ips-cheatsheet/" />
+<meta property="og:site_name" content="Owen Rumney" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2019-04-30T00:00:00+00:00" />
+<script type="application/ld+json">
+{"dateModified":"2019-04-30T00:00:00+00:00","datePublished":"2019-04-30T00:00:00+00:00","author":{"@type":"Person","name":"Owen Rumney"},"description":"Simple post with a cheatsheet table for CIDR block mask and available IP numbers","mainEntityOfPage":{"@type":"WebPage","@id":"https://www.owenrumney.co.uk/cidr-ips-cheatsheet/"},"url":"https://www.owenrumney.co.uk/cidr-ips-cheatsheet/","@type":"BlogPosting","headline":"CIDR Cheatsheet for available IP Address","@context":"https://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+
+
+<meta name="keywords" content="sysadmin,networking" />
+
+<link rel="shortcut icon" href="/favicon.ico" />
+<link rel="apple-touch-icon" href="/favicon.ico"/>
+<link rel="stylesheet" type="text/css" href="/assets/css/styles.css" />
+<link rel="stylesheet" type="text/css" href="/assets/css/prism.css" />
+<script src="/assets/js/prism.js"></script>
+
+
+
+</head>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-TLCVNKXMFJ"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-TLCVNKXMFJ');
+</script>
+
+<body>
+    <div class="wrapper">
+        <header class="wrapper-header">
+            <div class="header">
+  <nav class="float-right">
+  
+  <a href="https://github.com/owenrumney" target="_blank"
+    ><img
+      src="/assets/images/github.svg"
+      style="color: white; display: inline-block"
+      height="30px"
+      alt="GitHub"
+  /></a>
+  
+  <a href="https://linkedin.com/in/owenrumney" target="_blank"
+    ><img
+      src="/assets/images/linkedin.svg"
+      style="color: white; display: inline-block"
+      height="30px"
+      alt="LinkedIn"
+  /></a>
+  
+  <a href="https://cv.owenrumney.co.uk" target="_blank"
+    ><img
+      src="/assets/images/resume.svg"
+      style="color: white; display: inline-block"
+      height="32px"
+      alt="Resume"
+  /></a>
+  
+</nav>
+
+  <a href="https://www.owenrumney.co.uk" target="_blank"><h1>Owen Rumney</h1></a>
+  <br />
+  <h5><i>Software Engineer</i></h5>
+  <br />
+
+  <hr />
+</div>
+
+        </header>
+
+        <main class="wrapper-main">
+            <div class="main-content">
+            <div class="post-info">
+    <h2>CIDR Cheatsheet for available IP Address</h2>
+    <p>30 Apr 2019 - Owen Rumney</p>
+</div>
+
+<div class="post-content">
+<p>This is less of a post and more of a CIDR to mask cheatsheet to remind me how many IPs I get for a given block.</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>CIDR</th>
+      <th style="text-align: left">Subnet</th>
+      <th style="text-align: right">Total IPs</th>
+      <th style="text-align: right">Usable IPs</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>/32</td>
+      <td style="text-align: left">255.255.255.255</td>
+      <td style="text-align: right">1</td>
+      <td style="text-align: right">1</td>
+    </tr>
+    <tr>
+      <td>/31</td>
+      <td style="text-align: left">255.255.255.254</td>
+      <td style="text-align: right">2</td>
+      <td style="text-align: right">0</td>
+    </tr>
+    <tr>
+      <td>/30</td>
+      <td style="text-align: left">255.255.255.252</td>
+      <td style="text-align: right">4</td>
+      <td style="text-align: right">2</td>
+    </tr>
+    <tr>
+      <td>/29</td>
+      <td style="text-align: left">255.255.255.248</td>
+      <td style="text-align: right">8</td>
+      <td style="text-align: right">6</td>
+    </tr>
+    <tr>
+      <td>/28</td>
+      <td style="text-align: left">255.255.255.240</td>
+      <td style="text-align: right">16</td>
+      <td style="text-align: right">14</td>
+    </tr>
+    <tr>
+      <td>/27</td>
+      <td style="text-align: left">255.255.255.224</td>
+      <td style="text-align: right">32</td>
+      <td style="text-align: right">30</td>
+    </tr>
+    <tr>
+      <td>/26</td>
+      <td style="text-align: left">255.255.255.192</td>
+      <td style="text-align: right">64</td>
+      <td style="text-align: right">62</td>
+    </tr>
+    <tr>
+      <td>/25</td>
+      <td style="text-align: left">255.255.255.128</td>
+      <td style="text-align: right">128</td>
+      <td style="text-align: right">126</td>
+    </tr>
+    <tr>
+      <td>/24</td>
+      <td style="text-align: left">255.255.255.0</td>
+      <td style="text-align: right">256</td>
+      <td style="text-align: right">254</td>
+    </tr>
+    <tr>
+      <td>/23</td>
+      <td style="text-align: left">255.255.254.0</td>
+      <td style="text-align: right">512</td>
+      <td style="text-align: right">510</td>
+    </tr>
+    <tr>
+      <td>/22</td>
+      <td style="text-align: left">255.255.252.0</td>
+      <td style="text-align: right">1,024</td>
+      <td style="text-align: right">1,022</td>
+    </tr>
+    <tr>
+      <td>/21</td>
+      <td style="text-align: left">255.255.248.0</td>
+      <td style="text-align: right">2,048</td>
+      <td style="text-align: right">2,046</td>
+    </tr>
+    <tr>
+      <td>/20</td>
+      <td style="text-align: left">255.255.240.0</td>
+      <td style="text-align: right">4,096</td>
+      <td style="text-align: right">4,094</td>
+    </tr>
+    <tr>
+      <td>/19</td>
+      <td style="text-align: left">255.255.224.0</td>
+      <td style="text-align: right">8,192</td>
+      <td style="text-align: right">8,190</td>
+    </tr>
+    <tr>
+      <td>/18</td>
+      <td style="text-align: left">255.255.192.0</td>
+      <td style="text-align: right">16,384</td>
+      <td style="text-align: right">16,382</td>
+    </tr>
+    <tr>
+      <td>/17</td>
+      <td style="text-align: left">255.255.128.0</td>
+      <td style="text-align: right">32,768</td>
+      <td style="text-align: right">32,766</td>
+    </tr>
+    <tr>
+      <td>/16</td>
+      <td style="text-align: left">255.255.0.0</td>
+      <td style="text-align: right">65,536</td>
+      <td style="text-align: right">65,534</td>
+    </tr>
+    <tr>
+      <td>/15</td>
+      <td style="text-align: left">255.254.0.0</td>
+      <td style="text-align: right">131,072</td>
+      <td style="text-align: right">131,070</td>
+    </tr>
+    <tr>
+      <td>/14</td>
+      <td style="text-align: left">255.252.0.0</td>
+      <td style="text-align: right">262,144</td>
+      <td style="text-align: right">262,142</td>
+    </tr>
+    <tr>
+      <td>/13</td>
+      <td style="text-align: left">255.248.0.0</td>
+      <td style="text-align: right">524,288</td>
+      <td style="text-align: right">524,286</td>
+    </tr>
+    <tr>
+      <td>/12</td>
+      <td style="text-align: left">255.240.0.0</td>
+      <td style="text-align: right">1,048,576</td>
+      <td style="text-align: right">1,048,574</td>
+    </tr>
+    <tr>
+      <td>/11</td>
+      <td style="text-align: left">255.224.0.0</td>
+      <td style="text-align: right">2,097,152</td>
+      <td style="text-align: right">2,097,150</td>
+    </tr>
+    <tr>
+      <td>/10</td>
+      <td style="text-align: left">255.192.0.0</td>
+      <td style="text-align: right">4,194,304</td>
+      <td style="text-align: right">4,194,302</td>
+    </tr>
+    <tr>
+      <td>/9</td>
+      <td style="text-align: left">255.128.0.0</td>
+      <td style="text-align: right">8,388,608</td>
+      <td style="text-align: right">8,388,606</td>
+    </tr>
+    <tr>
+      <td>/8</td>
+      <td style="text-align: left">255.0.0.0</td>
+      <td style="text-align: right">16,777,216</td>
+      <td style="text-align: right">16,777,214</td>
+    </tr>
+    <tr>
+      <td>/7</td>
+      <td style="text-align: left">254.0.0.0</td>
+      <td style="text-align: right">33,554,432</td>
+      <td style="text-align: right">33,554,430</td>
+    </tr>
+    <tr>
+      <td>/6</td>
+      <td style="text-align: left">252.0.0.0</td>
+      <td style="text-align: right">67,108,864</td>
+      <td style="text-align: right">67,108,862</td>
+    </tr>
+    <tr>
+      <td>/5</td>
+      <td style="text-align: left">248.0.0.0</td>
+      <td style="text-align: right">134,217,728</td>
+      <td style="text-align: right">134,217,726</td>
+    </tr>
+    <tr>
+      <td>/4</td>
+      <td style="text-align: left">240.0.0.0</td>
+      <td style="text-align: right">268,435,456</td>
+      <td style="text-align: right">268,435,454</td>
+    </tr>
+    <tr>
+      <td>/3</td>
+      <td style="text-align: left">224.0.0.0</td>
+      <td style="text-align: right">536,870,912</td>
+      <td style="text-align: right">536,870,910</td>
+    </tr>
+    <tr>
+      <td>/2</td>
+      <td style="text-align: left">192.0.0.0</td>
+      <td style="text-align: right">1,073,741,824</td>
+      <td style="text-align: right">1,073,741,822</td>
+    </tr>
+    <tr>
+      <td>/1</td>
+      <td style="text-align: left">128.0.0.0</td>
+      <td style="text-align: right">2,147,483,648</td>
+      <td style="text-align: right">2,147,483,646</td>
+    </tr>
+    <tr>
+      <td>/0</td>
+      <td style="text-align: left">0.0.0.0</td>
+      <td style="text-align: right">4,294,967,296</td>
+      <td style="text-align: right">4,294,967,294</td>
+    </tr>
+  </tbody>
+</table>
+
+</div>
+
+            </div>
+        </main>
+    </div>
+
+    <footer class="wrapper-footer">
+        <div class="footer">
+    <span class="footer-text float-left">This work is licensed under <a rel="license" href="https://www.gnu.org/licenses/gpl-3.0.en.html" target="_blank">GPLv3</a></span>
+    <span class="footer-text float-right">
+    Site Updated: 2023-12-01  (<a href="/feed.xml" target="_blank">RSS</a>)
+  </span>
+</div>
+    </footer>
+</body>
+</html>

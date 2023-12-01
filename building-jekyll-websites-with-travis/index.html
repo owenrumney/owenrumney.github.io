@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<!-- Begin Jekyll SEO tag v2.6.1 -->
+<title>Building Jekyll Websites with Travis | Owen Rumney</title>
+<meta name="generator" content="Jekyll v4.2.1" />
+<meta property="og:title" content="Building Jekyll Websites with Travis" />
+<meta name="author" content="Owen Rumney" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="How to generate your Jekyll website with Travis" />
+<meta property="og:description" content="How to generate your Jekyll website with Travis" />
+<link rel="canonical" href="https://www.owenrumney.co.uk/building-jekyll-websites-with-travis/" />
+<meta property="og:url" content="https://www.owenrumney.co.uk/building-jekyll-websites-with-travis/" />
+<meta property="og:site_name" content="Owen Rumney" />
+<meta property="og:image" content="https://www.owenrumney.co.uk/assets/img/owen.png" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2020-10-04T00:00:00+00:00" />
+<script type="application/ld+json">
+{"dateModified":"2020-10-04T00:00:00+00:00","datePublished":"2020-10-04T00:00:00+00:00","author":{"@type":"Person","name":"Owen Rumney"},"description":"How to generate your Jekyll website with Travis","mainEntityOfPage":{"@type":"WebPage","@id":"https://www.owenrumney.co.uk/building-jekyll-websites-with-travis/"},"url":"https://www.owenrumney.co.uk/building-jekyll-websites-with-travis/","@type":"BlogPosting","image":"https://www.owenrumney.co.uk/assets/img/owen.png","headline":"Building Jekyll Websites with Travis","@context":"https://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+
+
+<meta name="keywords" content="blogging" />
+
+<link rel="shortcut icon" href="/favicon.ico" />
+<link rel="apple-touch-icon" href="/favicon.ico"/>
+<link rel="stylesheet" type="text/css" href="/assets/css/styles.css" />
+<link rel="stylesheet" type="text/css" href="/assets/css/prism.css" />
+<script src="/assets/js/prism.js"></script>
+
+
+
+</head>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-TLCVNKXMFJ"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-TLCVNKXMFJ');
+</script>
+
+<body>
+    <div class="wrapper">
+        <header class="wrapper-header">
+            <div class="header">
+  <nav class="float-right">
+  
+  <a href="https://github.com/owenrumney" target="_blank"
+    ><img
+      src="/assets/images/github.svg"
+      style="color: white; display: inline-block"
+      height="30px"
+      alt="GitHub"
+  /></a>
+  
+  <a href="https://linkedin.com/in/owenrumney" target="_blank"
+    ><img
+      src="/assets/images/linkedin.svg"
+      style="color: white; display: inline-block"
+      height="30px"
+      alt="LinkedIn"
+  /></a>
+  
+  <a href="https://cv.owenrumney.co.uk" target="_blank"
+    ><img
+      src="/assets/images/resume.svg"
+      style="color: white; display: inline-block"
+      height="32px"
+      alt="Resume"
+  /></a>
+  
+</nav>
+
+  <a href="https://www.owenrumney.co.uk" target="_blank"><h1>Owen Rumney</h1></a>
+  <br />
+  <h5><i>Software Engineer</i></h5>
+  <br />
+
+  <hr />
+</div>
+
+        </header>
+
+        <main class="wrapper-main">
+            <div class="main-content">
+            <div class="post-info">
+    <h2>Building Jekyll Websites with Travis</h2>
+    <p>04 Oct 2020 - Owen Rumney</p>
+</div>
+
+<div class="post-content">
+<p>This website is generated using <a href="https://jekyllrb.com/">Jekyll</a>, a static site generator. Basically, I write the posts as Markdown files, run it through Jekyll and out pops this website, <a href="'https://www.owenrumney.co.uk'">owenrumney.co.uk</a>.</p>
+
+<p>For as long as I have been building the site in this way I’ve built the site locally and commited the contents in to my <a href="https://github.com/owenrumney/owenrumney.github.io">Github Pages Project</a>. This step has always been a bit tedious, ensuring that I build the site to the correct folder with the <code class="language-plaintext highlighter-rouge">.git</code> references setup and up to date isn’t difficult, just a pain.</p>
+
+<p>At work we use Travis extensively for our build pipeline, I already have a Travis account personally so it occurred to me that I should be generating the site directly off commits to the blog base project, where I write my Markdown.</p>
+
+<h2 id="what-i-will-need">What I will need</h2>
+<ul>
+  <li>Travis Account</li>
+  <li><code class="language-plaintext highlighter-rouge">GITHUB_TOKEN</code> with permissions to update repositories</li>
+  <li>Travis gem</li>
+  <li>Build Scripts</li>
+  <li><code class="language-plaintext highlighter-rouge">Makefile</code></li>
+  <li><code class="language-plaintext highlighter-rouge">.travis.yml</code> file</li>
+</ul>
+
+<h3 id="the-travis-account">The Travis Account</h3>
+
+<p>A travis account is required to be able to do the builds, for more information see the <a href="https://www.travis.com">Travis website</a>.</p>
+
+<h3 id="the-github_token">The <code class="language-plaintext highlighter-rouge">GITHUB_TOKEN</code></h3>
+
+<p>The github token allows processes to access your github account and perform the actions that the token has been permissioned to perform. To create a new <code class="language-plaintext highlighter-rouge">GITHUB_TOKEN</code> you can navigate to the <a href="https://github.com/settings/tokens/new">Generate New Token page</a> in you logged in Github account.</p>
+
+<p>For this, I created a token that had access to commit to repos. Its sensible to have specific tokens for specific tasks in my opinion - rather than one super token that you use everywhere.</p>
+
+<h3 id="the-travis-gem">The Travis Gem</h3>
+
+<p>We are going to be encrypting the <code class="language-plaintext highlighter-rouge">GITHUB_TOKEN</code> into the <code class="language-plaintext highlighter-rouge">.travis.yml</code> file, so we need the <code class="language-plaintext highlighter-rouge">travis</code> gem to perform this. To install run</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>gem install travis
+</code></pre></div></div>
+
+<p>If you’ve got Jekyll, I’m assuming you’ve already got the Ruby infrastructure on your machine.</p>
+
+<h3 id="the-build-scripts">The Build Scripts</h3>
+
+<p>Below is the build script I use; I’ll break down the sections.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">#! /bin/bash</span>
+
+<span class="nb">set</span> <span class="nt">-e</span>
+
+<span class="nv">DEPLOY_REPO</span><span class="o">=</span><span class="s2">"https://</span><span class="k">${</span><span class="nv">GITHUB_TOKEN</span><span class="k">}</span><span class="s2">@github.com/owenrumney/owenrumney.github.io.git"</span>
+<span class="nv">MESSAGE</span><span class="o">=</span><span class="si">$(</span>git log <span class="nt">-1</span> HEAD <span class="nt">--pretty</span><span class="o">=</span>format:%s<span class="si">)</span>
+
+<span class="k">function </span>clean <span class="o">{</span> 
+	<span class="nb">echo</span> <span class="s2">"cleaning _site folder"</span>
+	<span class="k">if</span> <span class="o">[</span> <span class="nt">-d</span> <span class="s2">"_site"</span> <span class="o">]</span><span class="p">;</span> <span class="k">then </span><span class="nb">rm</span> <span class="nt">-Rf</span> _site<span class="p">;</span> <span class="k">fi</span> 
+<span class="o">}</span>
+
+<span class="k">function </span>clone_site <span class="o">{</span> 
+	<span class="nb">echo</span> <span class="s2">"getting latest site"</span>
+	git clone <span class="nt">--depth</span> 1 <span class="nv">$DEPLOY_REPO</span> _site 
+<span class="o">}</span>
+
+<span class="k">function </span>build <span class="o">{</span> 
+	<span class="nb">echo</span> <span class="s2">"building site"</span>
+	bundle <span class="nb">exec </span>jekyll build <span class="nt">--lsi</span>
+<span class="o">}</span>
+
+<span class="k">function </span>deploy <span class="o">{</span>
+	<span class="nb">echo</span> <span class="s2">"deploying changes"</span>
+
+	<span class="k">if</span> <span class="o">[</span> <span class="nt">-z</span> <span class="s2">"</span><span class="nv">$TRAVIS_PULL_REQUEST</span><span class="s2">"</span> <span class="o">]</span><span class="p">;</span> <span class="k">then
+	    </span><span class="nb">echo</span> <span class="s2">"except don't publish site for pull requests"</span>
+	    <span class="nb">exit </span>0
+	<span class="k">fi  
+
+	if</span> <span class="o">[</span> <span class="s2">"</span><span class="nv">$TRAVIS_BRANCH</span><span class="s2">"</span> <span class="o">!=</span> <span class="s2">"master"</span> <span class="o">]</span><span class="p">;</span> <span class="k">then
+	    </span><span class="nb">echo</span> <span class="s2">"except we should only publish the master branch. stopping here"</span>
+	    <span class="nb">exit </span>0
+	<span class="k">fi
+
+	</span><span class="nb">cd </span>_site
+	git config user.name <span class="s2">"Travis Build"</span>
+    git config user.email travis@owenrumney.co.uk
+	git add <span class="nt">-A</span>
+	git commit <span class="nt">-m</span> <span class="s2">"Travis Build: </span><span class="k">${</span><span class="nv">TRAVIS_BUILD_NUMBER</span><span class="k">}</span><span class="s2">. </span><span class="k">${</span><span class="nv">MESSAGE</span><span class="k">}</span><span class="s2">"</span>
+	git push <span class="nv">$DEPLOY_REPO</span> master:master
+<span class="o">}</span>
+</code></pre></div></div>
+
+<h4 id="clean">clean</h4>
+
+<p>The <code class="language-plaintext highlighter-rouge">clean</code> function ensures that the location the static site is generated into is gone (in the default cause this is the <code class="language-plaintext highlighter-rouge">_site</code> folder)</p>
+
+<h4 id="clone_site">clone_site</h4>
+
+<p>When we do the build in travis, we need to have the destination <code class="language-plaintext highlighter-rouge">github pages</code> project cloned into <code class="language-plaintext highlighter-rouge">_site</code> for writing. THis function does that clone to get the latest.</p>
+
+<h4 id="build">build</h4>
+
+<p>The <code class="language-plaintext highlighter-rouge">build</code> function runs <code class="language-plaintext highlighter-rouge">jekyll build</code> which by default will generate the site into <code class="language-plaintext highlighter-rouge">_site</code> folder</p>
+
+<h4 id="deploy">deploy</h4>
+
+<p>The <code class="language-plaintext highlighter-rouge">deploy</code> function is the main section for commiting the updates in the <code class="language-plaintext highlighter-rouge">github pages</code> project. This function ensures that the Travis run isn’t a PR and that the branch is <code class="language-plaintext highlighter-rouge">master</code> if these conditions are satisfied it will commit the changes to <code class="language-plaintext highlighter-rouge">_site</code> and push to make them available.</p>
+
+<h3 id="the-makefile">The Makefile</h3>
+<p>To simplify the running of the commands - and to allow them to be used locally easily, there is a <code class="language-plaintext highlighter-rouge">Makefile</code></p>
+
+<div class="language-make highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nl">.PHONY</span><span class="o">:</span> <span class="nf">initpost clean clone_site build deploy</span>
+
+<span class="nl">initpost</span><span class="o">:</span>
+	<span class="p">@</span>bash <span class="nt">-c</span> <span class="s2">"./scripts/initpost.sh"</span>
+
+<span class="nl">clean</span><span class="o">:</span>
+	<span class="p">@</span>bash <span class="nt">-c</span> <span class="s2">". scripts/build.sh &amp;&amp; clean"</span>
+
+<span class="nl">clone_site</span><span class="o">:</span>
+	<span class="p">@</span>bash <span class="nt">-c</span> <span class="s2">". scripts/build.sh &amp;&amp; clone_site"</span>
+
+<span class="nl">build</span><span class="o">:</span> <span class="nf">clean clone_site</span>
+	<span class="p">@</span>bash <span class="nt">-c</span> <span class="s2">". scripts/build.sh &amp;&amp; build"</span>
+
+<span class="nl">deploy</span><span class="o">:</span> <span class="nf">build</span>
+	<span class="p">@</span>bash <span class="nt">-c</span> <span class="s2">". scripts/build.sh &amp;&amp; deploy"</span>
+
+</code></pre></div></div>
+
+<p>Running <code class="language-plaintext highlighter-rouge">deploy</code> target will automatically run the <code class="language-plaintext highlighter-rouge">build</code> target, which in turn runs the <code class="language-plaintext highlighter-rouge">clean</code> and the <code class="language-plaintext highlighter-rouge">clone_site</code>. Now to build the site we can simply run</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>make build
+</code></pre></div></div>
+
+<h3 id="the-travisyml-file">The <code class="language-plaintext highlighter-rouge">.travis.yml</code> file</h3>
+<p>To pull this all together and trigger the build when we commit, we need the <code class="language-plaintext highlighter-rouge">.travis.yml</code> file.</p>
+
+<p>This file sits in the root of the project and when committed, triggers a Travis build of the current branch and where applicable, the associated PR.</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="ss">language: </span><span class="n">ruby</span>
+<span class="ss">cache: </span><span class="n">bundler</span>
+<span class="ss">env:
+  global:
+    secure: </span><span class="n">dsfojisdfglksdhgflsdhgsdfghedlfs</span>
+<span class="ss">install:
+</span><span class="o">-</span> <span class="n">bundle</span> <span class="n">install</span>
+<span class="ss">script:
+</span><span class="o">-</span> <span class="s2">"make deploy"</span>
+
+</code></pre></div></div>
+
+<p>This is a fairly straight forward <code class="language-plaintext highlighter-rouge">.travis.yml</code> file. We are telling Travis that this project is <code class="language-plaintext highlighter-rouge">ruby</code> based and we need to have the bundler cache available.</p>
+
+<p>Before starting, we want to install all of the required dependencies from the <code class="language-plaintext highlighter-rouge">Gemfile</code>, in this case it is basically <code class="language-plaintext highlighter-rouge">jekyll</code> and the ohter <code class="language-plaintext highlighter-rouge">jekyll</code> plugins I use in this site.</p>
+
+<p>One interesting part is the <code class="language-plaintext highlighter-rouge">env/global/secure</code> section. This contains my <code class="language-plaintext highlighter-rouge">GITHUB_TOKEN</code> in an encrypted form. To generate this, from the root of the project use the <code class="language-plaintext highlighter-rouge">travis</code> gem installed previously….</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>travis encrypt GITHUB_TOKEN=abcdefghij1234 --add
+</code></pre></div></div>
+
+<p>This will prompt to ask if you want to create the ENVVAR in the current folders <code class="language-plaintext highlighter-rouge">.travis.yml</code> file. It used the details of the repo as a seed for encryption.</p>
+
+<p>Finally the job runs <code class="language-plaintext highlighter-rouge">make deploy</code> which will build the site and deploy it to the <code class="language-plaintext highlighter-rouge">github pages</code> project as a new commit.</p>
+
+<h2 id="the-travis-output">The Travis Output</h2>
+
+<p>Now, when I commit changes to my blog base project, it runs in Travis and I get output similar to this;</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Installing SSH key from: default repository key
+Using /home/travis/.netrc to clone repository.
+git.checkout
+<span class="nv">$ </span>git clone <span class="nt">--depth</span><span class="o">=</span>50 <span class="nt">--branch</span><span class="o">=</span>master https://github.com/owenrumney/blogbase.git owenrumney/blogbase
+
+Setting environment variables from .travis.yml
+<span class="nv">$ </span><span class="nb">export </span><span class="nv">GITHUB_TOKEN</span><span class="o">=[</span>secure]
+rvm
+<span class="nv">$ </span>rvm use default
+<span class="nv">$ </span><span class="nb">export </span><span class="nv">BUNDLE_GEMFILE</span><span class="o">=</span><span class="nv">$PWD</span>/Gemfile
+cache.1
+Setting up build cache
+cache.bundler
+adding /home/travis/build/owenrumney/blogbase/vendor/bundle to cache
+ruby.versions
+<span class="nv">$ </span>ruby <span class="nt">--version</span>
+<span class="nb">install</span>
+
+<span class="nv">$ </span>bundle <span class="nb">install</span>
+<span class="nv">$ </span>make deploy
+
+cleaning _site folder
+getting latest site
+Cloning into <span class="s1">'_site'</span>...
+building site
+Configuration file: /home/travis/build/owenrumney/blogbase/_config.yml
+            Source: /home/travis/build/owenrumney/blogbase
+       Destination: /home/travis/build/owenrumney/blogbase/_site
+ Incremental build: disabled. Enable with <span class="nt">--incremental</span>
+      Generating... 
+                    <span class="k">done in </span>0.645 seconds.
+ Auto-regeneration: disabled. Use <span class="nt">--watch</span> to enable.
+deploying changes
+<span class="o">[</span>master a1e2f08] Travis Build: 6. Update the build script to use the Makefile
+ 1 file changed, 2 insertions<span class="o">(</span>+<span class="o">)</span>, 2 deletions<span class="o">(</span>-<span class="o">)</span>
+To https://github.com/owenrumney/owenrumney.github.io.git
+   5f492f6..a1e2f08  master -&gt; master
+The <span class="nb">command</span> <span class="s2">"make deploy"</span> exited with 0.
+cache.2
+store build cache
+Done. Your build exited with 0.
+</code></pre></div></div>
+
+</div>
+
+            </div>
+        </main>
+    </div>
+
+    <footer class="wrapper-footer">
+        <div class="footer">
+    <span class="footer-text float-left">This work is licensed under <a rel="license" href="https://www.gnu.org/licenses/gpl-3.0.en.html" target="_blank">GPLv3</a></span>
+    <span class="footer-text float-right">
+    Site Updated: 2023-12-01  (<a href="/feed.xml" target="_blank">RSS</a>)
+  </span>
+</div>
+    </footer>
+</body>
+</html>

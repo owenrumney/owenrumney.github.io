@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<!-- Begin Jekyll SEO tag v2.6.1 -->
+<title>Lightning introduction to Redis Graph | Owen Rumney</title>
+<meta name="generator" content="Jekyll v4.2.1" />
+<meta property="og:title" content="Lightning introduction to Redis Graph" />
+<meta name="author" content="Owen Rumney" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="A lightning intro to Redis Graph from a nights playing" />
+<meta property="og:description" content="A lightning intro to Redis Graph from a nights playing" />
+<link rel="canonical" href="https://www.owenrumney.co.uk/lightning-redis-graph-quickstart/" />
+<meta property="og:url" content="https://www.owenrumney.co.uk/lightning-redis-graph-quickstart/" />
+<meta property="og:site_name" content="Owen Rumney" />
+<meta property="og:image" content="https://www.owenrumney.co.uk/assets/img/owen.png" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2022-10-06T00:00:00+00:00" />
+<script type="application/ld+json">
+{"dateModified":"2022-10-06T00:00:00+00:00","datePublished":"2022-10-06T00:00:00+00:00","author":{"@type":"Person","name":"Owen Rumney"},"description":"A lightning intro to Redis Graph from a nights playing","mainEntityOfPage":{"@type":"WebPage","@id":"https://www.owenrumney.co.uk/lightning-redis-graph-quickstart/"},"url":"https://www.owenrumney.co.uk/lightning-redis-graph-quickstart/","@type":"BlogPosting","image":"https://www.owenrumney.co.uk/assets/img/owen.png","headline":"Lightning introduction to Redis Graph","@context":"https://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+
+
+<meta name="keywords" content="graph,learning" />
+
+<link rel="shortcut icon" href="/favicon.ico" />
+<link rel="apple-touch-icon" href="/favicon.ico"/>
+<link rel="stylesheet" type="text/css" href="/assets/css/styles.css" />
+<link rel="stylesheet" type="text/css" href="/assets/css/prism.css" />
+<script src="/assets/js/prism.js"></script>
+
+
+
+</head>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-TLCVNKXMFJ"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-TLCVNKXMFJ');
+</script>
+
+<body>
+    <div class="wrapper">
+        <header class="wrapper-header">
+            <div class="header">
+  <nav class="float-right">
+  
+  <a href="https://github.com/owenrumney" target="_blank"
+    ><img
+      src="/assets/images/github.svg"
+      style="color: white; display: inline-block"
+      height="30px"
+      alt="GitHub"
+  /></a>
+  
+  <a href="https://linkedin.com/in/owenrumney" target="_blank"
+    ><img
+      src="/assets/images/linkedin.svg"
+      style="color: white; display: inline-block"
+      height="30px"
+      alt="LinkedIn"
+  /></a>
+  
+  <a href="https://cv.owenrumney.co.uk" target="_blank"
+    ><img
+      src="/assets/images/resume.svg"
+      style="color: white; display: inline-block"
+      height="32px"
+      alt="Resume"
+  /></a>
+  
+</nav>
+
+  <a href="https://www.owenrumney.co.uk" target="_blank"><h1>Owen Rumney</h1></a>
+  <br />
+  <h5><i>Software Engineer</i></h5>
+  <br />
+
+  <hr />
+</div>
+
+        </header>
+
+        <main class="wrapper-main">
+            <div class="main-content">
+            <div class="post-info">
+    <h2>Lightning introduction to Redis Graph</h2>
+    <p>06 Oct 2022 - Owen Rumney</p>
+</div>
+
+<div class="post-content">
+<p>I’m familiar with Redis as a fast cache and have used it as such in the past. A few days ago I saw someone using Redis Insights to interact with RedisGraph and it looked pretty cool.</p>
+
+<p>I wasn’t aware that Redis Graph and Stream existed, so I’m keen to learn more about them. In this post I’m going to do a lightning tour of how I got started for anyone who wants to get stuck in quickly.</p>
+
+<h3 id="prerequisites">Prerequisites</h3>
+
+<p>The only thing you need to get started is Docker - I’m going to be launching Redis and Redis Insight using a <a href="https://docs.docker.com/compose/gettingstarted/" target="_blank">Docker Compose File</a>. The benefits of doing this are around the connectivity between the two containers and the insight instance seeing the Redis server.</p>
+
+<h3 id="docker-compose">Docker Compose</h3>
+
+<p>Lets start with the compose file, this is just straight forward yaml representation of what we want to achieve. In its simplest form, this will work;</p>
+
+<div class="language-yml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">version</span><span class="pi">:</span> <span class="s1">'</span><span class="s">3.9'</span>
+<span class="na">services</span><span class="pi">:</span>
+  <span class="na">redis</span><span class="pi">:</span>
+    <span class="na">image</span><span class="pi">:</span> <span class="s">redis/redis-stack-server:latest</span>
+    <span class="na">ports</span><span class="pi">:</span>
+      <span class="pi">-</span> <span class="s">6379:6379</span>
+    <span class="na">volumes</span><span class="pi">:</span>
+      <span class="pi">-</span> <span class="s">/home/owen/redis-data:/data</span>
+  <span class="na">redis-insight</span><span class="pi">:</span>
+    <span class="na">image</span><span class="pi">:</span> <span class="s">redislabs/redisinsight:latest</span>
+    <span class="na">ports</span><span class="pi">:</span>
+      <span class="pi">-</span> <span class="s">8001:8001</span>
+    <span class="na">volumes</span><span class="pi">:</span>
+      <span class="pi">-</span> <span class="s">/home/owen/redis-insights:/db</span>
+</code></pre></div></div>
+
+<p>This is saying, create me two services backed by the redis server image (<code class="language-plaintext highlighter-rouge">redis/redis-stack-server:latest</code>) and the redis insight image (<code class="language-plaintext highlighter-rouge">redislabs/redisinsight:latest</code>) and expose them on ports <code class="language-plaintext highlighter-rouge">6379</code> and <code class="language-plaintext highlighter-rouge">8001</code> respectively.</p>
+
+<p>Optionally I’ve mounted volumes in the containers so that I can tear it all down and when I start again it will have preserved my data.</p>
+
+<h4 id="starting-the-infrastructure">Starting the infrastructure</h4>
+
+<p>Starting the infrastructure is as simple as running the <code class="language-plaintext highlighter-rouge">up</code> command from the same dir as the <code class="language-plaintext highlighter-rouge">docker-compose.yaml</code> file.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>docker compose up
+</code></pre></div></div>
+
+<p>This will give us an output something like this;</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> <span class="nv">$ </span>docker compose up  
+<span class="o">[</span>+] Running 2/2
+ ⠿ Container redis-insight-redis-insight-1  Started                                   0.5s
+ ⠿ Container redis-insight-redis-1          Star...                                   0.5s
+</code></pre></div></div>
+
+<h3 id="opening-the-ui">Opening the UI</h3>
+
+<p>The UI can be launched from <a href="http://localhost:8001/" target="_blank">http://localhost:8001</a></p>
+
+<p>The first screen you’ll see is Welcome screen</p>
+
+<p><img src="../images/redis_insight_1.png" alt="Redis Welcome" /></p>
+
+<p>From here - say that you already have a database then choose to connect to the database.</p>
+
+<p><img src="../images/redis_insight_2.png" alt="Redis Configure DB" /></p>
+
+<p>As we used docker compose, the internal network wiring is done, so we can connect to the redis server by the name  <code class="language-plaintext highlighter-rouge">redis</code>. This is the name we gave it in <code class="language-plaintext highlighter-rouge">docker-compose.yaml</code>
+q
+Provide the details as below;</p>
+
+<p><img src="../images/redis_insight_3.png" alt="Redis Connect" /></p>
+
+<p>Clicking <code class="language-plaintext highlighter-rouge">ADD REDIS DATABASE</code> takes us to our databases - from here we choose <code class="language-plaintext highlighter-rouge">demodb</code></p>
+
+<p><img src="../images/redis_insight_4.png" alt="Redis Browser" /></p>
+
+<p>This takes us to the main page for this database and we can select <code class="language-plaintext highlighter-rouge">RedisGraph</code> for the menu.</p>
+
+<p><img src="../images/redis_insight_5.png" alt="Redis Database Details" /></p>
+
+<p>This screen is where we’re going to create the graph and do our simple family graph</p>
+
+<p><img src="../images/redis_insight_6.png" alt="Redis Graph" /></p>
+
+<h3 id="creating-a-simple-graph">Creating a simple graph</h3>
+
+<p>The first thing we want to do is add our people to the database. This is done by defining the nodes that make up these people with some simple attributes that define them.</p>
+
+<p>Paste this snippet into the query window;</p>
+
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">CREATE</span> <span class="p">(</span><span class="n">p1</span><span class="p">:</span><span class="n">Person</span><span class="p">{</span><span class="n">name</span><span class="p">:</span><span class="nv">"Rod"</span><span class="p">,</span> <span class="n">gender</span><span class="p">:</span> <span class="nv">"M"</span><span class="p">}),</span>
+       <span class="p">(</span><span class="n">p2</span><span class="p">:</span><span class="n">Person</span><span class="p">{</span><span class="n">name</span><span class="p">:</span><span class="nv">"Jane"</span><span class="p">,</span> <span class="n">gender</span><span class="p">:</span> <span class="nv">"F"</span><span class="p">}),</span>
+       <span class="p">(</span><span class="n">p3</span><span class="p">:</span><span class="n">Person</span><span class="p">{</span><span class="n">name</span><span class="p">:</span><span class="nv">"Freddy"</span><span class="p">,</span> <span class="n">gender</span><span class="p">:</span> <span class="nv">"M"</span><span class="p">}),</span>
+       <span class="p">(</span><span class="n">p4</span><span class="p">:</span><span class="n">Person</span><span class="p">{</span><span class="n">name</span><span class="p">:</span><span class="nv">"Jeffrey"</span><span class="p">,</span> <span class="n">gender</span><span class="p">:</span> <span class="nv">"M"</span><span class="p">})</span>
+</code></pre></div></div>
+
+<p>All being well, we’ve added 4 people to the database and we can visualise them with a simple <code class="language-plaintext highlighter-rouge">MATCH</code> command</p>
+
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">MATCH</span> <span class="p">(</span><span class="n">p</span><span class="p">:</span><span class="n">Person</span><span class="p">)</span> <span class="k">return</span> <span class="n">p</span>
+</code></pre></div></div>
+
+<p>This gives us a graph of the people with no links</p>
+
+<p><img src="../images/redis_person_1.png" alt="Redis no links" /></p>
+
+<h4 id="linking-up-the-family">Linking up the family</h4>
+
+<p>We can now link up the family;</p>
+
+<p>First things first - <code class="language-plaintext highlighter-rouge">Rod</code> and <code class="language-plaintext highlighter-rouge">Freddy</code> are brothers</p>
+
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">MATCH</span> <span class="p">(</span><span class="n">p1</span><span class="p">:</span><span class="n">Person</span><span class="p">{</span><span class="n">name</span><span class="p">:</span><span class="nv">"Rod"</span><span class="p">}),</span> <span class="p">(</span><span class="n">p2</span><span class="p">:</span><span class="n">Person</span><span class="p">{</span><span class="n">name</span><span class="p">:</span><span class="nv">"Freddy"</span><span class="p">})</span>
+<span class="k">CREATE</span> <span class="p">(</span><span class="n">p1</span><span class="p">)</span><span class="o">-</span><span class="p">[:</span><span class="n">Related</span><span class="p">{</span><span class="n">relationship</span><span class="p">:</span><span class="nv">"brother"</span><span class="p">}]</span><span class="o">-&gt;</span><span class="p">(</span><span class="n">p2</span><span class="p">)</span>
+<span class="k">CREATE</span> <span class="p">(</span><span class="n">p2</span><span class="p">)</span><span class="o">-</span><span class="p">[:</span><span class="n">Related</span><span class="p">{</span><span class="n">relationship</span><span class="p">:</span><span class="nv">"brother"</span><span class="p">}]</span><span class="o">-&gt;</span><span class="p">(</span><span class="n">p1</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p><code class="language-plaintext highlighter-rouge">Jane</code> and <code class="language-plaintext highlighter-rouge">Freddy</code> are married</p>
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">MATCH</span> <span class="p">(</span><span class="n">p1</span><span class="p">:</span><span class="n">Person</span><span class="p">{</span><span class="n">name</span><span class="p">:</span><span class="nv">"Jane"</span><span class="p">}),</span> <span class="p">(</span><span class="n">p2</span><span class="p">:</span><span class="n">Person</span><span class="p">{</span><span class="n">name</span><span class="p">:</span><span class="nv">"Freddy"</span><span class="p">})</span>
+<span class="k">CREATE</span> <span class="p">(</span><span class="n">p1</span><span class="p">)</span><span class="o">-</span><span class="p">[:</span><span class="n">Related</span><span class="p">{</span><span class="n">relationship</span><span class="p">:</span><span class="nv">"spouse"</span><span class="p">}]</span><span class="o">-&gt;</span><span class="p">(</span><span class="n">p2</span><span class="p">)</span>
+<span class="k">CREATE</span> <span class="p">(</span><span class="n">p2</span><span class="p">)</span><span class="o">-</span><span class="p">[:</span><span class="n">Related</span><span class="p">{</span><span class="n">relationship</span><span class="p">:</span><span class="nv">"spouse"</span><span class="p">}]</span><span class="o">-&gt;</span><span class="p">(</span><span class="n">p1</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p>And <code class="language-plaintext highlighter-rouge">Jane</code>’s father is <code class="language-plaintext highlighter-rouge">Jeffrey</code></p>
+
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">MATCH</span> <span class="p">(</span><span class="n">p1</span><span class="p">:</span><span class="n">Person</span><span class="p">{</span><span class="n">name</span><span class="p">:</span><span class="nv">"Jeffrey"</span><span class="p">}),</span> <span class="p">(</span><span class="n">p2</span><span class="p">:</span><span class="n">Person</span><span class="p">{</span><span class="n">name</span><span class="p">:</span><span class="nv">"Jane"</span><span class="p">})</span>
+<span class="k">CREATE</span> <span class="p">(</span><span class="n">p1</span><span class="p">)</span><span class="o">-</span><span class="p">[:</span><span class="n">Related</span><span class="p">{</span><span class="n">relationship</span><span class="p">:</span><span class="nv">"father"</span><span class="p">}]</span><span class="o">-&gt;</span><span class="p">(</span><span class="n">p2</span><span class="p">)</span>
+<span class="k">CREATE</span> <span class="p">(</span><span class="n">p2</span><span class="p">)</span><span class="o">-</span><span class="p">[:</span><span class="n">Related</span><span class="p">{</span><span class="n">relationship</span><span class="p">:</span><span class="nv">"daughter"</span><span class="p">}]</span><span class="o">-&gt;</span><span class="p">(</span><span class="n">p1</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p>We can look at the graph this generates using</p>
+
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">MATCH</span> <span class="p">(</span><span class="n">p</span><span class="p">:</span><span class="n">Person</span><span class="p">)</span> <span class="k">return</span> <span class="n">p</span>
+</code></pre></div></div>
+
+<p>The graph of this looks like</p>
+
+<p><img src="../images/redis_person_2.png" alt="redis person links" /></p>
+
+<p>How about if we want tot know who is a father</p>
+
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">MATCH</span> <span class="p">(</span><span class="n">p</span><span class="p">:</span><span class="n">Person</span><span class="p">)</span><span class="o">-</span><span class="p">[</span><span class="n">r</span><span class="p">:</span><span class="n">Related</span><span class="p">{</span><span class="n">relationship</span><span class="p">:</span><span class="nv">"father"</span><span class="p">}]</span><span class="o">-</span><span class="p">(</span><span class="n">p2</span><span class="p">:</span><span class="n">Person</span><span class="p">)</span> <span class="k">return</span> <span class="n">p</span>
+</code></pre></div></div>
+
+<p>This query is looking for people who are <code class="language-plaintext highlighter-rouge">Related</code> explicitly with the <code class="language-plaintext highlighter-rouge">relationship</code> of <code class="language-plaintext highlighter-rouge">"father"</code>.</p>
+
+<p><img src="../images/redis_person_3.png" alt="Father relationship" /></p>
+
+<h3 id="scratching-the-surface">Scratching the surface</h3>
+
+<p>This all doesn’t even scratch the service of what can be achieved - I’m already seeing the importance of SDKs and APIs to load data efficiently into and out of the database but I think it’s really an interesting area…</p>
+
+</div>
+
+            </div>
+        </main>
+    </div>
+
+    <footer class="wrapper-footer">
+        <div class="footer">
+    <span class="footer-text float-left">This work is licensed under <a rel="license" href="https://www.gnu.org/licenses/gpl-3.0.en.html" target="_blank">GPLv3</a></span>
+    <span class="footer-text float-right">
+    Site Updated: 2023-12-01  (<a href="/feed.xml" target="_blank">RSS</a>)
+  </span>
+</div>
+    </footer>
+</body>
+</html>

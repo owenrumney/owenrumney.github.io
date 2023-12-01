@@ -1,0 +1,665 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<!-- Begin Jekyll SEO tag v2.6.1 -->
+<title>Leveraging Annotations in Go | Owen Rumney</title>
+<meta name="generator" content="Jekyll v4.2.1" />
+<meta property="og:title" content="Leveraging Annotations in Go" />
+<meta name="author" content="Owen Rumney" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="An introduction to using annotations on structs in Go" />
+<meta property="og:description" content="An introduction to using annotations on structs in Go" />
+<link rel="canonical" href="https://www.owenrumney.co.uk/using-annotations-with-go/" />
+<meta property="og:url" content="https://www.owenrumney.co.uk/using-annotations-with-go/" />
+<meta property="og:site_name" content="Owen Rumney" />
+<meta property="og:image" content="https://www.owenrumney.co.uk/assets/img/owen.png" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2022-09-26T00:00:00+00:00" />
+<script type="application/ld+json">
+{"dateModified":"2022-09-26T00:00:00+00:00","datePublished":"2022-09-26T00:00:00+00:00","author":{"@type":"Person","name":"Owen Rumney"},"description":"An introduction to using annotations on structs in Go","mainEntityOfPage":{"@type":"WebPage","@id":"https://www.owenrumney.co.uk/using-annotations-with-go/"},"url":"https://www.owenrumney.co.uk/using-annotations-with-go/","@type":"BlogPosting","image":"https://www.owenrumney.co.uk/assets/img/owen.png","headline":"Leveraging Annotations in Go","@context":"https://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+
+
+<meta name="keywords" content="go,programming" />
+
+<link rel="shortcut icon" href="/favicon.ico" />
+<link rel="apple-touch-icon" href="/favicon.ico"/>
+<link rel="stylesheet" type="text/css" href="/assets/css/styles.css" />
+<link rel="stylesheet" type="text/css" href="/assets/css/prism.css" />
+<script src="/assets/js/prism.js"></script>
+
+
+
+</head>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-TLCVNKXMFJ"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-TLCVNKXMFJ');
+</script>
+
+<body>
+    <div class="wrapper">
+        <header class="wrapper-header">
+            <div class="header">
+  <nav class="float-right">
+  
+  <a href="https://github.com/owenrumney" target="_blank"
+    ><img
+      src="/assets/images/github.svg"
+      style="color: white; display: inline-block"
+      height="30px"
+      alt="GitHub"
+  /></a>
+  
+  <a href="https://linkedin.com/in/owenrumney" target="_blank"
+    ><img
+      src="/assets/images/linkedin.svg"
+      style="color: white; display: inline-block"
+      height="30px"
+      alt="LinkedIn"
+  /></a>
+  
+  <a href="https://cv.owenrumney.co.uk" target="_blank"
+    ><img
+      src="/assets/images/resume.svg"
+      style="color: white; display: inline-block"
+      height="32px"
+      alt="Resume"
+  /></a>
+  
+</nav>
+
+  <a href="https://www.owenrumney.co.uk" target="_blank"><h1>Owen Rumney</h1></a>
+  <br />
+  <h5><i>Software Engineer</i></h5>
+  <br />
+
+  <hr />
+</div>
+
+        </header>
+
+        <main class="wrapper-main">
+            <div class="main-content">
+            <div class="post-info">
+    <h2>Leveraging Annotations in Go</h2>
+    <p>26 Sep 2022 - Owen Rumney</p>
+</div>
+
+<div class="post-content">
+<p>In <a href="https://github.com/aquasecurity/defsec" target="\_blank">defsec</a>, we have a large number of Go objects which represent real world Cloud entities. A documented schema is required, but due to the number, it would be nice to automate the generation.</p>
+
+<p>In this post, I’m going to give a simplified introduction to Annotations that can be used with <code class="language-plaintext highlighter-rouge">text/template</code>in a struct to aid this.</p>
+
+<h3 id="s3-bucket-example">S3 Bucket example</h3>
+
+<p>Lets take the <code class="language-plaintext highlighter-rouge">S3 bucket</code> as an example. Regardless of how we create the bucket (Terraform, Ansible, CloudFormation etc), there are common attributes that reflect it.</p>
+
+<p>Lets look at a simplified <code class="language-plaintext highlighter-rouge">defsec</code> object that represents an <code class="language-plaintext highlighter-rouge">S3 bucket</code>;</p>
+
+<div class="language-go highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">package</span> <span class="n">main</span>
+
+<span class="k">import</span> <span class="p">(</span>
+	<span class="s">"github.com/liamg/iamgo"</span>
+<span class="p">)</span>
+
+<span class="k">type</span> <span class="n">Bucket</span> <span class="k">struct</span> <span class="p">{</span>
+	<span class="n">Name</span>              <span class="kt">string</span>
+	<span class="n">PublicAccessBlock</span> <span class="o">*</span><span class="n">PublicAccessBlock</span>
+	<span class="n">BucketPolicies</span>    <span class="p">[]</span><span class="n">Policy</span>
+	<span class="n">Encryption</span>        <span class="n">Encryption</span>
+	<span class="n">Versioning</span>        <span class="n">Versioning</span>
+	<span class="n">Logging</span>           <span class="n">Logging</span>
+	<span class="n">ACL</span>               <span class="kt">string</span>
+<span class="p">}</span>
+
+<span class="k">type</span> <span class="n">PublicAccessBlock</span> <span class="k">struct</span> <span class="p">{</span>
+	<span class="n">BlockPublicACLs</span>       <span class="kt">bool</span>
+	<span class="n">BlockPublicPolicy</span>     <span class="kt">bool</span>
+	<span class="n">IgnorePublicACLs</span>      <span class="kt">bool</span>
+	<span class="n">RestrictPublicBuckets</span> <span class="kt">bool</span>
+<span class="p">}</span>
+
+<span class="k">type</span> <span class="n">Logging</span> <span class="k">struct</span> <span class="p">{</span>
+	<span class="n">Enabled</span>      <span class="kt">bool</span>
+	<span class="n">TargetBucket</span> <span class="kt">string</span>
+<span class="p">}</span>
+
+<span class="k">type</span> <span class="n">Versioning</span> <span class="k">struct</span> <span class="p">{</span>
+	<span class="n">Enabled</span>   <span class="kt">bool</span>
+	<span class="n">MFADelete</span> <span class="kt">bool</span>
+<span class="p">}</span>
+
+<span class="k">type</span> <span class="n">Encryption</span> <span class="k">struct</span> <span class="p">{</span>
+	<span class="n">Enabled</span>   <span class="kt">bool</span>
+	<span class="n">Algorithm</span> <span class="kt">string</span>
+	<span class="n">KMSKeyId</span>  <span class="kt">string</span>
+<span class="p">}</span>
+
+<span class="k">type</span> <span class="n">Policy</span> <span class="k">struct</span> <span class="p">{</span>
+	<span class="n">Name</span>     <span class="kt">string</span>
+	<span class="n">Document</span> <span class="n">Document</span>
+	<span class="n">Builtin</span>  <span class="kt">bool</span>
+<span class="p">}</span>
+
+<span class="k">type</span> <span class="n">Document</span> <span class="k">struct</span> <span class="p">{</span>
+	<span class="n">Parsed</span>   <span class="n">iamgo</span><span class="o">.</span><span class="n">Document</span>
+	<span class="n">IsOffset</span> <span class="kt">bool</span>
+	<span class="n">HasRefs</span>  <span class="kt">bool</span>
+<span class="p">}</span>
+
+</code></pre></div></div>
+
+<p>This type has all the core attributes that we might want to check for any possible misconfigurations. We have written a comprehensive list of checks that can be applied to a bucket represented in this type - but what if you wanted to write your own Rego rule against the type? You might want to know what the properties mean?</p>
+
+<h2 id="annotations">Annotations</h2>
+
+<p>If you have experience with Go, you likely know that you can use annotations to tell the <code class="language-plaintext highlighter-rouge">json</code> or <code class="language-plaintext highlighter-rouge">yaml</code> libraries how to you want the Type to look when rendered into <code class="language-plaintext highlighter-rouge">json</code> or <code class="language-plaintext highlighter-rouge">yaml</code>.</p>
+
+<p>For example, you might have something like;</p>
+
+<div class="language-go highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+<span class="k">type</span> <span class="n">HairColour</span> <span class="kt">int</span>
+
+<span class="k">const</span> <span class="p">(</span>
+    <span class="n">Brown</span> <span class="n">HairColour</span> <span class="o">=</span> <span class="no">iota</span>
+    <span class="n">Blonde</span>
+    <span class="n">Grey</span>
+    <span class="n">Black</span>
+    <span class="n">Purple</span>
+<span class="p">)</span>
+
+<span class="k">type</span> <span class="n">Person</span> <span class="k">struct</span> <span class="p">{</span>
+    <span class="n">Name</span> <span class="kt">string</span>   <span class="s">`json:"name",yaml:"name"`</span>
+    <span class="n">Age</span> <span class="kt">int</span>       <span class="s">`json:"age",yaml:"age"`</span>
+    <span class="n">HairColor</span> <span class="kt">int</span> <span class="s">`json:"hair_colour",yaml:"hair_colour"`</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>We could then use the <code class="language-plaintext highlighter-rouge">json</code> library to display this;</p>
+
+<div class="language-go highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">package</span> <span class="n">main</span>
+
+<span class="k">func</span> <span class="n">main</span><span class="p">()</span> <span class="p">{</span>
+
+	<span class="n">person</span> <span class="o">:=</span> <span class="n">Person</span><span class="p">{</span>
+		<span class="n">Name</span><span class="o">:</span>      <span class="s">"Owen"</span><span class="p">,</span>
+		<span class="n">Age</span><span class="o">:</span>       <span class="m">40</span><span class="p">,</span>
+		<span class="n">HairColor</span><span class="o">:</span> <span class="m">2</span><span class="p">,</span>
+	<span class="p">}</span>
+
+	<span class="n">content</span><span class="p">,</span> <span class="n">err</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">MarshalIndent</span><span class="p">(</span><span class="n">person</span><span class="p">,</span> <span class="s">""</span><span class="p">,</span> <span class="s">"  "</span><span class="p">)</span>
+	<span class="k">if</span> <span class="n">err</span> <span class="o">!=</span> <span class="no">nil</span> <span class="p">{</span>
+		<span class="nb">panic</span><span class="p">(</span><span class="n">err</span><span class="p">)</span>
+	<span class="p">}</span>
+
+	<span class="n">fmt</span><span class="o">.</span><span class="n">Println</span><span class="p">(</span><span class="kt">string</span><span class="p">(</span><span class="n">content</span><span class="p">))</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>which would give us the output;</p>
+
+<div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">{</span><span class="w">
+  </span><span class="nl">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Owen"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"age"</span><span class="p">:</span><span class="w"> </span><span class="mi">40</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"hair_colour"</span><span class="p">:</span><span class="w"> </span><span class="mi">2</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div></div>
+
+<h2 id="back-to-the-bucket">Back to the Bucket</h2>
+
+<p>Returning to our bucket, if we wanted to support people writing Rego rules against this schema, we might want to use custom annotations with a description of what the property actually means.</p>
+
+<p>Below, I’ve updated the <code class="language-plaintext highlighter-rouge">S3 Bucket</code> with additional documentation about what each attribute means;</p>
+
+<div class="language-go highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">package</span> <span class="n">main</span>
+
+<span class="k">import</span> <span class="p">(</span>
+	<span class="s">"github.com/liamg/iamgo"</span>
+<span class="p">)</span>
+
+<span class="k">type</span> <span class="n">Bucket</span> <span class="k">struct</span> <span class="p">{</span>
+	<span class="n">Name</span>              <span class="kt">string</span>             <span class="s">`json:"name",doc:"The name of the bucket"`</span>
+	<span class="n">PublicAccessBlock</span> <span class="o">*</span><span class="n">PublicAccessBlock</span> <span class="s">`json:"public_access_block",doc:"The public access block configuration for the bucket"`</span>
+	<span class="n">BucketPolicies</span>    <span class="p">[]</span><span class="n">Policy</span>           <span class="s">`json:"bucket_policies",doc:"The bucket policies for the bucket"`</span>
+	<span class="n">Encryption</span>        <span class="n">Encryption</span>         <span class="s">`json:"encryption",doc:"Is the S3 bucket encrypted?"`</span>
+	<span class="n">Versioning</span>        <span class="n">Versioning</span>         <span class="s">`json:"versioning",doc:"Is the S3 bucket versioning enabled?"`</span>
+	<span class="n">Logging</span>           <span class="n">Logging</span>            <span class="s">`json:"logging",doc:"Is the S3 bucket logging enabled?"`</span>
+	<span class="n">ACL</span>               <span class="kt">string</span>             <span class="s">`json:"acl",doc:"The ACL for the bucket"`</span>
+<span class="p">}</span>
+
+<span class="k">type</span> <span class="n">PublicAccessBlock</span> <span class="k">struct</span> <span class="p">{</span>
+	<span class="n">BlockPublicACLs</span>       <span class="kt">bool</span> <span class="s">`json:"block_public_acls",doc:"Is the S3 bucket blocking public ACLs?"`</span>
+	<span class="n">BlockPublicPolicy</span>     <span class="kt">bool</span> <span class="s">`json:"block_public_policy",doc:"Is the S3 bucket blocking public policies?"`</span>
+	<span class="n">IgnorePublicACLs</span>      <span class="kt">bool</span> <span class="s">`json:"ignore_public_acls",doc:"Is the S3 bucket ignoring public ACLs?"`</span>
+	<span class="n">RestrictPublicBuckets</span> <span class="kt">bool</span> <span class="s">`json:"restrict_public_buckets",doc:"Is the S3 bucket restricting public buckets?"`</span>
+<span class="p">}</span>
+
+<span class="k">type</span> <span class="n">Logging</span> <span class="k">struct</span> <span class="p">{</span>
+	<span class="n">Enabled</span>      <span class="kt">bool</span>   <span class="s">`json:"enabled",doc:"Is the S3 bucket logging enabled?"`</span>
+	<span class="n">TargetBucket</span> <span class="kt">string</span> <span class="s">`json:"target_bucket",doc:"The target bucket for the S3 bucket logging"`</span>
+<span class="p">}</span>
+
+<span class="k">type</span> <span class="n">Versioning</span> <span class="k">struct</span> <span class="p">{</span>
+	<span class="n">Enabled</span>   <span class="kt">bool</span> <span class="s">`json:"enabled",doc:"Is the S3 bucket versioning enabled?"`</span>
+	<span class="n">MFADelete</span> <span class="kt">bool</span> <span class="s">`json:"mfa_delete",doc:"Is the S3 bucket versioning MFA delete enabled?"`</span>
+<span class="p">}</span>
+
+<span class="k">type</span> <span class="n">Encryption</span> <span class="k">struct</span> <span class="p">{</span>
+	<span class="n">Enabled</span>   <span class="kt">bool</span>   <span class="s">`json:"enabled",doc:"Is the S3 bucket encrypted?"`</span>
+	<span class="n">Algorithm</span> <span class="kt">string</span> <span class="s">`json:"algorithm",doc:"The encryption algorithm used"`</span>
+	<span class="n">KMSKeyId</span>  <span class="kt">string</span> <span class="s">`json:"kms_key_id",doc:"The KMS key ID used"`</span>
+<span class="p">}</span>
+
+<span class="k">type</span> <span class="n">Policy</span> <span class="k">struct</span> <span class="p">{</span>
+	<span class="n">Name</span>     <span class="kt">string</span>   <span class="s">`json:"name",doc:"The name of the policy"`</span>
+	<span class="n">Document</span> <span class="n">Document</span> <span class="s">`json:"document",doc:"The policy document"`</span>
+	<span class="n">Builtin</span>  <span class="kt">bool</span>     <span class="s">`json:"builtin",doc:"Is the policy a built-in policy"`</span>
+<span class="p">}</span>
+
+<span class="k">type</span> <span class="n">Document</span> <span class="k">struct</span> <span class="p">{</span>
+	<span class="n">Parsed</span>   <span class="n">iamgo</span><span class="o">.</span><span class="n">Document</span> <span class="s">`json:"parsed",doc:"The parsed policy document"`</span>
+	<span class="n">IsOffset</span> <span class="kt">bool</span>           <span class="s">`json:"is_offset",doc:"Is the policy document offset"`</span>
+	<span class="n">HasRefs</span>  <span class="kt">bool</span>           <span class="s">`json:"has_refs",doc:"Does the policy document have references"`</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>We want to use this to generate some meaningful documentation for the user so they can quickly see what is expected of them.</p>
+
+<p>We start with an example bucket for the docs</p>
+
+<div class="language-go highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">bucket</span> <span class="o">:=</span> <span class="n">Bucket</span><span class="p">{</span>
+	<span class="n">Name</span><span class="o">:</span> <span class="s">"example-bucket"</span><span class="p">,</span>
+	<span class="n">PublicAccessBlock</span><span class="o">:</span> <span class="o">&amp;</span><span class="n">PublicAccessBlock</span><span class="p">{</span>
+		<span class="n">BlockPublicACLs</span><span class="o">:</span>       <span class="no">false</span><span class="p">,</span>
+		<span class="n">BlockPublicPolicy</span><span class="o">:</span>     <span class="no">false</span><span class="p">,</span>
+		<span class="n">IgnorePublicACLs</span><span class="o">:</span>      <span class="no">false</span><span class="p">,</span>
+		<span class="n">RestrictPublicBuckets</span><span class="o">:</span> <span class="no">false</span><span class="p">,</span>
+	<span class="p">},</span>
+	<span class="n">BucketPolicies</span><span class="o">:</span> <span class="p">[]</span><span class="n">Policy</span><span class="p">{},</span>
+	<span class="n">Encryption</span><span class="o">:</span> <span class="n">Encryption</span><span class="p">{</span>
+		<span class="n">Enabled</span><span class="o">:</span>   <span class="no">false</span><span class="p">,</span>
+		<span class="n">Algorithm</span><span class="o">:</span> <span class="s">"AE256"</span><span class="p">,</span>
+		<span class="n">KMSKeyId</span><span class="o">:</span>  <span class="s">""</span><span class="p">,</span>
+	<span class="p">},</span>
+	<span class="n">Versioning</span><span class="o">:</span> <span class="n">Versioning</span><span class="p">{</span>
+		<span class="n">Enabled</span><span class="o">:</span>   <span class="no">false</span><span class="p">,</span>
+		<span class="n">MFADelete</span><span class="o">:</span> <span class="no">false</span><span class="p">,</span>
+	<span class="p">},</span>
+	<span class="n">Logging</span><span class="o">:</span> <span class="n">Logging</span><span class="p">{</span>
+		<span class="n">Enabled</span><span class="o">:</span> <span class="no">false</span><span class="p">,</span>
+	<span class="p">},</span>
+	<span class="n">ACL</span><span class="o">:</span> <span class="s">"false"</span><span class="p">,</span>
+<span class="p">}</span>
+
+<span class="n">exampleJson</span><span class="p">,</span> <span class="n">err</span> <span class="o">:=</span> <span class="n">json</span><span class="o">.</span><span class="n">MarshalIndent</span><span class="p">(</span><span class="n">bucket</span><span class="p">,</span> <span class="s">""</span><span class="p">,</span> <span class="s">"  "</span><span class="p">)</span>
+<span class="k">if</span> <span class="n">err</span> <span class="o">!=</span> <span class="no">nil</span> <span class="p">{</span>
+	<span class="nb">panic</span><span class="p">(</span><span class="n">err</span><span class="p">)</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>This gives us a <code class="language-plaintext highlighter-rouge">[]byte</code> of the <code class="language-plaintext highlighter-rouge">json</code> representation in a pretty-printed format.</p>
+
+<p>We’re not done yet, we’re wanting to print this as documentation so people can work out what the attributes are for. To do this, we can make use of the extra annotation we have added.</p>
+
+<div class="language-go highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">Name</span> <span class="kt">string</span> <span class="s">`json:"name",doc:"The name of the bucket"`</span>
+</code></pre></div></div>
+
+<p>To access the annotation, we need to use the <code class="language-plaintext highlighter-rouge">reflect</code> package to get the fields and read their annotations.</p>
+
+<p>Lets start with a <code class="language-plaintext highlighter-rouge">doc</code> object to hold the attribute name and docString and make a <code class="language-plaintext highlighter-rouge">Map</code> to hold our objects in</p>
+
+<div class="language-go highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">type</span> <span class="n">doc</span> <span class="k">struct</span> <span class="p">{</span>
+	<span class="n">AttributeName</span> <span class="kt">string</span>
+	<span class="n">DocString</span>     <span class="kt">string</span>
+<span class="p">}</span>
+
+<span class="n">docs</span> <span class="o">:=</span> <span class="nb">make</span><span class="p">(</span><span class="k">map</span><span class="p">[</span><span class="kt">string</span><span class="p">][]</span><span class="n">doc</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p>Next, we use reflection to get the type and iterate over the fields extracting the doc using a simple lookup on the <code class="language-plaintext highlighter-rouge">Tag</code> value</p>
+
+<div class="language-go highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">docString</span><span class="p">,</span> <span class="n">ok</span> <span class="o">:=</span> <span class="n">field</span><span class="o">.</span><span class="n">Tag</span><span class="o">.</span><span class="n">Lookup</span><span class="p">(</span><span class="s">"doc"</span><span class="p">)</span>
+<span class="k">if</span> <span class="o">!</span><span class="n">ok</span> <span class="p">{</span>
+	<span class="k">continue</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>Which gives us a whole function of</p>
+
+<div class="language-go highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">func</span> <span class="n">processTypeForDocs</span><span class="p">(</span><span class="n">t</span> <span class="n">reflect</span><span class="o">.</span><span class="n">Type</span><span class="p">,</span> <span class="n">docs</span> <span class="k">map</span><span class="p">[</span><span class="kt">string</span><span class="p">][]</span><span class="n">doc</span><span class="p">,</span> <span class="n">key</span> <span class="kt">string</span><span class="p">)</span> <span class="p">{</span>
+	<span class="k">for</span> <span class="n">i</span> <span class="o">:=</span> <span class="m">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">t</span><span class="o">.</span><span class="n">NumField</span><span class="p">();</span> <span class="n">i</span><span class="o">++</span> <span class="p">{</span>
+		<span class="n">field</span> <span class="o">:=</span> <span class="n">t</span><span class="o">.</span><span class="n">Field</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+		<span class="n">docString</span><span class="p">,</span> <span class="n">ok</span> <span class="o">:=</span> <span class="n">field</span><span class="o">.</span><span class="n">Tag</span><span class="o">.</span><span class="n">Lookup</span><span class="p">(</span><span class="s">"doc"</span><span class="p">)</span>
+		<span class="k">if</span> <span class="o">!</span><span class="n">ok</span> <span class="p">{</span>
+			<span class="k">continue</span>
+		<span class="p">}</span>
+		<span class="k">switch</span> <span class="n">field</span><span class="o">.</span><span class="n">Type</span><span class="o">.</span><span class="n">Kind</span><span class="p">()</span> <span class="p">{</span>
+		<span class="k">case</span> <span class="n">reflect</span><span class="o">.</span><span class="n">String</span><span class="p">,</span> <span class="n">reflect</span><span class="o">.</span><span class="n">Bool</span><span class="p">,</span> <span class="n">reflect</span><span class="o">.</span><span class="n">Int</span><span class="p">,</span> <span class="n">reflect</span><span class="o">.</span><span class="n">Float64</span><span class="o">:</span>
+			<span class="n">docs</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="nb">append</span><span class="p">(</span><span class="n">docs</span><span class="p">[</span><span class="n">key</span><span class="p">],</span> <span class="n">doc</span><span class="p">{</span>
+				<span class="n">AttributeName</span><span class="o">:</span> <span class="n">field</span><span class="o">.</span><span class="n">Name</span><span class="p">,</span>
+				<span class="n">DocString</span><span class="o">:</span>     <span class="n">docString</span><span class="p">,</span>
+			<span class="p">})</span>
+		<span class="k">case</span> <span class="n">reflect</span><span class="o">.</span><span class="n">Ptr</span><span class="o">:</span>
+			<span class="n">docs</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="nb">append</span><span class="p">(</span><span class="n">docs</span><span class="p">[</span><span class="n">key</span><span class="p">],</span> <span class="n">doc</span><span class="p">{</span>
+				<span class="n">AttributeName</span><span class="o">:</span> <span class="n">field</span><span class="o">.</span><span class="n">Name</span><span class="p">,</span>
+				<span class="n">DocString</span><span class="o">:</span>     <span class="n">docString</span><span class="p">,</span>
+			<span class="p">})</span>
+			<span class="n">processTypeForDocs</span><span class="p">(</span><span class="n">field</span><span class="o">.</span><span class="n">Type</span><span class="o">.</span><span class="n">Elem</span><span class="p">(),</span> <span class="n">docs</span><span class="p">,</span> <span class="n">field</span><span class="o">.</span><span class="n">Name</span><span class="p">)</span>
+		<span class="k">case</span> <span class="n">reflect</span><span class="o">.</span><span class="n">Struct</span><span class="o">:</span>
+			<span class="n">docs</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="nb">append</span><span class="p">(</span><span class="n">docs</span><span class="p">[</span><span class="n">key</span><span class="p">],</span> <span class="n">doc</span><span class="p">{</span>
+				<span class="n">AttributeName</span><span class="o">:</span> <span class="n">field</span><span class="o">.</span><span class="n">Name</span><span class="p">,</span>
+				<span class="n">DocString</span><span class="o">:</span>     <span class="n">docString</span><span class="p">,</span>
+			<span class="p">})</span>
+			<span class="n">processTypeForDocs</span><span class="p">(</span><span class="n">field</span><span class="o">.</span><span class="n">Type</span><span class="p">,</span> <span class="n">docs</span><span class="p">,</span> <span class="n">field</span><span class="o">.</span><span class="n">Name</span><span class="p">)</span>
+		<span class="p">}</span>
+	<span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>Now we have a populated map, we can pass that to our documentation Template to generate the docs.</p>
+
+<p>var docTemplate = `# S3 Bucket</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>## Example S3 Bucket JSON
+
+` + "```json" + `
+{{ .ExampleJSON }}
+` + "```" + `
+{{ range $key, $value := .Docs }}### {{ $key }}
+
+| Attribute Name     | Description          |
+| ------------------ | -------------------- |
+| {{ range $value }} | {{ .AttributeName }} | {{ .DocString }} |
+{{ end }}
+{{end}}
+`
+</code></pre></div></div>
+
+<p>Using the templated string above, we can use Go Templates to generate our documentation</p>
+
+<div class="language-go highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+<span class="n">docs</span> <span class="o">:=</span> <span class="nb">make</span><span class="p">(</span><span class="k">map</span><span class="p">[</span><span class="kt">string</span><span class="p">][]</span><span class="n">doc</span><span class="p">)</span>
+<span class="n">docs</span><span class="p">[</span><span class="s">"Bucket"</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span><span class="n">doc</span><span class="p">{}</span>
+
+<span class="n">processTypeForDocs</span><span class="p">(</span><span class="n">reflect</span><span class="o">.</span><span class="n">TypeOf</span><span class="p">(</span><span class="n">bucket</span><span class="p">),</span> <span class="n">docs</span><span class="p">,</span> <span class="s">"Bucket"</span><span class="p">)</span>
+
+<span class="n">tmplt</span><span class="p">,</span> <span class="n">_</span> <span class="o">:=</span> <span class="n">template</span><span class="o">.</span><span class="n">New</span><span class="p">(</span><span class="s">"doc"</span><span class="p">)</span><span class="o">.</span><span class="n">Parse</span><span class="p">(</span><span class="n">docTemplate</span><span class="p">)</span>
+
+<span class="n">tmplt</span><span class="o">.</span><span class="n">Execute</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">Stdout</span><span class="p">,</span> <span class="k">map</span><span class="p">[</span><span class="kt">string</span><span class="p">]</span><span class="n">nterface</span><span class="p">{}{</span>
+	<span class="s">"ExampleJSON"</span><span class="o">:</span> <span class="kt">string</span><span class="p">(</span><span class="n">exampleJson</span><span class="p">),</span>
+	<span class="s">"Docs"</span><span class="o">:</span>        <span class="n">docs</span><span class="p">,</span>
+<span class="p">})</span>
+</code></pre></div></div>
+
+<p>Here we are creating a <code class="language-plaintext highlighter-rouge">Map</code> with the attributes required in the template, some example <code class="language-plaintext highlighter-rouge">json</code> and the <code class="language-plaintext highlighter-rouge">doc</code> objects we created.</p>
+
+<p>When we run it in the terminal, we get the Markdown below written out.</p>
+
+<div class="language-markdown highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="gh"># S3 Bucket</span>
+
+<span class="gu">## Example S3 Bucket JSON</span>
+
+<span class="p">```</span><span class="nl">json
+</span><span class="p">{</span><span class="w">
+  </span><span class="nl">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"example-bucket"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"public_access_block"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+    </span><span class="nl">"block_public_acls"</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"block_public_policy"</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"ignore_public_acls"</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"restrict_public_buckets"</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="w">
+  </span><span class="p">},</span><span class="w">
+  </span><span class="nl">"bucket_policies"</span><span class="p">:</span><span class="w"> </span><span class="p">[],</span><span class="w">
+  </span><span class="nl">"encryption"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+    </span><span class="nl">"enabled"</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"algorithm"</span><span class="p">:</span><span class="w"> </span><span class="s2">"AE256"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"kms_key_id"</span><span class="p">:</span><span class="w"> </span><span class="s2">""</span><span class="w">
+  </span><span class="p">},</span><span class="w">
+  </span><span class="nl">"versioning"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+    </span><span class="nl">"enabled"</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"mfa_delete"</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="w">
+  </span><span class="p">},</span><span class="w">
+  </span><span class="nl">"logging"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+    </span><span class="nl">"enabled"</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"target_bucket"</span><span class="p">:</span><span class="w"> </span><span class="s2">""</span><span class="w">
+  </span><span class="p">},</span><span class="w">
+  </span><span class="nl">"acl"</span><span class="p">:</span><span class="w"> </span><span class="s2">"false"</span><span class="w">
+</span><span class="p">}</span><span class="w">
+ </span><span class="err">`</span><span class="w"> </span><span class="err">``</span><span class="w">
+</span><span class="err">###</span><span class="w"> </span><span class="err">Bucket</span><span class="w">
+
+</span><span class="err">|</span><span class="w"> </span><span class="err">Attribute</span><span class="w"> </span><span class="err">Name</span><span class="w">    </span><span class="err">|</span><span class="w"> </span><span class="err">Description</span><span class="w">                                          </span><span class="err">|</span><span class="w">
+</span><span class="err">|</span><span class="w"> </span><span class="err">-----------------</span><span class="w"> </span><span class="err">|</span><span class="w"> </span><span class="err">----------------------------------------------------</span><span class="w"> </span><span class="err">|</span><span class="w">
+</span><span class="err">|</span><span class="w"> </span><span class="err">Name</span><span class="w">              </span><span class="err">|</span><span class="w"> </span><span class="err">The</span><span class="w"> </span><span class="err">name</span><span class="w"> </span><span class="err">of</span><span class="w"> </span><span class="err">the</span><span class="w"> </span><span class="err">bucket</span><span class="w">                               </span><span class="err">|</span><span class="w">
+</span><span class="err">|</span><span class="w"> </span><span class="err">PublicAccessBlock</span><span class="w"> </span><span class="err">|</span><span class="w"> </span><span class="err">The</span><span class="w"> </span><span class="err">public</span><span class="w"> </span><span class="err">access</span><span class="w"> </span><span class="err">block</span><span class="w"> </span><span class="err">configuration</span><span class="w"> </span><span class="err">for</span><span class="w"> </span><span class="err">the</span><span class="w"> </span><span class="err">bucket</span><span class="w"> </span><span class="err">|</span><span class="w">
+</span><span class="err">|</span><span class="w"> </span><span class="err">Encryption</span><span class="w">        </span><span class="err">|</span><span class="w"> </span><span class="err">Is</span><span class="w"> </span><span class="err">the</span><span class="w"> </span><span class="err">S</span><span class="mi">3</span><span class="w"> </span><span class="err">bucket</span><span class="w"> </span><span class="err">encrypted?</span><span class="w">                          </span><span class="err">|</span><span class="w">
+</span><span class="err">|</span><span class="w"> </span><span class="err">Versioning</span><span class="w">        </span><span class="err">|</span><span class="w"> </span><span class="err">Is</span><span class="w"> </span><span class="err">the</span><span class="w"> </span><span class="err">S</span><span class="mi">3</span><span class="w"> </span><span class="err">bucket</span><span class="w"> </span><span class="err">versioning</span><span class="w"> </span><span class="err">enabled?</span><span class="w">                 </span><span class="err">|</span><span class="w">
+</span><span class="err">|</span><span class="w"> </span><span class="err">Logging</span><span class="w">           </span><span class="err">|</span><span class="w"> </span><span class="err">Is</span><span class="w"> </span><span class="err">the</span><span class="w"> </span><span class="err">S</span><span class="mi">3</span><span class="w"> </span><span class="err">bucket</span><span class="w"> </span><span class="err">logging</span><span class="w"> </span><span class="err">enabled?</span><span class="w">                    </span><span class="err">|</span><span class="w">
+</span><span class="err">|</span><span class="w"> </span><span class="err">ACL</span><span class="w">               </span><span class="err">|</span><span class="w"> </span><span class="err">The</span><span class="w"> </span><span class="err">ACL</span><span class="w"> </span><span class="err">for</span><span class="w"> </span><span class="err">the</span><span class="w"> </span><span class="err">bucket</span><span class="w">                               </span><span class="err">|</span><span class="w">
+
+</span><span class="err">###</span><span class="w"> </span><span class="err">Encryption</span><span class="w">
+
+</span><span class="err">|</span><span class="w"> </span><span class="err">Attribute</span><span class="w"> </span><span class="err">Name</span><span class="w"> </span><span class="err">|</span><span class="w"> </span><span class="err">Description</span><span class="w">                   </span><span class="err">|</span><span class="w">
+</span><span class="err">|</span><span class="w"> </span><span class="err">--------------</span><span class="w"> </span><span class="err">|</span><span class="w"> </span><span class="err">-----------------------------</span><span class="w"> </span><span class="err">|</span><span class="w">
+</span><span class="err">|</span><span class="w"> </span><span class="err">Enabled</span><span class="w">        </span><span class="err">|</span><span class="w"> </span><span class="err">Is</span><span class="w"> </span><span class="err">the</span><span class="w"> </span><span class="err">S</span><span class="mi">3</span><span class="w"> </span><span class="err">bucket</span><span class="w"> </span><span class="err">encrypted?</span><span class="w">   </span><span class="err">|</span><span class="w">
+</span><span class="err">|</span><span class="w"> </span><span class="err">Algorithm</span><span class="w">      </span><span class="err">|</span><span class="w"> </span><span class="err">The</span><span class="w"> </span><span class="err">encryption</span><span class="w"> </span><span class="err">algorithm</span><span class="w"> </span><span class="err">used</span><span class="w"> </span><span class="err">|</span><span class="w">
+</span><span class="err">|</span><span class="w"> </span><span class="err">KMSKeyId</span><span class="w">       </span><span class="err">|</span><span class="w"> </span><span class="err">The</span><span class="w"> </span><span class="err">KMS</span><span class="w"> </span><span class="err">key</span><span class="w"> </span><span class="err">ID</span><span class="w"> </span><span class="err">used</span><span class="w">           </span><span class="err">|</span><span class="w">
+
+</span><span class="err">###</span><span class="w"> </span><span class="err">Logging</span><span class="w">
+
+</span><span class="err">|</span><span class="w"> </span><span class="err">Attribute</span><span class="w"> </span><span class="err">Name</span><span class="w"> </span><span class="err">|</span><span class="w"> </span><span class="err">Description</span><span class="w">                                 </span><span class="err">|</span><span class="w">
+</span><span class="err">|</span><span class="w"> </span><span class="err">--------------</span><span class="w"> </span><span class="err">|</span><span class="w"> </span><span class="err">-------------------------------------------</span><span class="w"> </span><span class="err">|</span><span class="w">
+</span><span class="err">|</span><span class="w"> </span><span class="err">Enabled</span><span class="w">        </span><span class="err">|</span><span class="w"> </span><span class="err">Is</span><span class="w"> </span><span class="err">the</span><span class="w"> </span><span class="err">S</span><span class="mi">3</span><span class="w"> </span><span class="err">bucket</span><span class="w"> </span><span class="err">logging</span><span class="w"> </span><span class="err">enabled?</span><span class="w">           </span><span class="err">|</span><span class="w">
+</span><span class="err">|</span><span class="w"> </span><span class="err">TargetBucket</span><span class="w">   </span><span class="err">|</span><span class="w"> </span><span class="err">The</span><span class="w"> </span><span class="err">target</span><span class="w"> </span><span class="err">bucket</span><span class="w"> </span><span class="err">for</span><span class="w"> </span><span class="err">the</span><span class="w"> </span><span class="err">S</span><span class="mi">3</span><span class="w"> </span><span class="err">bucket</span><span class="w"> </span><span class="err">logging</span><span class="w"> </span><span class="err">|</span><span class="w">
+
+</span><span class="err">###</span><span class="w"> </span><span class="err">PublicAccessBlock</span><span class="w">
+
+</span><span class="err">|</span><span class="w"> </span><span class="err">Attribute</span><span class="w"> </span><span class="err">Name</span><span class="w">        </span><span class="err">|</span><span class="w"> </span><span class="err">Description</span><span class="w">                                  </span><span class="err">|</span><span class="w">
+</span><span class="err">|</span><span class="w"> </span><span class="err">---------------------</span><span class="w"> </span><span class="err">|</span><span class="w"> </span><span class="err">--------------------------------------------</span><span class="w"> </span><span class="err">|</span><span class="w">
+</span><span class="err">|</span><span class="w"> </span><span class="err">BlockPublicACLs</span><span class="w">       </span><span class="err">|</span><span class="w"> </span><span class="err">Is</span><span class="w"> </span><span class="err">the</span><span class="w"> </span><span class="err">S</span><span class="mi">3</span><span class="w"> </span><span class="err">bucket</span><span class="w"> </span><span class="err">blocking</span><span class="w"> </span><span class="err">public</span><span class="w"> </span><span class="err">ACLs?</span><span class="w">       </span><span class="err">|</span><span class="w">
+</span><span class="err">|</span><span class="w"> </span><span class="err">BlockPublicPolicy</span><span class="w">     </span><span class="err">|</span><span class="w"> </span><span class="err">Is</span><span class="w"> </span><span class="err">the</span><span class="w"> </span><span class="err">S</span><span class="mi">3</span><span class="w"> </span><span class="err">bucket</span><span class="w"> </span><span class="err">blocking</span><span class="w"> </span><span class="err">public</span><span class="w"> </span><span class="err">policies?</span><span class="w">   </span><span class="err">|</span><span class="w">
+</span><span class="err">|</span><span class="w"> </span><span class="err">IgnorePublicACLs</span><span class="w">      </span><span class="err">|</span><span class="w"> </span><span class="err">Is</span><span class="w"> </span><span class="err">the</span><span class="w"> </span><span class="err">S</span><span class="mi">3</span><span class="w"> </span><span class="err">bucket</span><span class="w"> </span><span class="err">ignoring</span><span class="w"> </span><span class="err">public</span><span class="w"> </span><span class="err">ACLs?</span><span class="w">       </span><span class="err">|</span><span class="w">
+</span><span class="err">|</span><span class="w"> </span><span class="err">RestrictPublicBuckets</span><span class="w"> </span><span class="err">|</span><span class="w"> </span><span class="err">Is</span><span class="w"> </span><span class="err">the</span><span class="w"> </span><span class="err">S</span><span class="mi">3</span><span class="w"> </span><span class="err">bucket</span><span class="w"> </span><span class="err">restricting</span><span class="w"> </span><span class="err">public</span><span class="w"> </span><span class="err">buckets?</span><span class="w"> </span><span class="err">|</span><span class="w">
+
+</span><span class="err">###</span><span class="w"> </span><span class="err">Versioning</span><span class="w">
+
+</span><span class="err">|</span><span class="w"> </span><span class="err">Attribute</span><span class="w"> </span><span class="err">Name</span><span class="w"> </span><span class="err">|</span><span class="w"> </span><span class="err">Description</span><span class="w">                                     </span><span class="err">|</span><span class="w">
+</span><span class="err">|</span><span class="w"> </span><span class="err">--------------</span><span class="w"> </span><span class="err">|</span><span class="w"> </span><span class="err">-----------------------------------------------</span><span class="w"> </span><span class="err">|</span><span class="w">
+</span><span class="err">|</span><span class="w"> </span><span class="err">Enabled</span><span class="w">        </span><span class="err">|</span><span class="w"> </span><span class="err">Is</span><span class="w"> </span><span class="err">the</span><span class="w"> </span><span class="err">S</span><span class="mi">3</span><span class="w"> </span><span class="err">bucket</span><span class="w"> </span><span class="err">versioning</span><span class="w"> </span><span class="err">enabled?</span><span class="w">            </span><span class="err">|</span><span class="w">
+</span><span class="err">|</span><span class="w"> </span><span class="err">MFADelete</span><span class="w">      </span><span class="err">|</span><span class="w"> </span><span class="err">Is</span><span class="w"> </span><span class="err">the</span><span class="w"> </span><span class="err">S</span><span class="mi">3</span><span class="w"> </span><span class="err">bucket</span><span class="w"> </span><span class="err">versioning</span><span class="w"> </span><span class="err">MFA</span><span class="w"> </span><span class="err">delete</span><span class="w"> </span><span class="err">enabled?</span><span class="w"> </span><span class="err">|</span><span class="w">
+</span>
+<span class="p">```</span>
+</code></pre></div></div>
+
+<p><br /></p>
+
+<h2 id="actual-rendered-output">Actual Rendered Output</h2>
+
+<p><br /></p>
+
+<h1 id="s3-bucket">S3 Bucket</h1>
+
+<h2 id="example-s3-bucket-json">Example S3 Bucket JSON</h2>
+
+<div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">{</span><span class="w">
+  </span><span class="nl">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"example-bucket"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"public_access_block"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+    </span><span class="nl">"block_public_acls"</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"block_public_policy"</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"ignore_public_acls"</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"restrict_public_buckets"</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="w">
+  </span><span class="p">},</span><span class="w">
+  </span><span class="nl">"bucket_policies"</span><span class="p">:</span><span class="w"> </span><span class="p">[],</span><span class="w">
+  </span><span class="nl">"encryption"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+    </span><span class="nl">"enabled"</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"algorithm"</span><span class="p">:</span><span class="w"> </span><span class="s2">"AE256"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"kms_key_id"</span><span class="p">:</span><span class="w"> </span><span class="s2">""</span><span class="w">
+  </span><span class="p">},</span><span class="w">
+  </span><span class="nl">"versioning"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+    </span><span class="nl">"enabled"</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"mfa_delete"</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="w">
+  </span><span class="p">},</span><span class="w">
+  </span><span class="nl">"logging"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+    </span><span class="nl">"enabled"</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"target_bucket"</span><span class="p">:</span><span class="w"> </span><span class="s2">""</span><span class="w">
+  </span><span class="p">},</span><span class="w">
+  </span><span class="nl">"acl"</span><span class="p">:</span><span class="w"> </span><span class="s2">"false"</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div></div>
+
+<h3 id="bucket">Bucket</h3>
+
+<table>
+  <thead>
+    <tr>
+      <th>Attribute Name</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Name</td>
+      <td>The name of the bucket</td>
+    </tr>
+    <tr>
+      <td>PublicAccessBlock</td>
+      <td>The public access block configuration for the bucket</td>
+    </tr>
+    <tr>
+      <td>Encryption</td>
+      <td>Is the S3 bucket encrypted?</td>
+    </tr>
+    <tr>
+      <td>Versioning</td>
+      <td>Is the S3 bucket versioning enabled?</td>
+    </tr>
+    <tr>
+      <td>Logging</td>
+      <td>Is the S3 bucket logging enabled?</td>
+    </tr>
+    <tr>
+      <td>ACL</td>
+      <td>The ACL for the bucket</td>
+    </tr>
+  </tbody>
+</table>
+
+<h3 id="encryption">Encryption</h3>
+
+<table>
+  <thead>
+    <tr>
+      <th>Attribute Name</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Enabled</td>
+      <td>Is the S3 bucket encrypted?</td>
+    </tr>
+    <tr>
+      <td>Algorithm</td>
+      <td>The encryption algorithm used</td>
+    </tr>
+    <tr>
+      <td>KMSKeyId</td>
+      <td>The KMS key ID used</td>
+    </tr>
+  </tbody>
+</table>
+
+<h3 id="logging">Logging</h3>
+
+<table>
+  <thead>
+    <tr>
+      <th>Attribute Name</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Enabled</td>
+      <td>Is the S3 bucket logging enabled?</td>
+    </tr>
+    <tr>
+      <td>TargetBucket</td>
+      <td>The target bucket for the S3 bucket logging</td>
+    </tr>
+  </tbody>
+</table>
+
+<h3 id="publicaccessblock">PublicAccessBlock</h3>
+
+<table>
+  <thead>
+    <tr>
+      <th>Attribute Name</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>BlockPublicACLs</td>
+      <td>Is the S3 bucket blocking public ACLs?</td>
+    </tr>
+    <tr>
+      <td>BlockPublicPolicy</td>
+      <td>Is the S3 bucket blocking public policies?</td>
+    </tr>
+    <tr>
+      <td>IgnorePublicACLs</td>
+      <td>Is the S3 bucket ignoring public ACLs?</td>
+    </tr>
+    <tr>
+      <td>RestrictPublicBuckets</td>
+      <td>Is the S3 bucket restricting public buckets?</td>
+    </tr>
+  </tbody>
+</table>
+
+<h3 id="versioning">Versioning</h3>
+
+<table>
+  <thead>
+    <tr>
+      <th>Attribute Name</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Enabled</td>
+      <td>Is the S3 bucket versioning enabled?</td>
+    </tr>
+    <tr>
+      <td>MFADelete</td>
+      <td>Is the S3 bucket versioning MFA delete enabled?</td>
+    </tr>
+  </tbody>
+</table>
+
+</div>
+
+            </div>
+        </main>
+    </div>
+
+    <footer class="wrapper-footer">
+        <div class="footer">
+    <span class="footer-text float-left">This work is licensed under <a rel="license" href="https://www.gnu.org/licenses/gpl-3.0.en.html" target="_blank">GPLv3</a></span>
+    <span class="footer-text float-right">
+    Site Updated: 2023-12-01  (<a href="/feed.xml" target="_blank">RSS</a>)
+  </span>
+</div>
+    </footer>
+</body>
+</html>

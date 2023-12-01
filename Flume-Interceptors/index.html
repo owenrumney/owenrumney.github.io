@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<!-- Begin Jekyll SEO tag v2.6.1 -->
+<title>Writing a Flume Interceptor | Owen Rumney</title>
+<meta name="generator" content="Jekyll v4.2.1" />
+<meta property="og:title" content="Writing a Flume Interceptor" />
+<meta name="author" content="Owen Rumney" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="Here we are in June, some five months since the last post and I finally have some time and content to sit and write a post." />
+<meta property="og:description" content="Here we are in June, some five months since the last post and I finally have some time and content to sit and write a post." />
+<link rel="canonical" href="https://www.owenrumney.co.uk/Flume-Interceptors/" />
+<meta property="og:url" content="https://www.owenrumney.co.uk/Flume-Interceptors/" />
+<meta property="og:site_name" content="Owen Rumney" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2015-06-17T00:00:00+00:00" />
+<script type="application/ld+json">
+{"dateModified":"2015-06-17T00:00:00+00:00","datePublished":"2015-06-17T00:00:00+00:00","author":{"@type":"Person","name":"Owen Rumney"},"description":"Here we are in June, some five months since the last post and I finally have some time and content to sit and write a post.","mainEntityOfPage":{"@type":"WebPage","@id":"https://www.owenrumney.co.uk/Flume-Interceptors/"},"url":"https://www.owenrumney.co.uk/Flume-Interceptors/","@type":"BlogPosting","headline":"Writing a Flume Interceptor","@context":"https://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+
+
+<meta name="keywords" content="hadoop,programming" />
+
+<link rel="shortcut icon" href="/favicon.ico" />
+<link rel="apple-touch-icon" href="/favicon.ico"/>
+<link rel="stylesheet" type="text/css" href="/assets/css/styles.css" />
+<link rel="stylesheet" type="text/css" href="/assets/css/prism.css" />
+<script src="/assets/js/prism.js"></script>
+
+
+
+</head>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-TLCVNKXMFJ"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-TLCVNKXMFJ');
+</script>
+
+<body>
+    <div class="wrapper">
+        <header class="wrapper-header">
+            <div class="header">
+  <nav class="float-right">
+  
+  <a href="https://github.com/owenrumney" target="_blank"
+    ><img
+      src="/assets/images/github.svg"
+      style="color: white; display: inline-block"
+      height="30px"
+      alt="GitHub"
+  /></a>
+  
+  <a href="https://linkedin.com/in/owenrumney" target="_blank"
+    ><img
+      src="/assets/images/linkedin.svg"
+      style="color: white; display: inline-block"
+      height="30px"
+      alt="LinkedIn"
+  /></a>
+  
+  <a href="https://cv.owenrumney.co.uk" target="_blank"
+    ><img
+      src="/assets/images/resume.svg"
+      style="color: white; display: inline-block"
+      height="32px"
+      alt="Resume"
+  /></a>
+  
+</nav>
+
+  <a href="https://www.owenrumney.co.uk" target="_blank"><h1>Owen Rumney</h1></a>
+  <br />
+  <h5><i>Software Engineer</i></h5>
+  <br />
+
+  <hr />
+</div>
+
+        </header>
+
+        <main class="wrapper-main">
+            <div class="main-content">
+            <div class="post-info">
+    <h2>Writing a Flume Interceptor</h2>
+    <p>17 Jun 2015 - Owen Rumney</p>
+</div>
+
+<div class="post-content">
+<p>Here we are in June, some five months since the last post and I finally have some time and content to sit and write a post.</p>
+
+<p>In April 2013 I started working with Hadoop, the plan was to suck in server application logs to determine who was using what data within the business to make sure it was being correctly accounted for. At the time, Flume seemed like the obvious choice to ingest these files till we realised the timing, format and frequency made Flume a little like over kill. As it happened, it was discounted before I could get my teeth into it.</p>
+
+<p>Two years later and there is a reason to use Flume - high volumes of regularly generated XML files which need ingesting into HDFS for processing - clearly a use case for Flume.</p>
+
+<p>There are two key requirements for this piece, one that the file name be preserved somehow and that the content be converted to JSON inflight - for this post I’m going to focus only on the former.</p>
+
+<p>When setting up the configuration for the Flume agent, the Spooling Directory Source can be configured to with <code class="language-plaintext highlighter-rouge">fileHeader = true</code> which will add the full path of the originating file into the header where it can be used by the interceptor. This can be appended to the destination path in HDFS, but as it contains the complete originating path it will go into a similar structure to source - in our case that isn’t desirable.</p>
+
+<p>To solve this, I’m writing and interceptor which will mutate the path to just have the filename with no extension.</p>
+
+<p>Creating the inteceptor requires a number of steps;</p>
+
+<ol>
+  <li>Importing required dependencies;</li>
+</ol>
+
+<div class="language-xml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nt">&lt;dependency&gt;</span>
+    <span class="nt">&lt;groupId&gt;</span>org.apache.flume<span class="nt">&lt;/groupId&gt;</span>
+    <span class="nt">&lt;artifactId&gt;</span>flume-ng-core<span class="nt">&lt;/artifactId&gt;</span>
+    <span class="nt">&lt;version&gt;</span>1.5.0<span class="nt">&lt;/version&gt;</span>
+<span class="nt">&lt;/dependency&gt;</span>
+</code></pre></div></div>
+
+<p>Then we need to create the abstract class which implements Interceptor which will be used as a base for future interceptors.</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">class</span> <span class="nc">AbstractFlumeInterceptor</span> <span class="kd">implements</span> <span class="nc">Interceptor</span> <span class="o">{</span>
+
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">initialize</span><span class="o">()</span> <span class="o">{</span>    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="nc">Event</span> <span class="nf">intercept</span><span class="o">(</span><span class="nc">Event</span> <span class="n">event</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="kc">null</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="nc">List</span><span class="o">&lt;</span><span class="nc">Event</span><span class="o">&gt;</span> <span class="nf">intercept</span><span class="o">(</span><span class="nc">List</span><span class="o">&lt;</span><span class="nc">Event</span><span class="o">&gt;</span> <span class="n">events</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">for</span> <span class="o">(</span><span class="nc">Iterator</span><span class="o">&lt;</span><span class="nc">Event</span><span class="o">&gt;</span> <span class="n">eventIterator</span> <span class="o">=</span> <span class="n">events</span><span class="o">.</span><span class="na">iterator</span><span class="o">();</span> <span class="n">eventIterator</span><span class="o">.</span><span class="na">hasNext</span><span class="o">();</span> <span class="o">)</span> <span class="o">{</span>
+            <span class="nc">Event</span> <span class="n">next</span> <span class="o">=</span>  <span class="n">intercept</span><span class="o">(</span><span class="n">eventIterator</span><span class="o">.</span><span class="na">next</span><span class="o">());</span>
+            <span class="k">if</span><span class="o">(</span><span class="n">next</span> <span class="o">==</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
+                <span class="n">eventIterator</span><span class="o">.</span><span class="na">remove</span><span class="o">();</span>
+            <span class="o">}</span>
+        <span class="o">}</span>
+        <span class="k">return</span> <span class="n">events</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">close</span><span class="o">()</span> <span class="o">{</span>    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<p>Now we have this class which wraps up the logic of handling a list of Events we need to create the concrete class called <code class="language-plaintext highlighter-rouge">FilenameInterceptor</code></p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nd">@Override</span>
+<span class="kd">public</span> <span class="nc">Event</span> <span class="nf">intercept</span><span class="o">(</span><span class="nc">Event</span> <span class="n">event</span><span class="o">)</span> <span class="o">{</span>
+    <span class="nc">Map</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">,</span> <span class="nc">String</span><span class="o">&gt;</span> <span class="n">headers</span> <span class="o">=</span> <span class="n">event</span><span class="o">.</span><span class="na">getHeaders</span><span class="o">();</span>
+    <span class="nc">String</span> <span class="n">headerValue</span> <span class="o">=</span> <span class="n">headers</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="n">header</span><span class="o">);</span> <span class="c1">// header in this case is 'file' as per the config</span>
+    <span class="k">if</span><span class="o">(</span><span class="n">headerValue</span> <span class="o">==</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
+        <span class="n">headerValue</span> <span class="o">=</span> <span class="s">""</span><span class="o">;</span>
+    <span class="o">}</span>
+    <span class="nc">Path</span> <span class="n">path</span> <span class="o">=</span> <span class="nc">Paths</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="n">headerValue</span><span class="o">);</span>
+    <span class="k">if</span> <span class="o">(</span><span class="n">path</span> <span class="o">!=</span> <span class="kc">null</span> <span class="o">&amp;&amp;</span> <span class="n">path</span><span class="o">.</span><span class="na">getFileName</span><span class="o">()</span> <span class="o">!=</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
+        <span class="n">headerValue</span> <span class="o">=</span> <span class="nc">FilenameUtils</span><span class="o">.</span><span class="na">removeExtension</span><span class="o">(</span><span class="n">path</span><span class="o">.</span><span class="na">getFileName</span><span class="o">().</span><span class="na">toString</span><span class="o">());</span>
+    <span class="o">}</span>
+    <span class="n">headers</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="n">header</span><span class="o">,</span> <span class="n">headerValue</span><span class="o">);</span>
+    <span class="k">return</span> <span class="n">event</span><span class="o">;</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<p>In the conf file for Flume we need the nested class in our Interceptor to build it, so the following Builder class is added</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">static</span> <span class="kd">class</span> <span class="nc">Builder</span> <span class="kd">implements</span> <span class="nc">Interceptor</span><span class="o">.</span><span class="na">Builder</span> <span class="o">{</span>
+    <span class="kd">private</span> <span class="nc">String</span> <span class="n">headerkey</span> <span class="o">=</span> <span class="s">"HostTime"</span><span class="o">;</span>
+
+    <span class="kd">public</span> <span class="nc">Interceptor</span> <span class="nf">build</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="k">new</span> <span class="nf">FilenameInterceptor</span><span class="o">(</span><span class="n">headerkey</span><span class="o">);</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">configure</span><span class="o">(</span><span class="nc">Context</span> <span class="n">context</span><span class="o">)</span> <span class="o">{</span>
+        <span class="n">headerkey</span> <span class="o">=</span> <span class="n">context</span><span class="o">.</span><span class="na">getString</span><span class="o">(</span><span class="s">"key"</span><span class="o">);</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<p>Now we have all this we can <code class="language-plaintext highlighter-rouge">mvn clean package</code> and copy the jar to the lib folder - in my case we’re using Cloudera so its in the parcels folder <code class="language-plaintext highlighter-rouge">/opt/cloudera/parcels/CDHxxx/flume-ng/lib</code>, from here it will be picked up with <code class="language-plaintext highlighter-rouge">flume-ng</code> starts.</p>
+
+<p>The new additions to the conf file are;</p>
+
+<div class="language-properties highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># ... source1 props ...
+</span><span class="py">agent1.sources.source1.fileHeader</span> <span class="p">=</span> <span class="s">true</span>
+<span class="py">agent1.sources.source1.interceptors</span> <span class="p">=</span> <span class="s">interceptor1</span>
+<span class="py">agent1.sources.source1.interceptors.interceptor1.type</span> <span class="p">=</span> <span class="s">[package].[for].[Interceptor].FilenameInterceptor$Builder</span>
+<span class="c"># ... hdfs1 props ...
+</span><span class="py">agent1.sinks.hdfs1.filePrefix</span> <span class="p">=</span> <span class="s">%{file}</span>
+</code></pre></div></div>
+
+</div>
+
+            </div>
+        </main>
+    </div>
+
+    <footer class="wrapper-footer">
+        <div class="footer">
+    <span class="footer-text float-left">This work is licensed under <a rel="license" href="https://www.gnu.org/licenses/gpl-3.0.en.html" target="_blank">GPLv3</a></span>
+    <span class="footer-text float-right">
+    Site Updated: 2023-12-01  (<a href="/feed.xml" target="_blank">RSS</a>)
+  </span>
+</div>
+    </footer>
+</body>
+</html>

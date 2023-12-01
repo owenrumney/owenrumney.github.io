@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<!-- Begin Jekyll SEO tag v2.6.1 -->
+<title>Introducing lazytrivy | Owen Rumney</title>
+<meta name="generator" content="Jekyll v4.2.1" />
+<meta property="og:title" content="Introducing lazytrivy" />
+<meta name="author" content="Owen Rumney" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="Using lazytrivy as a Trivy wrapper to simplify usage" />
+<meta property="og:description" content="Using lazytrivy as a Trivy wrapper to simplify usage" />
+<link rel="canonical" href="https://www.owenrumney.co.uk/lazy-trivy-introduction/" />
+<meta property="og:url" content="https://www.owenrumney.co.uk/lazy-trivy-introduction/" />
+<meta property="og:site_name" content="Owen Rumney" />
+<meta property="og:image" content="https://www.owenrumney.co.uk/assets/img/owen.png" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2022-09-07T00:00:00+00:00" />
+<script type="application/ld+json">
+{"dateModified":"2022-09-07T00:00:00+00:00","datePublished":"2022-09-07T00:00:00+00:00","author":{"@type":"Person","name":"Owen Rumney"},"description":"Using lazytrivy as a Trivy wrapper to simplify usage","mainEntityOfPage":{"@type":"WebPage","@id":"https://www.owenrumney.co.uk/lazy-trivy-introduction/"},"url":"https://www.owenrumney.co.uk/lazy-trivy-introduction/","@type":"BlogPosting","image":"https://www.owenrumney.co.uk/assets/img/owen.png","headline":"Introducing lazytrivy","@context":"https://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+
+
+<meta name="keywords" content="go,programming,tools" />
+
+<link rel="shortcut icon" href="/favicon.ico" />
+<link rel="apple-touch-icon" href="/favicon.ico"/>
+<link rel="stylesheet" type="text/css" href="/assets/css/styles.css" />
+<link rel="stylesheet" type="text/css" href="/assets/css/prism.css" />
+<script src="/assets/js/prism.js"></script>
+
+
+
+</head>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-TLCVNKXMFJ"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-TLCVNKXMFJ');
+</script>
+
+<body>
+    <div class="wrapper">
+        <header class="wrapper-header">
+            <div class="header">
+  <nav class="float-right">
+  
+  <a href="https://github.com/owenrumney" target="_blank"
+    ><img
+      src="/assets/images/github.svg"
+      style="color: white; display: inline-block"
+      height="30px"
+      alt="GitHub"
+  /></a>
+  
+  <a href="https://linkedin.com/in/owenrumney" target="_blank"
+    ><img
+      src="/assets/images/linkedin.svg"
+      style="color: white; display: inline-block"
+      height="30px"
+      alt="LinkedIn"
+  /></a>
+  
+  <a href="https://cv.owenrumney.co.uk" target="_blank"
+    ><img
+      src="/assets/images/resume.svg"
+      style="color: white; display: inline-block"
+      height="32px"
+      alt="Resume"
+  /></a>
+  
+</nav>
+
+  <a href="https://www.owenrumney.co.uk" target="_blank"><h1>Owen Rumney</h1></a>
+  <br />
+  <h5><i>Software Engineer</i></h5>
+  <br />
+
+  <hr />
+</div>
+
+        </header>
+
+        <main class="wrapper-main">
+            <div class="main-content">
+            <div class="post-info">
+    <h2>Introducing lazytrivy</h2>
+    <p>07 Sep 2022 - Owen Rumney</p>
+</div>
+
+<div class="post-content">
+<blockquote>
+  <p>UPDATED 21st Sept 2022: v1.0.0 Release</p>
+</blockquote>
+
+<h4 id="view-lazytrivy-on-github">View <code class="language-plaintext highlighter-rouge">lazytrivy</code> on <a href="https://github.com/owenrumney/lazytrivy" target="\_blank">GitHub</a></h4>
+
+<p><img src="../images/scan_all.png?raw=true" alt="lazytrivy" /></p>
+
+<p><a href="https://trivy.dev">Trivy</a> is the go to scanner for vulnerabilities and is rapidly becoming the go to for all your scanning needs.</p>
+
+<p>lazytrivy just makes the experience even easier. You can run <code class="language-plaintext highlighter-rouge">lazytrivy</code> without remembering all the commands and get a quick summary of the vulnerabilities you have.</p>
+
+<h3 id="how-does-it-work">How does it work?</h3>
+
+<p>Trivy is released as a binary or a Docker image. In order to support Windows users, <code class="language-plaintext highlighter-rouge">lazytrivy</code> uses the docker image and mounts the Docker socket to all the Trivy image to scan other images on the Docker host.</p>
+
+<p><code class="language-plaintext highlighter-rouge">lazytrivy</code> will query the Docker context to find the current context and use that host; alternatively, you can specify the <code class="language-plaintext highlighter-rouge">--docker-host</code> on start to point to a remote host.</p>
+
+<h3 id="features">Features</h3>
+
+<p><code class="language-plaintext highlighter-rouge">lazytrivy</code> has a growing list of features; right now -</p>
+
+<ul>
+  <li>Imag Scanning
+    <ul>
+      <li>Scan individual images on your machine</li>
+      <li>Scan all the images on your machine</li>
+      <li>Scan a remote image</li>
+    </ul>
+  </li>
+  <li>AWS Scanning
+    <ul>
+      <li>Scan your AWS account for misconfigurations</li>
+      <li>Dive into services and find service specific misconfigurations</li>
+    </ul>
+  </li>
+  <li>File System Scanning
+    <ul>
+      <li>Scan a local directory for misconfigurations, vulnerabilities and secrets</li>
+    </ul>
+  </li>
+</ul>
+
+<h3 id="image-scanning">Image Scanning</h3>
+
+<h4 id="individual-images">Individual Images</h4>
+
+<p>Choose an image from the side menu on the left and scan for vulnerbalities.</p>
+
+<p><img src="../images/scan_individual_images.gif?raw=true" alt="Scan an image" /></p>
+
+<h4 id="all-images">All Images</h4>
+
+<p>Alternative, you can scan all the images on the machine for a summary list that can be navigated through.</p>
+
+<p><img src="../images/scan_all_images.gif?raw=true" alt="All Image Scanning" /></p>
+
+<h4 id="remote-images">Remote Images</h4>
+
+<p>For images not on your machine, no problem - you can scan a remote image by pressing <code class="language-plaintext highlighter-rouge">r</code></p>
+
+<p><img src="../images/scan_remote_image.gif?raw=true" alt="Remote Image scanning" /></p>
+
+<p>The image will be scanned without needing to take up storage on your machine. You still get the same detailed results.</p>
+
+<h4 id="filtering">Filtering</h4>
+
+<p>In all cases, you can filter the results (<code class="language-plaintext highlighter-rouge">Critical</code>, <code class="language-plaintext highlighter-rouge">High</code>, <code class="language-plaintext highlighter-rouge">Medium</code>, <code class="language-plaintext highlighter-rouge">Low</code>, and <code class="language-plaintext highlighter-rouge">Unknown</code>) by pressing the first letter of the Severity letter… eg; <code class="language-plaintext highlighter-rouge">c</code> for <code class="language-plaintext highlighter-rouge">Critical</code>.</p>
+
+<p>Pressing <code class="language-plaintext highlighter-rouge">Return</code> on the issues will show more information about the issue.,</p>
+
+<h3 id="aws-scanning">AWS Scanning</h3>
+
+<p>Quickly switch to AWS mode by pressing <code class="language-plaintext highlighter-rouge">w</code> and you can scan accounts. If you have not run previously, then you can press <code class="language-plaintext highlighter-rouge">s</code> to start a scan and <code class="language-plaintext highlighter-rouge">lazytrivy</code> will attempt to detect credentials to work with.</p>
+
+<p>For this to work, you will need to have either <code class="language-plaintext highlighter-rouge">AWS</code> environment variables set or valid credentials in your <code class="language-plaintext highlighter-rouge">.aws</code> folder by using the <code class="language-plaintext highlighter-rouge">awscli</code>, <code class="language-plaintext highlighter-rouge">saml2aws</code> or similar.</p>
+
+<p><img src="../images/scan_aws_account.gif?raw=true" alt="Scanning AWS" /></p>
+
+<p>Scanning takes a short while depending on the size of the account, but eventually you will get a service list on the left that you can navigate through.</p>
+
+<p>Selecting a service will show all the issues identified and you can drill into the AWS resources to see what the problems are.</p>
+
+<p>Pressing <code class="language-plaintext highlighter-rouge">return</code> on the issues will show more information about the issue.</p>
+
+<h3 id="file-system-scanning">File System Scanning</h3>
+
+<p>Switching to Filesystem mode using <code class="language-plaintext highlighter-rouge">w</code> and you can scan a local directory.</p>
+
+<p>Alternatively, you can start <code class="language-plaintext highlighter-rouge">lazytrivy</code> in file system mode using</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>lazytrivy fs /path/to/scan
+</code></pre></div></div>
+
+<p><img src="../images/scan_filesystem.gif?raw=true" alt="Scanning File System" /></p>
+
+<h3 id="issues-comments-suggestions">Issues, Comments, Suggestions</h3>
+
+<p>Comments, suggestions and issues are most welcome, please raise them in <a href="https://github.com/owenrumney/lazytrivy/issues">GitHub</a></p>
+
+</div>
+
+            </div>
+        </main>
+    </div>
+
+    <footer class="wrapper-footer">
+        <div class="footer">
+    <span class="footer-text float-left">This work is licensed under <a rel="license" href="https://www.gnu.org/licenses/gpl-3.0.en.html" target="_blank">GPLv3</a></span>
+    <span class="footer-text float-right">
+    Site Updated: 2023-12-01  (<a href="/feed.xml" target="_blank">RSS</a>)
+  </span>
+</div>
+    </footer>
+</body>
+</html>

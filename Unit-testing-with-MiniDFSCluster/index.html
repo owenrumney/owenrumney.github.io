@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<!-- Begin Jekyll SEO tag v2.6.1 -->
+<title>Unit testing HDFS code | Owen Rumney</title>
+<meta name="generator" content="Jekyll v4.2.1" />
+<meta property="og:title" content="Unit testing HDFS code" />
+<meta name="author" content="Owen Rumney" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="I need to write a couple of unit tests for some code to add a log entry into HDFS but I don’t want to have to rely on having access to full blown HDFS cluster or a local install to achieve this." />
+<meta property="og:description" content="I need to write a couple of unit tests for some code to add a log entry into HDFS but I don’t want to have to rely on having access to full blown HDFS cluster or a local install to achieve this." />
+<link rel="canonical" href="https://www.owenrumney.co.uk/Unit-testing-with-MiniDFSCluster/" />
+<meta property="og:url" content="https://www.owenrumney.co.uk/Unit-testing-with-MiniDFSCluster/" />
+<meta property="og:site_name" content="Owen Rumney" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2015-07-02T00:00:00+00:00" />
+<script type="application/ld+json">
+{"dateModified":"2015-07-02T00:00:00+00:00","datePublished":"2015-07-02T00:00:00+00:00","author":{"@type":"Person","name":"Owen Rumney"},"description":"I need to write a couple of unit tests for some code to add a log entry into HDFS but I don’t want to have to rely on having access to full blown HDFS cluster or a local install to achieve this.","mainEntityOfPage":{"@type":"WebPage","@id":"https://www.owenrumney.co.uk/Unit-testing-with-MiniDFSCluster/"},"url":"https://www.owenrumney.co.uk/Unit-testing-with-MiniDFSCluster/","@type":"BlogPosting","headline":"Unit testing HDFS code","@context":"https://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+
+
+<meta name="keywords" content="hadoop,programming" />
+
+<link rel="shortcut icon" href="/favicon.ico" />
+<link rel="apple-touch-icon" href="/favicon.ico"/>
+<link rel="stylesheet" type="text/css" href="/assets/css/styles.css" />
+<link rel="stylesheet" type="text/css" href="/assets/css/prism.css" />
+<script src="/assets/js/prism.js"></script>
+
+
+
+</head>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-TLCVNKXMFJ"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-TLCVNKXMFJ');
+</script>
+
+<body>
+    <div class="wrapper">
+        <header class="wrapper-header">
+            <div class="header">
+  <nav class="float-right">
+  
+  <a href="https://github.com/owenrumney" target="_blank"
+    ><img
+      src="/assets/images/github.svg"
+      style="color: white; display: inline-block"
+      height="30px"
+      alt="GitHub"
+  /></a>
+  
+  <a href="https://linkedin.com/in/owenrumney" target="_blank"
+    ><img
+      src="/assets/images/linkedin.svg"
+      style="color: white; display: inline-block"
+      height="30px"
+      alt="LinkedIn"
+  /></a>
+  
+  <a href="https://cv.owenrumney.co.uk" target="_blank"
+    ><img
+      src="/assets/images/resume.svg"
+      style="color: white; display: inline-block"
+      height="32px"
+      alt="Resume"
+  /></a>
+  
+</nav>
+
+  <a href="https://www.owenrumney.co.uk" target="_blank"><h1>Owen Rumney</h1></a>
+  <br />
+  <h5><i>Software Engineer</i></h5>
+  <br />
+
+  <hr />
+</div>
+
+        </header>
+
+        <main class="wrapper-main">
+            <div class="main-content">
+            <div class="post-info">
+    <h2>Unit testing HDFS code</h2>
+    <p>02 Jul 2015 - Owen Rumney</p>
+</div>
+
+<div class="post-content">
+<p>I need to write a couple of unit tests for some code to add a log entry into HDFS but I don’t want to have to rely on having access to full blown HDFS cluster or a local install to achieve this.</p>
+
+<p>The MiniDFSCluster in <code class="language-plaintext highlighter-rouge">org.apache.hadoop:hadoop-hdfs</code> can be used to create a quick clustered file system which can be used to testing.</p>
+
+<p>The following dependencies are required for the test to work.</p>
+
+<div class="language-xml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nt">&lt;dependency&gt;</span>
+    <span class="nt">&lt;groupId&gt;</span>org.apache.hadoop<span class="nt">&lt;/groupId&gt;</span>
+    <span class="nt">&lt;artifactId&gt;</span>hadoop-hdfs<span class="nt">&lt;/artifactId&gt;</span>
+    <span class="nt">&lt;version&gt;</span>2.6.0<span class="nt">&lt;/version&gt;</span>
+    <span class="nt">&lt;scope&gt;</span>test<span class="nt">&lt;/scope&gt;</span>
+<span class="nt">&lt;/dependency&gt;</span>
+<span class="nt">&lt;dependency&gt;</span>
+    <span class="nt">&lt;groupId&gt;</span>org.apache.hadoop<span class="nt">&lt;/groupId&gt;</span>
+    <span class="nt">&lt;artifactId&gt;</span>hadoop-hdfs<span class="nt">&lt;/artifactId&gt;</span>
+    <span class="nt">&lt;type&gt;</span>test-jar<span class="nt">&lt;/type&gt;</span>
+    <span class="nt">&lt;version&gt;</span>2.6.0<span class="nt">&lt;/version&gt;</span>
+    <span class="nt">&lt;scope&gt;</span>test<span class="nt">&lt;/scope&gt;</span>
+<span class="nt">&lt;/dependency&gt;</span>
+
+</code></pre></div></div>
+
+<p>The code is reasonably simple, I’m creating the cluster in the Test setup and tearing it down during the teardown phase of the tests</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">private</span> <span class="nc">MiniDFSCluster</span> <span class="n">cluster</span><span class="o">;</span>
+<span class="kd">private</span> <span class="nc">String</span> <span class="n">hdfsURI</span><span class="o">;</span>
+
+<span class="kd">public</span> <span class="kt">void</span> <span class="nf">setUp</span><span class="o">()</span> <span class="kd">throws</span> <span class="nc">Exception</span> <span class="o">{</span>
+    <span class="kd">super</span><span class="o">.</span><span class="na">setUp</span><span class="o">();</span>
+    <span class="nc">Configuration</span> <span class="n">conf</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">Configuration</span><span class="o">();</span>
+    <span class="nc">File</span> <span class="n">baseDir</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">File</span><span class="o">(</span><span class="s">"./target/hdfs/"</span><span class="o">).</span><span class="na">getAbsoluteFile</span><span class="o">();</span>
+    <span class="nc">FileUtil</span><span class="o">.</span><span class="na">fullyDelete</span><span class="o">(</span><span class="n">baseDir</span><span class="o">);</span>
+    <span class="n">conf</span><span class="o">.</span><span class="na">set</span><span class="o">(</span><span class="nc">MiniDFSCluster</span><span class="o">.</span><span class="na">HDFS_MINIDFS_BASEDIR</span><span class="o">,</span> <span class="n">baseDir</span><span class="o">.</span><span class="na">getAbsolutePath</span><span class="o">());</span>
+    <span class="nc">MiniDFSCluster</span><span class="o">.</span><span class="na">Builder</span> <span class="n">builder</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">MiniDFSCluster</span><span class="o">.</span><span class="na">Builder</span><span class="o">(</span><span class="n">conf</span><span class="o">);</span>
+    <span class="n">cluster</span> <span class="o">=</span> <span class="n">builder</span><span class="o">.</span><span class="na">build</span><span class="o">();</span>
+    <span class="n">hdfsURI</span> <span class="o">=</span> <span class="s">"hdfs://localhost:"</span><span class="o">+</span> <span class="n">cluster</span><span class="o">.</span><span class="na">getNameNodePort</span><span class="o">()</span> <span class="o">+</span> <span class="s">"/"</span><span class="o">;</span>
+<span class="o">}</span>
+
+<span class="kd">public</span> <span class="kt">void</span> <span class="nf">tearDown</span><span class="o">()</span> <span class="kd">throws</span> <span class="nc">Exception</span> <span class="o">{</span>
+    <span class="n">cluster</span><span class="o">.</span><span class="na">shutdown</span><span class="o">();</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<p>This makes a cluster available for the tests, in this case its a simple log entry which is going to return the path to the log entry, because this has a guid in I need to just make sure the file is created starting as expected</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="kt">void</span> <span class="nf">testCreateLogEntry</span><span class="o">()</span> <span class="kd">throws</span> <span class="nc">Exception</span> <span class="o">{</span>
+	<span class="nc">String</span> <span class="n">logentry</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">LogEntry</span><span class="o">().</span><span class="na">createLogEntry</span><span class="o">(</span><span class="s">"TestStage"</span><span class="o">,</span> <span class="s">"TestCategory"</span><span class="o">,</span> <span class="s">"/testpath"</span><span class="o">,</span> <span class="n">cluster</span><span class="o">.</span><span class="na">getFileSystem</span><span class="o">());</span>
+	<span class="nc">String</span> <span class="n">date</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">SimpleDateFormat</span><span class="o">(</span><span class="s">"yyyyMMdd"</span><span class="o">).</span><span class="na">format</span><span class="o">(</span><span class="k">new</span> <span class="nc">Date</span><span class="o">());</span>
+	<span class="n">assertTrue</span><span class="o">(</span><span class="n">logentry</span><span class="o">.</span><span class="na">startsWith</span><span class="o">(</span><span class="nc">String</span><span class="o">.</span><span class="na">format</span><span class="o">(</span><span class="s">"/testpath/TestStage_%s_"</span><span class="o">,</span> <span class="n">date</span><span class="o">)));</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+</div>
+
+            </div>
+        </main>
+    </div>
+
+    <footer class="wrapper-footer">
+        <div class="footer">
+    <span class="footer-text float-left">This work is licensed under <a rel="license" href="https://www.gnu.org/licenses/gpl-3.0.en.html" target="_blank">GPLv3</a></span>
+    <span class="footer-text float-right">
+    Site Updated: 2023-12-01  (<a href="/feed.xml" target="_blank">RSS</a>)
+  </span>
+</div>
+    </footer>
+</body>
+</html>

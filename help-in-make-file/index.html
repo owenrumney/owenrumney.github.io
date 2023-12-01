@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<!-- Begin Jekyll SEO tag v2.6.1 -->
+<title>Adding Help to a Makefile | Owen Rumney</title>
+<meta name="generator" content="Jekyll v4.2.1" />
+<meta property="og:title" content="Adding Help to a Makefile" />
+<meta name="author" content="Owen Rumney" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="Add a quick help section to a Makefile" />
+<meta property="og:description" content="Add a quick help section to a Makefile" />
+<link rel="canonical" href="https://www.owenrumney.co.uk/help-in-make-file/" />
+<meta property="og:url" content="https://www.owenrumney.co.uk/help-in-make-file/" />
+<meta property="og:site_name" content="Owen Rumney" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2019-12-16T00:00:00+00:00" />
+<script type="application/ld+json">
+{"dateModified":"2019-12-16T00:00:00+00:00","datePublished":"2019-12-16T00:00:00+00:00","author":{"@type":"Person","name":"Owen Rumney"},"description":"Add a quick help section to a Makefile","mainEntityOfPage":{"@type":"WebPage","@id":"https://www.owenrumney.co.uk/help-in-make-file/"},"url":"https://www.owenrumney.co.uk/help-in-make-file/","@type":"BlogPosting","headline":"Adding Help to a Makefile","@context":"https://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+
+
+<meta name="keywords" content="make,documentation" />
+
+<link rel="shortcut icon" href="/favicon.ico" />
+<link rel="apple-touch-icon" href="/favicon.ico"/>
+<link rel="stylesheet" type="text/css" href="/assets/css/styles.css" />
+<link rel="stylesheet" type="text/css" href="/assets/css/prism.css" />
+<script src="/assets/js/prism.js"></script>
+
+
+
+</head>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-TLCVNKXMFJ"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-TLCVNKXMFJ');
+</script>
+
+<body>
+    <div class="wrapper">
+        <header class="wrapper-header">
+            <div class="header">
+  <nav class="float-right">
+  
+  <a href="https://github.com/owenrumney" target="_blank"
+    ><img
+      src="/assets/images/github.svg"
+      style="color: white; display: inline-block"
+      height="30px"
+      alt="GitHub"
+  /></a>
+  
+  <a href="https://linkedin.com/in/owenrumney" target="_blank"
+    ><img
+      src="/assets/images/linkedin.svg"
+      style="color: white; display: inline-block"
+      height="30px"
+      alt="LinkedIn"
+  /></a>
+  
+  <a href="https://cv.owenrumney.co.uk" target="_blank"
+    ><img
+      src="/assets/images/resume.svg"
+      style="color: white; display: inline-block"
+      height="32px"
+      alt="Resume"
+  /></a>
+  
+</nav>
+
+  <a href="https://www.owenrumney.co.uk" target="_blank"><h1>Owen Rumney</h1></a>
+  <br />
+  <h5><i>Software Engineer</i></h5>
+  <br />
+
+  <hr />
+</div>
+
+        </header>
+
+        <main class="wrapper-main">
+            <div class="main-content">
+            <div class="post-info">
+    <h2>Adding Help to a Makefile</h2>
+    <p>16 Dec 2019 - Owen Rumney</p>
+</div>
+
+<div class="post-content">
+<p>Sometimes you inherit or even create a huge <code class="language-plaintext highlighter-rouge">Makefile</code> which is unwieldly and difficult to understand. The longer it is, the more complicated it can be to find out which targets are available and what they do.</p>
+
+<p>This post covers an effective way to add a help target to a <code class="language-plaintext highlighter-rouge">Makefile</code> which will give an overview of what targets are available.</p>
+
+<h2 id="basic-makefile">Basic Makefile</h2>
+
+<p>I’m going to use a really basic but real <code class="language-plaintext highlighter-rouge">Makefile</code> as a starting example. It runs a suite of tests, creates a dockerised environment for testing against or can stop the env.</p>
+
+<div class="language-make highlighter-rouge"><div class="highlight"><pre class="highlight"><code> <span class="nl">test</span><span class="o">:</span>
+ <span class="c">## test: Run the test suite then shut down
+</span>   <span class="err">docker-compose</span> <span class="err">up</span> <span class="err">--abort-on-container-exit</span> <span class="err">--exit-code-from</span> <span class="err">tests</span>
+
+ <span class="nl">dev</span><span class="o">:</span>
+ <span class="c">## dev: Create an environment in docker to develop against
+</span>   <span class="err">docker-compose</span> <span class="err">-f</span> <span class="err">docker-compose-local.yml</span> <span class="err">up</span> <span class="err">-d</span>
+
+ <span class="nl">stop</span><span class="o">:</span>
+ <span class="c">## stop: Stop the docker instances for dev
+</span>   <span class="err">docker-compose</span> <span class="err">down</span>
+</code></pre></div></div>
+
+<p>Lets imagine that there are another 20 targets available including dependency management, build, build with unit tests, package, publish etc. Getting this as a new joiner, I’d have to open the file and read it through to get an idea of what options were available and what each one did.</p>
+
+<h2 id="adding-help">Adding Help</h2>
+
+<p>To add a <code class="language-plaintext highlighter-rouge">help</code> section, we can put a comment under each of the targets with details of the action, then use a simple hand full of commands including <code class="language-plaintext highlighter-rouge">sed</code> and <code class="language-plaintext highlighter-rouge">column</code> in the <code class="language-plaintext highlighter-rouge">help</code> target.</p>
+
+<div class="language-make highlighter-rouge"><div class="highlight"><pre class="highlight"><code> <span class="nl">test</span><span class="o">:</span>
+ <span class="c">## test: Run the test suite then shut down
+</span>   <span class="err">docker-compose</span> <span class="err">up</span> <span class="err">--abort-on-container-exit</span> <span class="err">--exit-code-from</span> <span class="err">tests</span>
+
+ <span class="nl">dev</span><span class="o">:</span>
+ <span class="c">## dev: Create an environment in docker to develop against
+</span>   <span class="err">docker-compose</span> <span class="err">-f</span> <span class="err">docker-compose-local.yml</span> <span class="err">up</span> <span class="err">-d</span>
+
+ <span class="nl">stop</span><span class="o">:</span>
+ <span class="c">## stop: Stop the docker instances for dev
+</span>   <span class="err">docker-compose</span> <span class="err">down</span>
+
+ <span class="nl">help</span><span class="o">:</span>
+ <span class="c">## help: This helpful list of commands
+</span>   <span class="nl">@echo "Usage</span><span class="o">:</span> \n<span class="nf">"</span>
+   <span class="nl">@sed -n 's/^##//p' ${MAKEFILE_LIST} | column -t -s '</span><span class="o">:</span><span class="nf">' | sed -e 's/^/-/'</span>
+</code></pre></div></div>
+
+<p>What this target does is find all of the entries starting <code class="language-plaintext highlighter-rouge">##</code> in all of the Makefiles that have been loaded (this is stored in the <code class="language-plaintext highlighter-rouge">MAKEFILE_LIST</code> env var). 
+Once the comment lines have been gathered, they are piped to column to format into a table, splitting on the colon <code class="language-plaintext highlighter-rouge">:</code>.
+Finally, the front of the line is replaces with a dash, to get the breakdown of comments.</p>
+
+<h2 id="running-make-with-help">Running Make with help</h2>
+
+<p>Now we can run <code class="language-plaintext highlighter-rouge">make help</code> to get more information about the available targets.</p>
+
+<p>This will give us the result;</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>make <span class="nb">help
+</span>Usage:
+
+- <span class="nb">test   </span>Run the <span class="nb">test </span>suite <span class="k">then </span>shut down
+- dev    Create an environment <span class="k">in </span>docker to develop against
+- stop   Stop the docker instances <span class="k">for </span>dev
+- help   this helpful list of <span class="nb">command</span>
+</code></pre></div></div>
+
+<p>That’s it, the more tasks there are, the more that this can be useful. Ultimately, it is only as useful as the quality and accuracy of the comments.</p>
+
+</div>
+
+            </div>
+        </main>
+    </div>
+
+    <footer class="wrapper-footer">
+        <div class="footer">
+    <span class="footer-text float-left">This work is licensed under <a rel="license" href="https://www.gnu.org/licenses/gpl-3.0.en.html" target="_blank">GPLv3</a></span>
+    <span class="footer-text float-right">
+    Site Updated: 2023-12-01  (<a href="/feed.xml" target="_blank">RSS</a>)
+  </span>
+</div>
+    </footer>
+</body>
+</html>

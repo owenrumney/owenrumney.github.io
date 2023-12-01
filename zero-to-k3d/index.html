@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<!-- Begin Jekyll SEO tag v2.6.1 -->
+<title>Zero to k3d | Owen Rumney</title>
+<meta name="generator" content="Jekyll v4.2.1" />
+<meta property="og:title" content="Zero to k3d" />
+<meta name="author" content="Owen Rumney" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="Getting started with k3d" />
+<meta property="og:description" content="Getting started with k3d" />
+<link rel="canonical" href="https://www.owenrumney.co.uk/zero-to-k3d/" />
+<meta property="og:url" content="https://www.owenrumney.co.uk/zero-to-k3d/" />
+<meta property="og:site_name" content="Owen Rumney" />
+<meta property="og:image" content="https://www.owenrumney.co.uk/assets/img/owen.png" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2022-04-07T00:00:00+00:00" />
+<script type="application/ld+json">
+{"dateModified":"2022-04-07T00:00:00+00:00","datePublished":"2022-04-07T00:00:00+00:00","author":{"@type":"Person","name":"Owen Rumney"},"description":"Getting started with k3d","mainEntityOfPage":{"@type":"WebPage","@id":"https://www.owenrumney.co.uk/zero-to-k3d/"},"url":"https://www.owenrumney.co.uk/zero-to-k3d/","@type":"BlogPosting","image":"https://www.owenrumney.co.uk/assets/img/owen.png","headline":"Zero to k3d","@context":"https://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+
+
+<meta name="keywords" content="kubernetes,docker,learning" />
+
+<link rel="shortcut icon" href="/favicon.ico" />
+<link rel="apple-touch-icon" href="/favicon.ico"/>
+<link rel="stylesheet" type="text/css" href="/assets/css/styles.css" />
+<link rel="stylesheet" type="text/css" href="/assets/css/prism.css" />
+<script src="/assets/js/prism.js"></script>
+
+
+
+</head>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-TLCVNKXMFJ"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-TLCVNKXMFJ');
+</script>
+
+<body>
+    <div class="wrapper">
+        <header class="wrapper-header">
+            <div class="header">
+  <nav class="float-right">
+  
+  <a href="https://github.com/owenrumney" target="_blank"
+    ><img
+      src="/assets/images/github.svg"
+      style="color: white; display: inline-block"
+      height="30px"
+      alt="GitHub"
+  /></a>
+  
+  <a href="https://linkedin.com/in/owenrumney" target="_blank"
+    ><img
+      src="/assets/images/linkedin.svg"
+      style="color: white; display: inline-block"
+      height="30px"
+      alt="LinkedIn"
+  /></a>
+  
+  <a href="https://cv.owenrumney.co.uk" target="_blank"
+    ><img
+      src="/assets/images/resume.svg"
+      style="color: white; display: inline-block"
+      height="32px"
+      alt="Resume"
+  /></a>
+  
+</nav>
+
+  <a href="https://www.owenrumney.co.uk" target="_blank"><h1>Owen Rumney</h1></a>
+  <br />
+  <h5><i>Software Engineer</i></h5>
+  <br />
+
+  <hr />
+</div>
+
+        </header>
+
+        <main class="wrapper-main">
+            <div class="main-content">
+            <div class="post-info">
+    <h2>Zero to k3d</h2>
+    <p>07 Apr 2022 - Owen Rumney</p>
+</div>
+
+<div class="post-content">
+<p>I have had an on/off relationship with Kubernetes for a number of years and want to spend some time really getting to know how to use it, run it and secure it.</p>
+
+<p>I previously wrote some <a href="https://github.com/owenrumney/local_k8s">Anisble playbooks</a> to run Kubernetes on my desktop then chatting to <a href="https://twitter.com/alistair_hey">@alistair_hey</a> about running a local environment on my fairly underpowered laptop he suggested <a href="https://k3d.io/v5.4.1/">k3d</a> … so the journey starts here.</p>
+
+<h2 id="prerequisites">Prerequisites</h2>
+
+<p>k3d is a wrapper for <a href="https://github.com/rancher/k3s">k3s</a> but runs the cluster in Docker. This means that you will need Docker running on the machine (which I already have!). A quick solution is <a href="https://www.docker.com/products/docker-desktop/">Docker Desktop</a> which is very accessible or you can install it using the instructions for your OS and Architecture.</p>
+
+<p>I will be using <code class="language-plaintext highlighter-rouge">kubectl</code> later to interact with the cluster, so this is also required.</p>
+
+<h2 id="getting-started">Getting Started</h2>
+
+<h3 id="install-kubectl">Install kubectl</h3>
+
+<p>As I am running on Linux I will use the installation instructions for <a href="https://kubernetes.io/docs/tasks/tools/install-kubectl-linux/">kubectl</a></p>
+
+<p>The first step is to pull the latest binary from <code class="language-plaintext highlighter-rouge">dl.k8s.io</code>.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">cd</span> ~/Downloads
+
+curl <span class="nt">-LO</span> <span class="s2">"https://dl.k8s.io/release/</span><span class="si">$(</span>curl <span class="nt">-L</span> <span class="nt">-s</span> https://dl.k8s.io/release/stable.txt<span class="si">)</span><span class="s2">/bin/linux/amd64/kubectl"</span>
+</code></pre></div></div>
+
+<p>Now I have this, I want to check against the checksum file</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>cd ~/Downloads
+curl -LO "https://dl.k8s.io/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl.sha256"
+</code></pre></div></div>
+
+<p>I use the checksums file to validate the binary is as it should be</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">echo</span> <span class="s2">"</span><span class="si">$(</span><span class="nb">cat </span>kubectl.sha256<span class="si">)</span><span class="s2">  kubectl"</span> | <span class="nb">sha256sum</span> <span class="nt">--check</span>
+</code></pre></div></div>
+
+<p>Assuming I were told it was <code class="language-plaintext highlighter-rouge">kubectl: OK</code> I can continue to install.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">sudo install</span> <span class="nt">-o</span> root <span class="nt">-g</span> root <span class="nt">-m</span> 0755 kubectl /usr/local/bin/kubectl
+</code></pre></div></div>
+
+<p>Lets now check the install was good</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>kubectl version <span class="nt">--short</span><span class="o">=</span><span class="nb">true</span>
+</code></pre></div></div>
+
+<p>which should give me output similar to</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Client Version: v1.23.4
+Server Version: v1.22.7+k3s1
+</code></pre></div></div>
+
+<h3 id="installing-k3d">Installing k3d</h3>
+
+<p>First step is to install k3d - I don’t like using <code class="language-plaintext highlighter-rouge">wget</code> or <code class="language-plaintext highlighter-rouge">curl</code> with install scripts from GitHub so I’m am going to be using the assets from the <a href="https://github.com/k3d-io/k3d/releases">Releases Page</a>.</p>
+
+<p>I am using Ubuntu on a x64 machine so I need to download <code class="language-plaintext highlighter-rouge">k3d-linux-amd64</code></p>
+
+<blockquote>
+  <p>Note I’m using v5.4.1 at the time of writing</p>
+</blockquote>
+
+<p>Once I have it downloaded, I can install the command on the path</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">cd</span> ~/Downloads
+
+<span class="nb">sudo install </span>k3d-linux-amd64 /usr/local/bin/k3d
+
+</code></pre></div></div>
+
+<p>Now it has been installed I can run to check</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>k3d <span class="nt">--version</span>
+</code></pre></div></div>
+
+<p>This should give me the output;</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>k3d version v5.4.1
+k3s version v1.22.7-k3s1 <span class="o">(</span>default<span class="o">)</span>
+</code></pre></div></div>
+<h3 id="creating-the-first-cluster">Creating the first cluster</h3>
+
+<p>For the first cluster I am going to create it with the following parameters</p>
+
+<ul>
+  <li><strong>Name:</strong> first-cluster</li>
+  <li><strong>Servers:</strong>  3</li>
+</ul>
+
+<p>To do this, I use the <code class="language-plaintext highlighter-rouge">cluster</code> sub command</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>k3d cluster create first-cluster <span class="nt">--servers</span> 3
+</code></pre></div></div>
+
+<p>This will give an output similar to this;</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>INFO[0000] Prep: Network                                
+INFO[0000] Created network <span class="s1">'k3d-first-cluster'</span>          
+INFO[0000] Created image volume k3d-first-cluster-images 
+INFO[0000] Starting new tools node...                   
+INFO[0000] Creating initializing server node            
+INFO[0000] Creating node <span class="s1">'k3d-first-cluster-server-0'</span>   
+INFO[0000] Pulling image <span class="s1">'ghcr.io/k3d-io/k3d-tools:5.4.1'</span> 
+INFO[0001] Pulling image <span class="s1">'docker.io/rancher/k3s:v1.22.7-k3s1'</span> 
+INFO[0002] Starting Node <span class="s1">'k3d-first-cluster-tools'</span>      
+INFO[0005] Creating node <span class="s1">'k3d-first-cluster-server-1'</span>   
+INFO[0006] Creating node <span class="s1">'k3d-first-cluster-server-2'</span>   
+INFO[0006] Creating LoadBalancer <span class="s1">'k3d-first-cluster-serverlb'</span> 
+INFO[0007] Pulling image <span class="s1">'ghcr.io/k3d-io/k3d-proxy:5.4.1'</span> 
+INFO[0009] Using the k3d-tools node to gather environment information 
+INFO[0009] HostIP: using network gateway 172.20.0.1 address 
+INFO[0009] Starting cluster <span class="s1">'first-cluster'</span>             
+INFO[0009] Starting the initializing server...          
+INFO[0009] Starting Node <span class="s1">'k3d-first-cluster-server-0'</span>   
+INFO[0010] Starting servers...                          
+INFO[0010] Starting Node <span class="s1">'k3d-first-cluster-server-1'</span>   
+INFO[0031] Starting Node <span class="s1">'k3d-first-cluster-server-2'</span>   
+INFO[0047] All agents already running.                  
+INFO[0047] Starting helpers...                          
+INFO[0047] Starting Node <span class="s1">'k3d-first-cluster-serverlb'</span>   
+INFO[0054] Injecting records <span class="k">for </span>hostAliases <span class="o">(</span>incl. host.k3d.internal<span class="o">)</span> and <span class="k">for </span>4 network members into CoreDNS configmap... 
+INFO[0056] Cluster <span class="s1">'first-cluster'</span> created successfully! 
+INFO[0056] You can now use it like this:                
+kubectl cluster-info
+</code></pre></div></div>
+
+<p>Within just under a minute I have my first cluster up and running, I can list the clusters to see its running with the <code class="language-plaintext highlighter-rouge">cluster list</code> sub command</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>k3d cluster list
+</code></pre></div></div>
+<p>The output tells me that there are 3 servers running;</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>NAME            SERVERS   AGENTS   LOADBALANCER
+first-cluster   3/3       0/0      <span class="nb">true</span>
+</code></pre></div></div>
+
+<p>Now that the cluster is running I can use <code class="language-plaintext highlighter-rouge">kubectl</code> to get some more information about the cluster</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>kubectl cluster-info
+</code></pre></div></div>
+
+<p>which should give similar output to this;</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Kubernetes control plane is running at https://0.0.0.0:38909
+CoreDNS is running at https://0.0.0.0:38909/api/v1/namespaces/kube-system/services/kube-dns:dns/proxy
+Metrics-server is running at https://0.0.0.0:38909/api/v1/namespaces/kube-system/services/https:metrics-server:https/proxy
+</code></pre></div></div>
+
+<p>I know that I have 3 nodes - so lets get some inforamtion about them too</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>kubectl get nodes
+</code></pre></div></div>
+
+<p>This will give me an output similar to this;</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>NAME                         STATUS   ROLES                       AGE   VERSION
+k3d-first-cluster-server-0   Ready    control-plane,etcd,master   15m   v1.22.7+k3s1
+k3d-first-cluster-server-1   Ready    control-plane,etcd,master   15m   v1.22.7+k3s1
+k3d-first-cluster-server-2   Ready    control-plane,etcd,master   14m   v1.22.7+k3s1
+</code></pre></div></div>
+
+<p>The last step in this bootstrapping post is to check I can run a container - so I’m going to do a basic command to run a new pod called <code class="language-plaintext highlighter-rouge">nginx</code> using the <code class="language-plaintext highlighter-rouge">nginx</code> image</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>kubectl run nginx <span class="nt">--image</span> nginx
+</code></pre></div></div>
+
+<p>which hopefully should give me some output letting me know my pod has been created</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>pod/nginx created
+</code></pre></div></div>
+
+<p>A pod is the smallest instance of compute that can be deployed. A pod can contain a number of containers if their purpose is tightly coupled; an example might be a pod with a cache container that has another short life container required to pre-populate.</p>
+
+<p>I can check the status of the pod using <code class="language-plaintext highlighter-rouge">kubectl</code></p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>kubectl describe pod nginx
+</code></pre></div></div>
+
+<p>Which will give me a verbose output about the pod</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Name:         nginx
+Namespace:    default
+Priority:     0
+Node:         k3d-first-cluster-server-2/172.20.0.4
+Start Time:   Thu, 07 Apr 2022 18:54:28 +0100
+Labels:       <span class="nv">run</span><span class="o">=</span>nginx
+Annotations:  &lt;none&gt;
+Status:       Running
+IP:           10.42.2.4
+IPs:
+  IP:  10.42.2.4
+Containers:
+  nginx:
+    Container ID:   containerd://f5f568d6e62b5c8db6742b7ec2136a8939f2deb65e4b68a662a5ee7ee88e94e5
+    Image:          nginx
+    Image ID:       docker.io/library/nginx@sha256:2275af0f20d71b293916f1958f8497f987b8d8fd8113df54635f2a5915002bf1
+    Port:           &lt;none&gt;
+    Host Port:      &lt;none&gt;
+    State:          Running
+      Started:      Thu, 07 Apr 2022 18:54:28 +0100
+    Ready:          True
+    Restart Count:  0
+    Environment:    &lt;none&gt;
+    Mounts:
+      /var/run/secrets/kubernetes.io/serviceaccount from kube-api-access-vs2qt <span class="o">(</span>ro<span class="o">)</span>
+Conditions:
+  Type              Status
+  Initialized       True 
+  Ready             True 
+  ContainersReady   True 
+  PodScheduled      True 
+Volumes:
+  kube-api-access-vs2qt:
+    Type:                    Projected <span class="o">(</span>a volume that contains injected data from multiple sources<span class="o">)</span>
+    TokenExpirationSeconds:  3607
+    ConfigMapName:           kube-root-ca.crt
+    ConfigMapOptional:       &lt;nil&gt;
+    DownwardAPI:             <span class="nb">true
+</span>QoS Class:                   BestEffort
+Node-Selectors:              &lt;none&gt;
+Tolerations:                 node.kubernetes.io/not-ready:NoExecute <span class="nv">op</span><span class="o">=</span>Exists <span class="k">for </span>300s
+                             node.kubernetes.io/unreachable:NoExecute <span class="nv">op</span><span class="o">=</span>Exists <span class="k">for </span>300s
+Events:
+  Type    Reason     Age    From               Message
+  <span class="nt">----</span>    <span class="nt">------</span>     <span class="nt">----</span>   <span class="nt">----</span>               <span class="nt">-------</span>
+  Normal  Scheduled  5m33s  default-scheduler  Successfully assigned default/nginx to k3d-first-cluster-server-2
+  Normal  Pulling    5m33s  kubelet            Pulling image <span class="s2">"nginx"</span>
+  Normal  Pulled     5m28s  kubelet            Successfully pulled image <span class="s2">"nginx"</span> <span class="k">in </span>5.005731925s
+  Normal  Created    5m28s  kubelet            Created container nginx
+  Normal  Started    5m27s  kubelet            Started container nginx
+</code></pre></div></div>
+
+<p>I can see from this that the pod was deployed on <code class="language-plaintext highlighter-rouge">server-2</code> and pulled the latest <code class="language-plaintext highlighter-rouge">nginx</code> image before successfully starting</p>
+
+<h3 id="cleaning-up">Cleaning Up</h3>
+
+<p>Now that I know that everything seems to be okay, I can tear it all down before starting to do something more useful in the next blog post.</p>
+
+<p>First lets stop the <code class="language-plaintext highlighter-rouge">nginx</code> pod</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>kubectl delete pod nginx
+</code></pre></div></div>
+
+<p>Then I can stop the cluster</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>k3d cluster stop first-server
+
+INFO[0000] Stopping cluster <span class="s1">'first-cluster'</span>             
+INFO[0011] Stopped cluster <span class="s1">'first-cluster'</span> 
+</code></pre></div></div>
+
+<p>I am going to keep the cluster for the next blog, but I can now remove it if I wish using</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>k3d cluster delete first-cluster
+
+INFO[0000] Deleting cluster <span class="s1">'first-cluster'</span>             
+INFO[0000] Deleting cluster network <span class="s1">'k3d-first-cluster'</span> 
+INFO[0000] Deleting 2 attached volumes...               
+WARN[0000] Failed to delete volume <span class="s1">'k3d-first-cluster-images'</span> of cluster <span class="s1">'first-cluster'</span>: failed to find volume <span class="s1">'k3d-first-cluster-images'</span>: Error: No such volume: k3d-first-cluster-images -&gt; Try to delete it manually 
+INFO[0000] Removing cluster details from default kubeconfig... 
+INFO[0000] Removing standalone kubeconfig file <span class="o">(</span><span class="k">if </span>there is one<span class="o">)</span>... 
+INFO[0000] Successfully deleted cluster first-cluster!  
+</code></pre></div></div>
+
+</div>
+
+            </div>
+        </main>
+    </div>
+
+    <footer class="wrapper-footer">
+        <div class="footer">
+    <span class="footer-text float-left">This work is licensed under <a rel="license" href="https://www.gnu.org/licenses/gpl-3.0.en.html" target="_blank">GPLv3</a></span>
+    <span class="footer-text float-right">
+    Site Updated: 2023-12-01  (<a href="/feed.xml" target="_blank">RSS</a>)
+  </span>
+</div>
+    </footer>
+</body>
+</html>

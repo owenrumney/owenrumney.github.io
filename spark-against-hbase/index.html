@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<!-- Begin Jekyll SEO tag v2.6.1 -->
+<title>Running Spark against HBase | Owen Rumney</title>
+<meta name="generator" content="Jekyll v4.2.1" />
+<meta property="og:title" content="Running Spark against HBase" />
+<meta name="author" content="Owen Rumney" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="Its reasonably easy to run a Spark job against HBase using the newAPIHadoopRDD available on the SparkContext." />
+<meta property="og:description" content="Its reasonably easy to run a Spark job against HBase using the newAPIHadoopRDD available on the SparkContext." />
+<link rel="canonical" href="https://www.owenrumney.co.uk/spark-against-hbase/" />
+<meta property="og:url" content="https://www.owenrumney.co.uk/spark-against-hbase/" />
+<meta property="og:site_name" content="Owen Rumney" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2017-11-10T00:00:00+00:00" />
+<script type="application/ld+json">
+{"dateModified":"2017-11-10T00:00:00+00:00","datePublished":"2017-11-10T00:00:00+00:00","author":{"@type":"Person","name":"Owen Rumney"},"description":"Its reasonably easy to run a Spark job against HBase using the newAPIHadoopRDD available on the SparkContext.","mainEntityOfPage":{"@type":"WebPage","@id":"https://www.owenrumney.co.uk/spark-against-hbase/"},"url":"https://www.owenrumney.co.uk/spark-against-hbase/","@type":"BlogPosting","headline":"Running Spark against HBase","@context":"https://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+
+
+<meta name="keywords" content="programming,spark,hbase" />
+
+<link rel="shortcut icon" href="/favicon.ico" />
+<link rel="apple-touch-icon" href="/favicon.ico"/>
+<link rel="stylesheet" type="text/css" href="/assets/css/styles.css" />
+<link rel="stylesheet" type="text/css" href="/assets/css/prism.css" />
+<script src="/assets/js/prism.js"></script>
+
+
+
+</head>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-TLCVNKXMFJ"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-TLCVNKXMFJ');
+</script>
+
+<body>
+    <div class="wrapper">
+        <header class="wrapper-header">
+            <div class="header">
+  <nav class="float-right">
+  
+  <a href="https://github.com/owenrumney" target="_blank"
+    ><img
+      src="/assets/images/github.svg"
+      style="color: white; display: inline-block"
+      height="30px"
+      alt="GitHub"
+  /></a>
+  
+  <a href="https://linkedin.com/in/owenrumney" target="_blank"
+    ><img
+      src="/assets/images/linkedin.svg"
+      style="color: white; display: inline-block"
+      height="30px"
+      alt="LinkedIn"
+  /></a>
+  
+  <a href="https://cv.owenrumney.co.uk" target="_blank"
+    ><img
+      src="/assets/images/resume.svg"
+      style="color: white; display: inline-block"
+      height="32px"
+      alt="Resume"
+  /></a>
+  
+</nav>
+
+  <a href="https://www.owenrumney.co.uk" target="_blank"><h1>Owen Rumney</h1></a>
+  <br />
+  <h5><i>Software Engineer</i></h5>
+  <br />
+
+  <hr />
+</div>
+
+        </header>
+
+        <main class="wrapper-main">
+            <div class="main-content">
+            <div class="post-info">
+    <h2>Running Spark against HBase</h2>
+    <p>10 Nov 2017 - Owen Rumney</p>
+</div>
+
+<div class="post-content">
+<p>Its reasonably easy to run a Spark job against HBase using the <code class="language-plaintext highlighter-rouge">newAPIHadoopRDD</code> available on the <code class="language-plaintext highlighter-rouge">SparkContext</code>.</p>
+
+<p>The general steps are,</p>
+
+<ol>
+  <li>create an <code class="language-plaintext highlighter-rouge">HBaseConfiguration</code></li>
+  <li>create a <code class="language-plaintext highlighter-rouge">SparkContext</code></li>
+  <li>create a <code class="language-plaintext highlighter-rouge">newAPIHadoopRDD</code></li>
+  <li>perform job action</li>
+</ol>
+
+<p>To get this working, you’re going to need the HBase libraries in your <code class="language-plaintext highlighter-rouge">build.sbt</code> file. I’m using HBase <code class="language-plaintext highlighter-rouge">1.1.2</code> at the moment so thats the version I’m pulling in.</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="s">"org.apache.hbase"</span> <span class="o">%</span> <span class="s">"hbase-shaded-client"</span> <span class="o">%</span> <span class="s">"1.1.2"</span>
+<span class="s">"org.apache.hbase"</span> <span class="o">%</span> <span class="s">"hbase-server"</span> <span class="o">%</span> <span class="s">"1.1.2"</span>
+</code></pre></div></div>
+
+<h3 id="creating-the-hbaseconfiguration">Creating the HBaseConfiguration</h3>
+
+<p>This requires, at a minimum, the zookeeper URI. In my environment the test and the production have different <code class="language-plaintext highlighter-rouge">ZOOKEEPER_ZNODE_PARENT</code> so I’m passing that in to override the default.</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">def</span> <span class="nf">createConfig</span><span class="o">(</span><span class="nl">zookeeper:</span> <span class="nc">String</span><span class="o">,</span> <span class="nl">hbaseParentNode:</span> <span class="nc">String</span><span class="o">,</span> <span class="nl">tableName:</span> <span class="nc">String</span><span class="o">):</span> <span class="nc">Configuration</span> <span class="o">=</span> <span class="o">{</span>
+  <span class="n">val</span> <span class="n">config</span> <span class="o">=</span> <span class="nc">HBaseConfiguration</span><span class="o">.</span><span class="na">create</span><span class="o">()</span>
+  <span class="n">config</span><span class="o">.</span><span class="na">set</span><span class="o">(</span><span class="s">"zookeeper.znode.parent"</span><span class="o">,</span> <span class="n">hbaseParentNode</span><span class="o">)</span>
+  <span class="n">config</span><span class="o">.</span><span class="na">set</span><span class="o">(</span><span class="s">"hbase.zookeeper.quorum"</span><span class="o">,</span> <span class="n">zookeeper</span><span class="o">)</span>
+  <span class="n">config</span><span class="o">.</span><span class="na">set</span><span class="o">(</span><span class="s">"hbase.mapreduce.inputtable"</span><span class="o">,</span> <span class="n">tableName</span><span class="o">)</span>
+  <span class="n">config</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<h3 id="creating-the-sparkcontext">Creating the SparkContext</h3>
+
+<p>The <code class="language-plaintext highlighter-rouge">SparkContext</code> is going to be the main engine of the job. At a minimum we just need to have the <code class="language-plaintext highlighter-rouge">SparkConf</code> with the job name.</p>
+
+<div class="language-scala highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">val</span> <span class="nv">conf</span> <span class="k">=</span> <span class="k">new</span> <span class="nc">SparkConf</span><span class="o">().</span><span class="py">setAppName</span><span class="o">(</span><span class="n">jobname</span><span class="o">)</span>
+<span class="k">val</span> <span class="nv">spark</span> <span class="k">=</span> <span class="k">new</span> <span class="nc">SparkContext</span><span class="o">(</span><span class="n">conf</span><span class="o">)</span>
+</code></pre></div></div>
+
+<h3 id="creating-the-newapihadooprdd">Creating the newAPIHadoopRDD</h3>
+
+<p>We have a <code class="language-plaintext highlighter-rouge">HBaseConfiguration</code> and a <code class="language-plaintext highlighter-rouge">SparkContext</code> so now we can create the <code class="language-plaintext highlighter-rouge">newAPIHadoopRDD</code>. The <code class="language-plaintext highlighter-rouge">newAPIHadoopRDD</code> needs the config with the table name and namespace and needs to know to use a <code class="language-plaintext highlighter-rouge">TableInputFormat</code> for the <code class="language-plaintext highlighter-rouge">InputFormat</code>. We’re expecting the class of the keys to be <code class="language-plaintext highlighter-rouge">ImmutableBytesWritable</code> and for the values a <code class="language-plaintext highlighter-rouge">Result</code>.</p>
+
+<div class="language-scala highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">val</span> <span class="nv">zookeeper</span> <span class="k">=</span> <span class="s">"hbase-box1:2181,hbase-box2:2181"</span>
+<span class="k">val</span> <span class="nv">hbaseParentNode</span> <span class="k">=</span> <span class="s">"/hbase"</span>
+<span class="k">val</span> <span class="nv">tableName</span> <span class="k">=</span> <span class="s">"credit_data:accounts"</span>
+
+<span class="k">val</span> <span class="nv">config</span> <span class="k">=</span> <span class="nf">createConfig</span><span class="o">(</span><span class="n">zookeeper</span><span class="o">,</span> <span class="n">hbaseParentNode</span><span class="o">,</span> <span class="n">tableName</span><span class="o">)</span>
+
+
+<span class="k">val</span> <span class="nv">hBaseRDD</span> <span class="k">=</span> <span class="nv">spark</span><span class="o">.</span><span class="py">newAPIHadoopRDD</span><span class="o">(</span><span class="n">config</span><span class="o">,</span>
+                <span class="n">classOf</span><span class="o">[</span><span class="kt">TableInputFormat</span><span class="o">],</span>
+                <span class="n">classOf</span><span class="o">[</span><span class="kt">ImmutableBytesWritable</span><span class="o">],</span>
+                <span class="n">classOf</span><span class="o">[</span><span class="kt">Result</span><span class="o">])</span>
+</code></pre></div></div>
+
+<h3 id="performing-the-job-action">Performing the Job Action</h3>
+
+<p>Thats all we need, we can now run our job. Its contrived, but consider the following table.</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>key</th>
+      <th>d:cl</th>
+      <th>d:cb</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>1234678838472938</td>
+      <td>1000.00</td>
+      <td>432.00</td>
+    </tr>
+    <tr>
+      <td>9842897418374027</td>
+      <td>100.00</td>
+      <td>95.70</td>
+    </tr>
+    <tr>
+      <td>7880927412346013</td>
+      <td>600.00</td>
+      <td>523.30</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>In our table, we have a key with the credit card number and a <code class="language-plaintext highlighter-rouge">ColumnFamily</code> of <code class="language-plaintext highlighter-rouge">d:</code> which holds the <code class="language-plaintext highlighter-rouge">column_qualifiers</code> <code class="language-plaintext highlighter-rouge">cl (credit limit)</code> and <code class="language-plaintext highlighter-rouge">cb (current balance)</code>.</p>
+
+<p>For this job, I want to know all the accounts which are at &gt;90% of their available credit.</p>
+
+<div class="language-scala highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">case</span> <span class="k">class</span> <span class="nc">Account</span><span class="o">(</span><span class="n">ccNumber</span><span class="k">:</span> <span class="kt">String</span><span class="o">,</span> <span class="n">limit</span><span class="k">:</span> <span class="kt">Double</span><span class="o">,</span> <span class="n">balance</span><span class="k">:</span> <span class="kt">Double</span><span class="o">)</span>
+
+<span class="k">val</span> <span class="nv">accountsRDD</span> <span class="k">=</span> <span class="nv">hBaseRDD</span><span class="o">.</span><span class="py">map</span><span class="o">(</span><span class="n">r</span> <span class="k">=&gt;</span> <span class="o">{</span>
+    <span class="k">val</span> <span class="nv">key</span> <span class="k">=</span> <span class="nv">Bytes</span><span class="o">.</span><span class="py">toStringBinary</span><span class="o">(</span><span class="nv">t</span><span class="o">.</span><span class="py">_1</span><span class="o">.</span><span class="py">get</span><span class="o">())</span>
+    <span class="k">val</span> <span class="nv">result</span> <span class="k">=</span> <span class="nv">t</span><span class="o">.</span><span class="py">_2</span><span class="o">.</span><span class="py">getFamilyMap</span><span class="o">(</span><span class="s">"d"</span><span class="o">)</span>
+    <span class="k">val</span> <span class="nv">limit</span> <span class="k">=</span> <span class="nv">Bytes</span><span class="o">.</span><span class="py">toDouble</span><span class="o">(</span><span class="nv">result</span><span class="o">.</span><span class="py">get</span><span class="o">(</span><span class="s">"cl"</span><span class="o">))</span>
+    <span class="k">val</span> <span class="nv">balance</span> <span class="k">=</span> <span class="nv">Bytes</span><span class="o">.</span><span class="py">toDouble</span><span class="o">(</span><span class="nv">result</span><span class="o">.</span><span class="py">get</span><span class="o">(</span><span class="s">"cb"</span><span class="o">))</span>
+    <span class="nc">Account</span><span class="o">(</span><span class="n">key</span><span class="o">,</span> <span class="n">limit</span><span class="o">,</span> <span class="n">balance</span><span class="o">)</span>
+<span class="o">})</span>
+</code></pre></div></div>
+
+<p>That gives us a nicely typed RDD of Accounts we can use to do our filtering on.</p>
+
+<div class="language-scala highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">val</span> <span class="nv">eligibleAccountsRDD</span> <span class="k">=</span> <span class="nv">accountRDD</span><span class="o">.</span><span class="py">filter</span><span class="o">(</span><span class="n">a</span> <span class="k">=&gt;</span> <span class="o">{</span>
+    <span class="o">(</span><span class="nv">a</span><span class="o">.</span><span class="py">balance</span> <span class="o">/</span> <span class="nv">a</span><span class="o">.</span><span class="py">limit</span><span class="o">)</span> <span class="o">&gt;</span> <span class="mf">0.9</span>
+<span class="o">})</span>
+</code></pre></div></div>
+
+<p>That gives the matching accounts which we can now extract the account number for and save to disk.</p>
+
+<div class="language-scala highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">val</span> <span class="nv">accountNoRDD</span> <span class="k">=</span> <span class="nv">eligibleAccountsRDD</span><span class="o">.</span><span class="py">map</span><span class="o">(</span><span class="n">a</span> <span class="k">=&gt;</span> <span class="o">{</span>
+    <span class="nv">a</span><span class="o">.</span><span class="py">ccNumber</span>
+<span class="o">}).</span><span class="py">saveAsTextFile</span><span class="o">(</span><span class="s">"/save/location"</span><span class="o">)</span>
+</code></pre></div></div>
+
+<p>The save location will now be a folder with the created <code class="language-plaintext highlighter-rouge">part-xxxxx</code> files containing the results. In our case…</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>9842897418374027
+7880927412346013
+</code></pre></div></div>
+
+</div>
+
+            </div>
+        </main>
+    </div>
+
+    <footer class="wrapper-footer">
+        <div class="footer">
+    <span class="footer-text float-left">This work is licensed under <a rel="license" href="https://www.gnu.org/licenses/gpl-3.0.en.html" target="_blank">GPLv3</a></span>
+    <span class="footer-text float-right">
+    Site Updated: 2023-12-01  (<a href="/feed.xml" target="_blank">RSS</a>)
+  </span>
+</div>
+    </footer>
+</body>
+</html>

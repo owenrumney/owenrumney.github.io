@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<!-- Begin Jekyll SEO tag v2.6.1 -->
+<title>Terraform Static Analysis with tfsec | Owen Rumney</title>
+<meta name="generator" content="Jekyll v4.2.1" />
+<meta property="og:title" content="Terraform Static Analysis with tfsec" />
+<meta name="author" content="Owen Rumney" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="Security based static analysis for Terraform using tfsec" />
+<meta property="og:description" content="Security based static analysis for Terraform using tfsec" />
+<link rel="canonical" href="https://www.owenrumney.co.uk/terraform-static-analysis-with-tfsec-copy/" />
+<meta property="og:url" content="https://www.owenrumney.co.uk/terraform-static-analysis-with-tfsec-copy/" />
+<meta property="og:site_name" content="Owen Rumney" />
+<meta property="og:image" content="https://www.owenrumney.co.uk/assets/img/owen.png" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2020-10-11T00:00:00+00:00" />
+<script type="application/ld+json">
+{"dateModified":"2020-10-11T00:00:00+00:00","datePublished":"2020-10-11T00:00:00+00:00","author":{"@type":"Person","name":"Owen Rumney"},"description":"Security based static analysis for Terraform using tfsec","mainEntityOfPage":{"@type":"WebPage","@id":"https://www.owenrumney.co.uk/terraform-static-analysis-with-tfsec-copy/"},"url":"https://www.owenrumney.co.uk/terraform-static-analysis-with-tfsec-copy/","@type":"BlogPosting","image":"https://www.owenrumney.co.uk/assets/img/owen.png","headline":"Terraform Static Analysis with tfsec","@context":"https://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+
+
+<meta name="keywords" content="terraform,tools,tfsec" />
+
+<link rel="shortcut icon" href="/favicon.ico" />
+<link rel="apple-touch-icon" href="/favicon.ico"/>
+<link rel="stylesheet" type="text/css" href="/assets/css/styles.css" />
+<link rel="stylesheet" type="text/css" href="/assets/css/prism.css" />
+<script src="/assets/js/prism.js"></script>
+
+
+
+</head>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-TLCVNKXMFJ"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-TLCVNKXMFJ');
+</script>
+
+<body>
+    <div class="wrapper">
+        <header class="wrapper-header">
+            <div class="header">
+  <nav class="float-right">
+  
+  <a href="https://github.com/owenrumney" target="_blank"
+    ><img
+      src="/assets/images/github.svg"
+      style="color: white; display: inline-block"
+      height="30px"
+      alt="GitHub"
+  /></a>
+  
+  <a href="https://linkedin.com/in/owenrumney" target="_blank"
+    ><img
+      src="/assets/images/linkedin.svg"
+      style="color: white; display: inline-block"
+      height="30px"
+      alt="LinkedIn"
+  /></a>
+  
+  <a href="https://cv.owenrumney.co.uk" target="_blank"
+    ><img
+      src="/assets/images/resume.svg"
+      style="color: white; display: inline-block"
+      height="32px"
+      alt="Resume"
+  /></a>
+  
+</nav>
+
+  <a href="https://www.owenrumney.co.uk" target="_blank"><h1>Owen Rumney</h1></a>
+  <br />
+  <h5><i>Software Engineer</i></h5>
+  <br />
+
+  <hr />
+</div>
+
+        </header>
+
+        <main class="wrapper-main">
+            <div class="main-content">
+            <div class="post-info">
+    <h2>Terraform Static Analysis with tfsec</h2>
+    <p>11 Oct 2020 - Owen Rumney</p>
+</div>
+
+<div class="post-content">
+<p>We use <a href="https://www.terraform.io">Terraform</a> for all our deployment automation needs. Thanks to it’s fantastic extensibility, if there isn’t a provider available to do what we need, it’s very easy to create one.</p>
+
+<p>Terraform, for those who haven’t used it before, lets you declaratively specify the resources that you want to deploy and then maintains a state of what has and hasn’t been deployed. For deployed resources, it tracks the characteristics or attributes, and updates accordingly with updates.</p>
+
+<p>As an example, say we wanted to create a new S3 bucket in our AWS account we might define something like;</p>
+
+<div class="language-terraform highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">resource</span> <span class="s2">"aws_s3_bucket"</span> <span class="s2">"my-bucket-for-secret-things"</span> <span class="p">{</span>
+  <span class="nx">bucket</span> <span class="p">=</span> <span class="s2">"my-bucket-for-secret-things"</span>
+  <span class="nx">acl</span>    <span class="p">=</span> <span class="s2">"public-read"</span>
+
+  <span class="nx">tags</span> <span class="p">=</span> <span class="p">{</span>
+    <span class="nx">Name</span>        <span class="p">=</span> <span class="s2">"Sensitive Storage Bucket"</span>
+    <span class="nx">Environment</span> <span class="p">=</span> <span class="s2">"Production"</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>Now, you might see straight away that there is a potential issue here - the bucket has an ACL allowing <code class="language-plaintext highlighter-rouge">public-read</code>. Checking the <a href="https://docs.aws.amazon.com/AmazonS3/latest/dev/acl-overview.html#canned-acl">AWS Documentation</a> on canned responses, shows us that public read has the following permissions;</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Owner gets FULL_CONTROL. The AllUsers group (see Who Is a Grantee?) gets READ access.
+</code></pre></div></div>
+
+<p>We can see this easily with a single resource in our file, but imagine this was just one resource among thousands in a project; this could very easily go unnoticed and end up in production with a wide open bucket.</p>
+
+<h2 id="enter-tfsec">Enter TFSEC</h2>
+
+<p><code class="language-plaintext highlighter-rouge">tfsec</code> is a static analysis tool for Terraform created by <a href="https://www.github.com/liamg">liamg</a>. It will tell you if there are security issues in your Terraform. Installation is simple;</p>
+
+<h3 id="mac">Mac</h3>
+
+<p><code class="language-plaintext highlighter-rouge">tfsec</code> is available for install with homebrew</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>brew install tfsec
+</code></pre></div></div>
+
+<h3 id="windows">Windows</h3>
+<p><code class="language-plaintext highlighter-rouge">tfsec</code> is available for install with Chocolatey</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>choco install tfsec
+</code></pre></div></div>
+
+<h3 id="linuxeverything-else">Linux/everything else</h3>
+<p>Alternatively, you can install using <code class="language-plaintext highlighter-rouge">go get</code></p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>go get <span class="nt">-u</span> github.com/tfsec/tfsec/cmd/tfsec
+</code></pre></div></div>
+
+<p>We can use <code class="language-plaintext highlighter-rouge">tfsec</code> to test our Terraform by simply running the command against the folder with our terraform in it.</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>.
+|_ tf/
+    |_ main.tf
+</code></pre></div></div>
+
+<p>Assuming that the above resource for the S3 bucket is in <code class="language-plaintext highlighter-rouge">main.tf</code>, we can run</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>tfsec tf
+</code></pre></div></div>
+
+<p>This will give me a list of problems categorised into severities.</p>
+
+<div class="language-terraform highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="mi">3</span> <span class="nx">potential</span> <span class="nx">problems</span> <span class="nx">detected</span><span class="err">:</span>
+
+<span class="nx">Problem</span> <span class="mi">1</span>
+
+  <span class="p">[</span><span class="nx">AWS001</span><span class="p">][</span><span class="nx">WARNING</span><span class="p">]</span> <span class="nx">Resource</span> <span class="s1">'aws_s3_bucket.my-bucket-for-secret-things'</span> <span class="nx">has</span> <span class="nx">an</span> <span class="nx">ACL</span> <span class="nx">which</span> <span class="nx">allows</span> <span class="nx">public</span> <span class="nx">read</span> <span class="nx">access</span><span class="err">.</span>
+  <span class="err">/</span><span class="nx">tmp</span><span class="err">/</span><span class="nx">tfsec</span><span class="err">/</span><span class="nx">main</span><span class="err">.</span><span class="nx">tf</span><span class="err">:</span><span class="mi">5</span>
+
+       <span class="mi">2</span> <span class="err">|</span> 
+       <span class="mi">3</span> <span class="err">|</span> <span class="k">resource</span> <span class="s2">"aws_s3_bucket"</span> <span class="s2">"my-bucket-for-secret-things"</span> <span class="p">{</span>
+       <span class="mi">4</span> <span class="err">|</span>   <span class="nx">bucket</span> <span class="p">=</span> <span class="s2">"my-bucket-for-secret-things"</span>
+       <span class="mi">5</span> <span class="err">|</span>   <span class="nx">acl</span>    <span class="p">=</span> <span class="s2">"public-read"</span>
+       <span class="mi">6</span> <span class="err">|</span> 
+       <span class="mi">7</span> <span class="err">|</span>   <span class="nx">tags</span> <span class="p">=</span> <span class="p">{</span>
+       <span class="mi">8</span> <span class="err">|</span>     <span class="nx">Name</span>        <span class="p">=</span> <span class="s2">"Sensitive Storage Bucket"</span>
+
+  <span class="nx">See</span> <span class="nx">https</span><span class="err">:</span><span class="c1">//github.com/tfsec/tfsec/wiki/AWS001 for more information.</span>
+
+<span class="nx">Problem</span> <span class="mi">2</span>
+
+  <span class="p">[</span><span class="nx">AWS002</span><span class="p">][</span><span class="nx">ERROR</span><span class="p">]</span> <span class="nx">Resource</span> <span class="s1">'aws_s3_bucket.my-bucket-for-secret-things'</span> <span class="nx">does</span> <span class="nx">not</span> <span class="nx">have</span> <span class="nx">logging</span> <span class="nx">enabled</span><span class="err">.</span>
+  <span class="err">/</span><span class="nx">tmp</span><span class="err">/</span><span class="nx">tfsec</span><span class="err">/</span><span class="nx">main</span><span class="p">.</span><span class="nx">tf</span><span class="err">:</span><span class="mi">3</span><span class="err">-</span><span class="mi">11</span>
+
+       <span class="mi">1</span> <span class="err">|</span> 
+       <span class="mi">2</span> <span class="err">|</span> 
+       <span class="mi">3</span> <span class="err">|</span> <span class="k">resource</span> <span class="s2">"aws_s3_bucket"</span> <span class="s2">"my-bucket-for-secret-things"</span> <span class="p">{</span>
+       <span class="mi">4</span> <span class="err">|</span>   <span class="nx">bucket</span> <span class="p">=</span> <span class="s2">"my-bucket-for-secret-things"</span>
+       <span class="mi">5</span> <span class="err">|</span>   <span class="nx">acl</span>    <span class="p">=</span> <span class="s2">"public-read"</span>
+       <span class="mi">6</span> <span class="err">|</span> 
+       <span class="mi">7</span> <span class="err">|</span>   <span class="nx">tags</span> <span class="p">=</span> <span class="p">{</span>
+       <span class="mi">8</span> <span class="err">|</span>     <span class="nx">Name</span>        <span class="p">=</span> <span class="s2">"Sensitive Storage Bucket"</span>
+       <span class="mi">9</span> <span class="err">|</span>     <span class="nx">Environment</span> <span class="p">=</span> <span class="s2">"Production"</span>
+      <span class="mi">10</span> <span class="err">|</span>   <span class="p">}</span>
+      <span class="mi">11</span> <span class="err">|</span> <span class="p">}</span>
+      <span class="mi">12</span> <span class="err">|</span> 
+
+  <span class="nx">See</span> <span class="nx">https</span><span class="err">:</span><span class="c1">//github.com/tfsec/tfsec/wiki/AWS002 for more information.</span>
+
+<span class="nx">Problem</span> <span class="mi">3</span>
+
+  <span class="p">[</span><span class="nx">AWS017</span><span class="p">][</span><span class="nx">ERROR</span><span class="p">]</span> <span class="nx">Resource</span> <span class="s1">'aws_s3_bucket.my-bucket-for-secret-things'</span> <span class="nx">defines</span> <span class="nx">an</span> <span class="nx">un</span><span class="err">-</span><span class="nx">encrypted</span> <span class="nx">S3</span> <span class="nx">bucket</span> <span class="p">(</span><span class="nx">missing</span> <span class="nx">server_side_encryption_configuration</span> <span class="nx">block</span><span class="p">).</span>
+  <span class="err">/</span><span class="nx">tmp</span><span class="err">/</span><span class="nx">tfsec</span><span class="err">/</span><span class="nx">main</span><span class="p">.</span><span class="nx">tf</span><span class="err">:</span><span class="mi">3</span><span class="err">-</span><span class="mi">11</span>
+
+       <span class="mi">1</span> <span class="err">|</span> 
+       <span class="mi">2</span> <span class="err">|</span> 
+       <span class="mi">3</span> <span class="err">|</span> <span class="k">resource</span> <span class="s2">"aws_s3_bucket"</span> <span class="s2">"my-bucket-for-secret-things"</span> <span class="p">{</span>
+       <span class="mi">4</span> <span class="err">|</span>   <span class="nx">bucket</span> <span class="p">=</span> <span class="s2">"my-bucket-for-secret-things"</span>
+       <span class="mi">5</span> <span class="err">|</span>   <span class="nx">acl</span>    <span class="p">=</span> <span class="s2">"public-read"</span>
+       <span class="mi">6</span> <span class="err">|</span> 
+       <span class="mi">7</span> <span class="err">|</span>   <span class="nx">tags</span> <span class="p">=</span> <span class="p">{</span>
+       <span class="mi">8</span> <span class="err">|</span>     <span class="nx">Name</span>        <span class="p">=</span> <span class="s2">"Sensitive Storage Bucket"</span>
+       <span class="mi">9</span> <span class="err">|</span>     <span class="nx">Environment</span> <span class="p">=</span> <span class="s2">"Production"</span>
+      <span class="mi">10</span> <span class="err">|</span>   <span class="p">}</span>
+      <span class="mi">11</span> <span class="err">|</span> <span class="p">}</span>
+      <span class="mi">12</span> <span class="err">|</span> 
+
+  <span class="nx">See</span> <span class="nx">https</span><span class="err">:</span><span class="c1">//github.com/tfsec/tfsec/wiki/AWS017 for more information.</span>
+
+</code></pre></div></div>
+
+<p>We can see that it has identified that we have a public acl specified, this is a warning to draw our attention to the fact and allow us to make a judgement call.</p>
+
+<p>The other two errors tell us that we don’t have “at rest” encryption and we could do with access logging. All in all very useful since I’d forgotten them.</p>
+
+<h3 id="but-there-is-more">But there is more</h3>
+
+<p>One of the benefits of <code class="language-plaintext highlighter-rouge">tfsec</code> is the ability for it to process default variable values and report on them as well. For example if we had a variable for the acl.</p>
+
+<div class="language-terraform highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">variable</span> <span class="s2">"bucket-acl"</span> <span class="p">{</span>
+    <span class="nx">description</span> <span class="p">=</span> <span class="s2">"The ACL for S3 buckets"</span>
+    <span class="nx">default</span>     <span class="p">=</span> <span class="s2">"public-read"</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>then we update the <code class="language-plaintext highlighter-rouge">main.tf</code> file to use this variable rather than the hard coded value;</p>
+
+<div class="language-terraform highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">resource</span> <span class="s2">"aws_s3_bucket"</span> <span class="s2">"my-bucket-for-secret-things"</span> <span class="p">{</span>
+  <span class="nx">bucket</span> <span class="p">=</span> <span class="s2">"my-bucket-for-secret-things"</span>
+  <span class="nx">acl</span>    <span class="p">=</span> <span class="kd">var</span><span class="p">.</span><span class="nx">bucket</span><span class="err">-</span><span class="nx">acl</span>
+
+  <span class="nx">tags</span> <span class="p">=</span> <span class="p">{</span>
+    <span class="nx">Name</span>        <span class="p">=</span> <span class="s2">"Sensitive Storage Bucket"</span>
+    <span class="nx">Environment</span> <span class="p">=</span> <span class="s2">"Production"</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>Our folder structure now looks more like this;</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>.
+|_ tf/
+    |_ main.tf
+    |_ variables.tf
+</code></pre></div></div>
+
+<p>Now when we run <code class="language-plaintext highlighter-rouge">tfsec</code> against the <code class="language-plaintext highlighter-rouge">tf</code> folder it gives us a slightly different error;</p>
+<div class="language-terraform highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nx">Problem</span> <span class="mi">1</span>
+
+  <span class="p">[</span><span class="nx">AWS001</span><span class="p">][]</span> <span class="nx">Resource</span> <span class="s1">'aws_s3_bucket.my-bucket-for-secret-things'</span> <span class="nx">has</span> <span class="nx">an</span> <span class="nx">ACL</span> <span class="nx">which</span> <span class="nx">allows</span> <span class="nx">public</span> <span class="nx">read</span> <span class="nx">access</span><span class="err">.</span>
+  <span class="err">/</span><span class="nx">tmp</span><span class="err">/</span><span class="nx">tfsec</span><span class="err">/</span><span class="nx">main</span><span class="err">.</span><span class="nx">tf</span><span class="err">:</span><span class="mi">5</span>
+
+       <span class="mi">2</span> <span class="err">|</span> 
+       <span class="mi">3</span> <span class="err">|</span> <span class="k">resource</span> <span class="s2">"aws_s3_bucket"</span> <span class="s2">"my-bucket-for-secret-things"</span> <span class="p">{</span>
+       <span class="mi">4</span> <span class="err">|</span>   <span class="nx">bucket</span> <span class="p">=</span> <span class="s2">"my-bucket-for-secret-things"</span>
+       <span class="mi">5</span> <span class="err">|</span>   <span class="nx">acl</span>    <span class="p">=</span> <span class="kd">var</span><span class="p">.</span><span class="nx">bucket</span><span class="err">-</span><span class="nx">acl</span>    <span class="p">[</span><span class="nx">string</span><span class="p">]</span> <span class="s2">"public-read"</span>
+       <span class="mi">6</span> <span class="err">|</span> 
+       <span class="mi">7</span> <span class="err">|</span>   <span class="nx">tags</span> <span class="p">=</span> <span class="p">{</span>
+       <span class="mi">8</span> <span class="err">|</span>     <span class="nx">Name</span>        <span class="p">=</span> <span class="s2">"Sensitive Storage Bucket"</span>
+
+  <span class="nx">See</span> <span class="nx">https</span><span class="err">:</span><span class="c1">//github.com/tfsec/tfsec/wiki/AWS001 for more information.</span>
+
+</code></pre></div></div>
+
+<p>The default value as been evaluated from the <code class="language-plaintext highlighter-rouge">variables.tf</code> file and seen that without explicitly overriding the value would have the same net effect as hard coding it to <code class="language-plaintext highlighter-rouge">public-read</code></p>
+
+<h3 id="false-positive">False Positive</h3>
+
+<p>Assuming that you did intend to ignore this error for this resource, that is fine, it can be done by adding an ignore declaration to the resource;</p>
+
+<div class="language-terraform highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">resource</span> <span class="s2">"aws_s3_bucket"</span> <span class="s2">"my-bucket-for-secret-things"</span> <span class="p">{</span>
+  <span class="nx">bucket</span> <span class="p">=</span> <span class="s2">"my-bucket-for-secret-things"</span>
+  <span class="c1">#tfsec:ignore:AWS001</span>
+  <span class="nx">acl</span>    <span class="p">=</span> <span class="kd">var</span><span class="p">.</span><span class="nx">bucket</span><span class="err">-</span><span class="nx">acl</span>
+
+  <span class="nx">tags</span> <span class="p">=</span> <span class="p">{</span>
+    <span class="nx">Name</span>        <span class="p">=</span> <span class="s2">"Sensitive Storage Bucket"</span>
+    <span class="nx">Environment</span> <span class="p">=</span> <span class="s2">"Production"</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+
+</code></pre></div></div>
+
+<h3 id="more-information">More information</h3>
+
+<p>Check out the <a href="https://www.github.com/tfsec/tfsec">github project</a> for more information</p>
+
+<h3 id="a-note-on-terraform">A note on Terraform</h3>
+
+<p>If it sounds like something you want to learn more about then check out <a href="https://leanpub.com/terraform-from-beginner-to-master"><code class="language-plaintext highlighter-rouge">Terraform: From Beginner to Master</code> by Kevin Holditch</a></p>
+
+</div>
+
+            </div>
+        </main>
+    </div>
+
+    <footer class="wrapper-footer">
+        <div class="footer">
+    <span class="footer-text float-left">This work is licensed under <a rel="license" href="https://www.gnu.org/licenses/gpl-3.0.en.html" target="_blank">GPLv3</a></span>
+    <span class="footer-text float-right">
+    Site Updated: 2023-12-01  (<a href="/feed.xml" target="_blank">RSS</a>)
+  </span>
+</div>
+    </footer>
+</body>
+</html>

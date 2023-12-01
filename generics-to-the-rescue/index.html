@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<!-- Begin Jekyll SEO tag v2.6.1 -->
+<title>Generics to the Rescue | Owen Rumney</title>
+<meta name="generator" content="Jekyll v4.2.1" />
+<meta property="og:title" content="Generics to the Rescue" />
+<meta name="author" content="Owen Rumney" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="A tale of performance improvements using Generics" />
+<meta property="og:description" content="A tale of performance improvements using Generics" />
+<link rel="canonical" href="https://www.owenrumney.co.uk/generics-to-the-rescue/" />
+<meta property="og:url" content="https://www.owenrumney.co.uk/generics-to-the-rescue/" />
+<meta property="og:site_name" content="Owen Rumney" />
+<meta property="og:image" content="https://www.owenrumney.co.uk/assets/img/owen.png" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2022-08-11T00:00:00+00:00" />
+<script type="application/ld+json">
+{"dateModified":"2022-08-11T00:00:00+00:00","datePublished":"2022-08-11T00:00:00+00:00","author":{"@type":"Person","name":"Owen Rumney"},"description":"A tale of performance improvements using Generics","mainEntityOfPage":{"@type":"WebPage","@id":"https://www.owenrumney.co.uk/generics-to-the-rescue/"},"url":"https://www.owenrumney.co.uk/generics-to-the-rescue/","@type":"BlogPosting","image":"https://www.owenrumney.co.uk/assets/img/owen.png","headline":"Generics to the Rescue","@context":"https://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+
+
+<meta name="keywords" content="programming,go" />
+
+<link rel="shortcut icon" href="/favicon.ico" />
+<link rel="apple-touch-icon" href="/favicon.ico"/>
+<link rel="stylesheet" type="text/css" href="/assets/css/styles.css" />
+<link rel="stylesheet" type="text/css" href="/assets/css/prism.css" />
+<script src="/assets/js/prism.js"></script>
+
+
+
+</head>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-TLCVNKXMFJ"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-TLCVNKXMFJ');
+</script>
+
+<body>
+    <div class="wrapper">
+        <header class="wrapper-header">
+            <div class="header">
+  <nav class="float-right">
+  
+  <a href="https://github.com/owenrumney" target="_blank"
+    ><img
+      src="/assets/images/github.svg"
+      style="color: white; display: inline-block"
+      height="30px"
+      alt="GitHub"
+  /></a>
+  
+  <a href="https://linkedin.com/in/owenrumney" target="_blank"
+    ><img
+      src="/assets/images/linkedin.svg"
+      style="color: white; display: inline-block"
+      height="30px"
+      alt="LinkedIn"
+  /></a>
+  
+  <a href="https://cv.owenrumney.co.uk" target="_blank"
+    ><img
+      src="/assets/images/resume.svg"
+      style="color: white; display: inline-block"
+      height="32px"
+      alt="Resume"
+  /></a>
+  
+</nav>
+
+  <a href="https://www.owenrumney.co.uk" target="_blank"><h1>Owen Rumney</h1></a>
+  <br />
+  <h5><i>Software Engineer</i></h5>
+  <br />
+
+  <hr />
+</div>
+
+        </header>
+
+        <main class="wrapper-main">
+            <div class="main-content">
+            <div class="post-info">
+    <h2>Generics to the Rescue</h2>
+    <p>11 Aug 2022 - Owen Rumney</p>
+</div>
+
+<div class="post-content">
+<p><img src="../images/generics-to-the-rescue.png" alt="Generics To the Rescue" /></p>
+
+<h3 id="a-bit-of-background">A bit of background</h3>
+
+<p>I’m working on a tool that uses the <a href="https://aws.github.io/aws-sdk-go-v2/docs/" target="_blank">AWS Go SDK</a> to pull back a lot of information about an account using the API.</p>
+
+<p>Some services require several secondary API calls - for example to get a full picture about an S3 bucket with details about encryption, policies, ACL, logging, versioning and Public Access Block configuration requires six more calls.</p>
+
+<p>When dealing with a medium to large number of buckets, making these calls sequentially is time consuming; extrapolating that over many services and you have a processing time that is not insignificant.</p>
+
+<h3 id="a-bit-more-detail">A bit more detail</h3>
+
+<p>Lets put a little bit more detail around this and take SQS for example.</p>
+
+<p>The first thing that we need to do is get all of the SQS queues. The API returns them in pages, so that needs to be handled too…</p>
+
+<div class="language-go highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">client</span> <span class="o">=</span> <span class="n">sqs</span><span class="o">.</span><span class="n">NewFromConfig</span><span class="p">(</span><span class="n">ctx</span><span class="o">.</span><span class="n">SessionConfig</span><span class="p">())</span> <span class="c">// import "github.com/aws/aws-sdk-go-v2/service/sqs/types"</span>
+
+<span class="k">var</span> <span class="n">apiQueueURLS</span> <span class="p">[]</span><span class="kt">string</span>
+<span class="k">var</span> <span class="n">input</span> <span class="n">types</span><span class="o">.</span><span class="n">ListQueuesInput</span> <span class="c">// import "github.com/aws/aws-sdk-go-v2/service/sqs/types"</span>
+<span class="k">for</span> <span class="p">{</span>
+	<span class="n">output</span><span class="p">,</span> <span class="n">err</span> <span class="o">:=</span> <span class="n">a</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">ListQueues</span><span class="p">(</span><span class="n">a</span><span class="o">.</span><span class="n">Context</span><span class="p">(),</span> <span class="o">&amp;</span><span class="n">input</span><span class="p">)</span>
+	<span class="k">if</span> <span class="n">err</span> <span class="o">!=</span> <span class="no">nil</span> <span class="p">{</span>
+		<span class="k">return</span> <span class="no">nil</span><span class="p">,</span> <span class="n">err</span>
+	<span class="p">}</span>
+	<span class="n">apiQueueURLs</span> <span class="o">=</span> <span class="nb">append</span><span class="p">(</span><span class="n">apiQueueURLs</span><span class="p">,</span> <span class="n">output</span><span class="o">.</span><span class="n">QueueUrls</span><span class="o">...</span><span class="p">)</span>
+	<span class="k">if</span> <span class="n">output</span><span class="o">.</span><span class="n">NextToken</span> <span class="o">==</span> <span class="no">nil</span> <span class="p">{</span>
+		<span class="k">break</span>
+	<span class="p">}</span>
+	<span class="n">input</span><span class="o">.</span><span class="n">NextToken</span> <span class="o">=</span> <span class="n">output</span><span class="o">.</span><span class="n">NextToken</span>
+<span class="p">}</span>
+
+</code></pre></div></div>
+
+<p>We now have a list of all the <code class="language-plaintext highlighter-rouge">QueueURLs</code> for a given region, but we likely need more information than that so we’re going to have to make some more calls.</p>
+
+<p>We want to populate the data in a our <code class="language-plaintext highlighter-rouge">Queue</code> object</p>
+<div class="language-go highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">type</span> <span class="n">Queue</span> <span class="k">struct</span> <span class="p">{</span>
+	<span class="n">QueueURL</span>   <span class="kt">string</span>
+	<span class="n">Encryption</span> <span class="n">Encryption</span>
+	<span class="n">Policies</span>   <span class="p">[]</span><span class="n">iam</span><span class="o">.</span><span class="n">Policy</span>
+<span class="p">}</span>
+
+<span class="k">type</span> <span class="n">Encryption</span> <span class="k">struct</span> <span class="p">{</span>
+	<span class="n">KMSKeyID</span>          <span class="kt">string</span>
+	<span class="n">ManagedEncryption</span> <span class="kt">bool</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>If we create a function to get the details - with some of the logic removed for brevity</p>
+
+<div class="language-go highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">func</span> <span class="n">adaptQueue</span><span class="p">(</span><span class="n">queueUrl</span> <span class="kt">string</span><span class="p">)</span> <span class="p">(</span><span class="o">*</span><span class="n">Queue</span><span class="p">,</span> <span class="kt">error</span><span class="p">)</span> <span class="p">{</span>
+
+	<span class="c">// make another call to get the attributes for the Queue</span>
+	<span class="n">queueAttributes</span><span class="p">,</span> <span class="n">err</span> <span class="o">:=</span> <span class="n">a</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">GetQueueAttributes</span><span class="p">(</span><span class="n">a</span><span class="o">.</span><span class="n">Context</span><span class="p">(),</span> <span class="o">&amp;</span><span class="n">sqs</span><span class="o">.</span><span class="n">GetQueueAttributesInput</span><span class="p">{</span>
+		<span class="n">QueueUrl</span><span class="o">:</span> <span class="n">aws</span><span class="o">.</span><span class="n">String</span><span class="p">(</span><span class="n">queueUrl</span><span class="p">),</span>
+		<span class="n">AttributeNames</span><span class="o">:</span> <span class="p">[]</span><span class="n">types</span><span class="o">.</span><span class="n">QueueAttributeName</span><span class="p">{</span>
+			<span class="n">types</span><span class="o">.</span><span class="n">QueueAttributeNameSqsManagedSseEnabled</span><span class="p">,</span>
+			<span class="n">types</span><span class="o">.</span><span class="n">QueueAttributeNameKmsMasterKeyId</span><span class="p">,</span>
+			<span class="n">types</span><span class="o">.</span><span class="n">QueueAttributeNamePolicy</span><span class="p">,</span>
+			<span class="n">types</span><span class="o">.</span><span class="n">QueueAttributeNameQueueArn</span><span class="p">,</span>
+		<span class="p">},</span>
+	<span class="p">})</span>
+	<span class="k">if</span> <span class="n">err</span> <span class="o">!=</span> <span class="no">nil</span> <span class="p">{</span>
+		<span class="k">return</span> <span class="no">nil</span><span class="p">,</span> <span class="n">err</span>
+	<span class="p">}</span>
+
+	<span class="n">queueARN</span> <span class="o">:=</span> <span class="n">queueAttributes</span><span class="o">.</span><span class="n">Attributes</span><span class="p">[</span><span class="kt">string</span><span class="p">(</span><span class="n">types</span><span class="o">.</span><span class="n">QueueAttributeNameQueueArn</span><span class="p">)]</span>
+	<span class="n">queue</span> <span class="o">:=</span> <span class="o">&amp;</span><span class="n">sqs</span><span class="o">.</span><span class="n">Queue</span><span class="p">{</span>
+		<span class="n">QueueURL</span><span class="o">:</span> <span class="n">queueUrl</span><span class="p">,</span>
+		<span class="n">Policies</span><span class="o">:</span> <span class="p">[]</span><span class="n">iam</span><span class="o">.</span><span class="n">Policy</span><span class="p">{},</span>
+		<span class="n">Encryption</span><span class="o">:</span> <span class="n">sqs</span><span class="o">.</span><span class="n">Encryption</span><span class="p">{</span>
+			<span class="n">KMSKeyID</span><span class="o">:</span>          <span class="s">""</span><span class="p">,</span>
+			<span class="n">ManagedEncryption</span><span class="o">:</span> <span class="no">false</span><span class="p">,</span>
+		<span class="p">},</span>
+	<span class="p">}</span>
+
+	<span class="n">sseEncrypted</span> <span class="o">:=</span> <span class="n">queueAttributes</span><span class="o">.</span><span class="n">Attributes</span><span class="p">[</span><span class="kt">string</span><span class="p">(</span><span class="n">types</span><span class="o">.</span><span class="n">QueueAttributeNameSqsManagedSseEnabled</span><span class="p">)]</span>
+	<span class="n">kmsEncryption</span> <span class="o">:=</span> <span class="n">queueAttributes</span><span class="o">.</span><span class="n">Attributes</span><span class="p">[</span><span class="kt">string</span><span class="p">(</span><span class="n">types</span><span class="o">.</span><span class="n">QueueAttributeNameKmsMasterKeyId</span><span class="p">)]</span>
+	<span class="n">queuePolicy</span> <span class="o">:=</span> <span class="n">queueAttributes</span><span class="o">.</span><span class="n">Attributes</span><span class="p">[</span><span class="kt">string</span><span class="p">(</span><span class="n">types</span><span class="o">.</span><span class="n">QueueAttributeNamePolicy</span><span class="p">)]</span>
+
+	<span class="k">if</span> <span class="n">sseEncrypted</span> <span class="o">==</span> <span class="s">"SSE-SQS"</span> <span class="o">||</span> <span class="n">sseEncrypted</span> <span class="o">==</span> <span class="s">"SSE-KMS"</span> <span class="p">{</span>
+		<span class="n">queue</span><span class="o">.</span><span class="n">Encryption</span><span class="o">.</span><span class="n">ManagedEncryption</span> <span class="o">=</span> <span class="no">true</span>
+	<span class="p">}</span>
+
+	<span class="k">if</span> <span class="n">kmsEncryption</span> <span class="o">!=</span> <span class="s">""</span> <span class="p">{</span>
+		<span class="n">queue</span><span class="o">.</span><span class="n">Encryption</span><span class="o">.</span><span class="n">KMSKeyID</span> <span class="o">=</span> <span class="n">kmsEncryption</span>
+	<span class="p">}</span>
+
+	<span class="k">if</span> <span class="n">queuePolicy</span> <span class="o">!=</span> <span class="s">""</span> <span class="p">{</span>
+		<span class="n">policy</span><span class="p">,</span> <span class="n">err</span> <span class="o">:=</span> <span class="n">iamgo</span><span class="o">.</span><span class="n">ParseString</span><span class="p">(</span><span class="n">queuePolicy</span><span class="p">)</span> <span class="c">// import "github.com/liamg/iamgo"</span>
+		<span class="k">if</span> <span class="n">err</span> <span class="o">==</span> <span class="no">nil</span> <span class="p">{</span>
+			<span class="n">queue</span><span class="o">.</span><span class="n">Policies</span> <span class="o">=</span> <span class="nb">append</span><span class="p">(</span><span class="n">queue</span><span class="o">.</span><span class="n">Policies</span><span class="p">,</span> <span class="n">iam</span><span class="o">.</span><span class="n">Policy</span><span class="p">{</span>
+				<span class="n">Document</span><span class="o">:</span> <span class="n">iam</span><span class="o">.</span><span class="n">Document</span><span class="p">{</span>
+					<span class="n">Parsed</span><span class="o">:</span>   <span class="o">*</span><span class="n">policy</span><span class="p">,</span>
+				<span class="p">},</span>
+				<span class="n">Builtin</span><span class="o">:</span> <span class="no">false</span><span class="p">,</span>
+			<span class="p">})</span>
+		<span class="p">}</span>
+
+	<span class="p">}</span>
+	<span class="k">return</span> <span class="n">queue</span><span class="p">,</span> <span class="no">nil</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>In this case, we only had to make a single additional request to the API, but the argument is clear for trying to parallelise this process a little.</p>
+
+<h3 id="what-do-we-want-to-do">What do we want to do?</h3>
+
+<p>Ideally, we would get the list of queues so we know how many we’re talking about and this can drive our progress mechanism we might have in out UX.</p>
+
+<p>Once we have the list of URLs, we want to parallelise the adaption process. But wait!! the <code class="language-plaintext highlighter-rouge">adaptQueue</code> function in this case takes a <code class="language-plaintext highlighter-rouge">[]string</code>, but for buckets it might be a <code class="language-plaintext highlighter-rouge">[]s3.Bucket</code> or with IAM an <code class="language-plaintext highlighter-rouge">[]iam.Role</code>.</p>
+
+<p>We need a <code class="language-plaintext highlighter-rouge">generic</code> function that will take the slice of inputs and a function to call for each item.</p>
+
+<h1 id="generics-to-the-rescue">Generics to the rescue!!</h1>
+
+<p>Lets say out input (in this case a <code class="language-plaintext highlighter-rouge">[]string</code>) is type <code class="language-plaintext highlighter-rouge">T</code> and the output we want (in this case a <code class="language-plaintext highlighter-rouge">[]Queue</code>) is type <code class="language-plaintext highlighter-rouge">S</code>, we can create a generic function to handle this</p>
+
+<div class="language-go highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">func</span> <span class="n">ParallelAdapt</span><span class="p">[</span><span class="n">T</span> <span class="n">any</span><span class="p">,</span> <span class="n">S</span> <span class="n">any</span><span class="p">](</span><span class="n">items</span> <span class="p">[]</span><span class="n">T</span> <span class="n">adapt</span> <span class="k">func</span><span class="p">(</span><span class="n">T</span><span class="p">)</span> <span class="p">(</span><span class="o">*</span><span class="n">S</span><span class="p">,</span> <span class="kt">error</span><span class="p">))</span> <span class="p">[]</span><span class="n">S</span> <span class="p">{</span>
+	<span class="n">processes</span> <span class="o">:=</span> <span class="n">getProcessCount</span><span class="p">(</span><span class="n">DefaultStrategy</span><span class="p">)</span>
+
+    <span class="n">mu</span> <span class="o">:=</span> <span class="n">sync</span><span class="o">.</span><span class="n">Mutex</span><span class="p">{}</span>
+    <span class="k">var</span> <span class="n">results</span> <span class="p">[]</span><span class="n">S</span>
+
+    <span class="k">var</span> <span class="n">ch</span> <span class="o">=</span> <span class="nb">make</span><span class="p">(</span><span class="k">chan</span> <span class="n">T</span><span class="p">,</span> <span class="m">50</span><span class="p">)</span>
+	<span class="n">wg</span> <span class="o">:=</span> <span class="n">sync</span><span class="o">.</span><span class="n">WaitGroup</span><span class="p">{}</span>
+	<span class="n">wg</span><span class="o">.</span><span class="n">Add</span><span class="p">(</span><span class="n">processes</span><span class="p">)</span>
+
+	<span class="k">for</span> <span class="n">i</span> <span class="o">:=</span> <span class="m">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">processes</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span> <span class="p">{</span>
+		<span class="k">go</span> <span class="k">func</span><span class="p">()</span> <span class="p">{</span>
+			<span class="k">for</span> <span class="p">{</span>
+				<span class="n">in</span><span class="p">,</span> <span class="n">ok</span> <span class="o">:=</span> <span class="o">&lt;-</span><span class="n">ch</span>
+				<span class="k">if</span> <span class="o">!</span><span class="n">ok</span> <span class="p">{</span>
+					<span class="n">wg</span><span class="o">.</span><span class="n">Done</span><span class="p">()</span>
+					<span class="k">return</span>
+				<span class="p">}</span>
+				<span class="n">out</span><span class="p">,</span> <span class="n">err</span> <span class="o">:=</span> <span class="n">adapt</span><span class="p">(</span><span class="n">in</span><span class="p">)</span>
+				<span class="k">if</span> <span class="n">err</span> <span class="o">!=</span> <span class="no">nil</span> <span class="p">{</span>
+					<span class="n">log</span><span class="o">.</span><span class="n">Debug</span><span class="p">(</span><span class="s">"Error while adapting resource %v: %w"</span><span class="p">,</span> <span class="n">in</span><span class="p">,</span> <span class="n">err</span><span class="p">)</span>
+					<span class="k">continue</span>
+				<span class="p">}</span>
+
+				<span class="k">if</span> <span class="n">out</span> <span class="o">!=</span> <span class="no">nil</span> <span class="p">{</span>
+					<span class="n">mu</span><span class="o">.</span><span class="n">Lock</span><span class="p">()</span>
+					<span class="n">results</span> <span class="o">=</span> <span class="nb">append</span><span class="p">(</span><span class="n">results</span><span class="p">,</span> <span class="o">*</span><span class="n">out</span><span class="p">)</span>
+					<span class="n">mu</span><span class="o">.</span><span class="n">Unlock</span><span class="p">()</span>
+				<span class="p">}</span>
+			<span class="p">}</span>
+		<span class="p">}()</span>
+	<span class="p">}</span>
+
+	<span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">item</span> <span class="o">:=</span> <span class="k">range</span> <span class="n">items</span> <span class="p">{</span>
+		<span class="n">ch</span> <span class="o">&lt;-</span> <span class="n">item</span>
+	<span class="p">}</span>
+
+	<span class="nb">close</span><span class="p">(</span><span class="n">ch</span><span class="p">)</span>
+	<span class="n">wg</span><span class="o">.</span><span class="n">Wait</span><span class="p">()</span>
+
+	<span class="k">return</span> <span class="n">results</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>Let’s break down this function - first, we use a strategy that we’ve used to get the number of processes to run.</p>
+
+<p>We need to keep in mind the rate limiting of AWS API so there is no point using unbounded number of go routines.</p>
+
+<div class="language-go highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">type</span> <span class="n">Strategy</span> <span class="kt">int</span>
+
+<span class="k">const</span> <span class="p">(</span>
+	<span class="n">DefaultStrategy</span> <span class="n">Strategy</span> <span class="o">=</span> <span class="no">iota</span>
+	<span class="n">CPUCountStrategy</span>
+	<span class="n">OneAtATimeStrategy</span>
+<span class="p">)</span>
+
+<span class="k">func</span> <span class="n">getProcessCount</span><span class="p">(</span><span class="n">strategy</span> <span class="n">Strategy</span><span class="p">)</span> <span class="kt">int</span> <span class="p">{</span>
+	<span class="k">switch</span> <span class="n">strategy</span> <span class="p">{</span>
+	<span class="k">case</span> <span class="n">OneAtATimeStrategy</span><span class="o">:</span>
+		<span class="k">return</span> <span class="m">1</span>
+	<span class="k">case</span> <span class="n">CPUCountStrategy</span><span class="p">,</span> <span class="n">DefaultStrategy</span><span class="o">:</span>
+		<span class="k">return</span> <span class="n">runtime</span><span class="o">.</span><span class="n">NumCPU</span><span class="p">()</span>
+	<span class="k">default</span><span class="o">:</span>
+		<span class="c">// this shouldn't be reached but at least we don't crash</span>
+		<span class="k">return</span> <span class="m">1</span>
+	<span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>In this example, we’re running as many Go routines as we have CPUs.</p>
+
+<p>The next thing to create a slice of results of type <code class="language-plaintext highlighter-rouge">S</code> (in this case <code class="language-plaintext highlighter-rouge">[]Queue</code>) where our results are going to go. We need a <code class="language-plaintext highlighter-rouge">sync.Mutex</code> here to safely add items to the slice.</p>
+
+<p>Now for the concurrency bit…</p>
+
+<p>We create a <code class="language-plaintext highlighter-rouge">sync.WaitGroup</code> that has space for the number of process we’re going to use.</p>
+
+<p>We also create a channel with an arbitrary number of slots where we’re going to push the inputs of type <code class="language-plaintext highlighter-rouge">T</code> for processing.</p>
+
+<p>Next, we create as many Go routines as we have processes that takes a value off the channel <code class="language-plaintext highlighter-rouge">ch</code> and if its ok, it will run the <code class="language-plaintext highlighter-rouge">adapt</code> function provided against the value of type <code class="language-plaintext highlighter-rouge">T</code>. We get an error and an output result of type <code class="language-plaintext highlighter-rouge">S</code> from the function which we can safely add to the <code class="language-plaintext highlighter-rouge">results</code> then the go routine can go back to the channel for another item of work.</p>
+
+<p>The last step is to add everything to the channel - we loop over the items (in this case <code class="language-plaintext highlighter-rouge">[]string</code>) sending them to the channel. When this is done, we <code class="language-plaintext highlighter-rouge">close</code> the channel to tell it nothing else is coming then <code class="language-plaintext highlighter-rouge">Wait</code> for the <code class="language-plaintext highlighter-rouge">WaitGroup</code> to be done (this is done when the channel has nothing else on it, and each process will complete).</p>
+
+<p>Finally, we return the results back to the caller.</p>
+
+<h3 id="using-the-function">Using the function</h3>
+
+<p>We can easily use this function, sticking with the same example we would call</p>
+
+<div class="language-go highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">results</span> <span class="o">:=</span> <span class="n">ParallelAdapt</span><span class="p">(</span><span class="n">apiQueueURLS</span><span class="p">,</span> <span class="n">adaptQueue</span><span class="p">)</span> <span class="c">// we have a slice of *Queue</span>
+</code></pre></div></div>
+
+<p>The number of concurrent calls is always something that needs to be analysed and a suitable trade off come to. You don’t want to create IO issues in the name of concurrency.</p>
+
+
+</div>
+
+            </div>
+        </main>
+    </div>
+
+    <footer class="wrapper-footer">
+        <div class="footer">
+    <span class="footer-text float-left">This work is licensed under <a rel="license" href="https://www.gnu.org/licenses/gpl-3.0.en.html" target="_blank">GPLv3</a></span>
+    <span class="footer-text float-right">
+    Site Updated: 2023-12-01  (<a href="/feed.xml" target="_blank">RSS</a>)
+  </span>
+</div>
+    </footer>
+</body>
+</html>

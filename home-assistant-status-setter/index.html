@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<!-- Begin Jekyll SEO tag v2.6.1 -->
+<title>Set Slack status using Home Assistant | Owen Rumney</title>
+<meta name="generator" content="Jekyll v4.2.1" />
+<meta property="og:title" content="Set Slack status using Home Assistant" />
+<meta name="author" content="Owen Rumney" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="Adding automation triggers to home assistant to set Slack status" />
+<meta property="og:description" content="Adding automation triggers to home assistant to set Slack status" />
+<link rel="canonical" href="https://www.owenrumney.co.uk/home-assistant-status-setter/" />
+<meta property="og:url" content="https://www.owenrumney.co.uk/home-assistant-status-setter/" />
+<meta property="og:site_name" content="Owen Rumney" />
+<meta property="og:image" content="https://www.owenrumney.co.uk/assets/img/owen.png" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2023-11-30T00:00:00+00:00" />
+<script type="application/ld+json">
+{"dateModified":"2023-11-30T00:00:00+00:00","datePublished":"2023-11-30T00:00:00+00:00","author":{"@type":"Person","name":"Owen Rumney"},"description":"Adding automation triggers to home assistant to set Slack status","mainEntityOfPage":{"@type":"WebPage","@id":"https://www.owenrumney.co.uk/home-assistant-status-setter/"},"url":"https://www.owenrumney.co.uk/home-assistant-status-setter/","@type":"BlogPosting","image":"https://www.owenrumney.co.uk/assets/img/owen.png","headline":"Set Slack status using Home Assistant","@context":"https://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+
+
+<meta name="keywords" content="python,learning,home-assistant" />
+
+<link rel="shortcut icon" href="/favicon.ico" />
+<link rel="apple-touch-icon" href="/favicon.ico"/>
+<link rel="stylesheet" type="text/css" href="/assets/css/styles.css" />
+<link rel="stylesheet" type="text/css" href="/assets/css/prism.css" />
+<script src="/assets/js/prism.js"></script>
+
+
+
+</head>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-TLCVNKXMFJ"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-TLCVNKXMFJ');
+</script>
+
+<body>
+    <div class="wrapper">
+        <header class="wrapper-header">
+            <div class="header">
+  <nav class="float-right">
+  
+  <a href="https://github.com/owenrumney" target="_blank"
+    ><img
+      src="/assets/images/github.svg"
+      style="color: white; display: inline-block"
+      height="30px"
+      alt="GitHub"
+  /></a>
+  
+  <a href="https://linkedin.com/in/owenrumney" target="_blank"
+    ><img
+      src="/assets/images/linkedin.svg"
+      style="color: white; display: inline-block"
+      height="30px"
+      alt="LinkedIn"
+  /></a>
+  
+  <a href="https://cv.owenrumney.co.uk" target="_blank"
+    ><img
+      src="/assets/images/resume.svg"
+      style="color: white; display: inline-block"
+      height="32px"
+      alt="Resume"
+  /></a>
+  
+</nav>
+
+  <a href="https://www.owenrumney.co.uk" target="_blank"><h1>Owen Rumney</h1></a>
+  <br />
+  <h5><i>Software Engineer</i></h5>
+  <br />
+
+  <hr />
+</div>
+
+        </header>
+
+        <main class="wrapper-main">
+            <div class="main-content">
+            <div class="post-info">
+    <h2>Set Slack status using Home Assistant</h2>
+    <p>30 Nov 2023 - Owen Rumney</p>
+</div>
+
+<div class="post-content">
+<h1 id="the-brief">The Brief</h1>
+
+<table>
+  <tbody>
+    <tr>
+      <td>Note: I am on week two of running a HomeAssistant service so I’m still learning. If you have any suggestions or improvements please let me know.</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>I want to be able to set my Slack presence when I’m working and “Away” when I’m not. I want this to be automated so I don’t have to remember to do it and I want the notifications muted when I’m not working.</p>
+
+<h1 id="the-solution">The Solution</h1>
+
+<h2 id="previous-solution">Previous Solution</h2>
+
+<p>The previous solution (which worked) was a Lambda running in AWS that was triggered by an EventBridge schedule to change my status at the required times. This worked but it was a bit of a pain to maintain and I wanted to move it to something that was a bit more “local” to me.</p>
+
+<h2 id="home-assistant">Home Assistant</h2>
+
+<p>I’ve been running Home Assistant for a few weeks now and I’m enjoying it. I’ve got a few automations set up and I’m slowly adding more. I’ve got a few smart plugs and lights that were previously controlled by Alexa and ported over to HA with very little pain.</p>
+
+<h2 id="steps">Steps</h2>
+
+<p>The following steps are required to achieve this</p>
+
+<ol>
+  <li>Create a Slack App</li>
+  <li>Create a Slack Token</li>
+  <li>Create and add a custom component to Home Assistant</li>
+  <li>Set up the automation</li>
+</ol>
+
+<h3 id="create-a-slack-app">Create a Slack App</h3>
+
+<p>Go to the <a href="https://api.slack.com/apps/" target="\_blank">Apps Management Console</a> and click on “Create New App”. Give it a name and select the workspace you want to use it in.</p>
+
+<h3 id="create-a-slack-token">Create a Slack Token</h3>
+
+<p>Go to the <code class="language-plaintext highlighter-rouge">OAuth &amp; Permissions</code> section and scroll down to the <code class="language-plaintext highlighter-rouge">Scopes</code> section. Add the following scopes:</p>
+
+<p><img src="../images/slack_oauth_and_permissions.png" alt="OAuth and Permissions" /></p>
+
+<p>Set the scopes to the following;</p>
+
+<p><img src="../images/user_token_scopes.png" alt="Scopes" /></p>
+
+<p>Scroll back up, install to workspace and make a note of the token that is generated… it will start <code class="language-plaintext highlighter-rouge">xoxp-</code></p>
+
+<p>The api can be added to the <code class="language-plaintext highlighter-rouge">secrets.yaml</code> file in Home Assistant under <code class="language-plaintext highlighter-rouge">api_key</code> for use later.</p>
+
+<h3 id="create-and-add-a-custom-component-to-home-assistant">Create and add a custom component to Home Assistant</h3>
+
+<p>Setting up a custom component so that it is available as a service in HA is fairly easy. The <a href="https://developers.home-assistant.io/docs/dev_101_services" target="\_blank">documentation</a> is pretty good and there are plenty of examples to follow.</p>
+
+<p>The first thing you need is to create a folder in your <code class="language-plaintext highlighter-rouge">config</code> directory called <code class="language-plaintext highlighter-rouge">custom_components</code>. This is where you will put your custom components.
+Next, you need to create a folder for your component. In my case, I created a folder called <code class="language-plaintext highlighter-rouge">slack_presence_setter</code> and inside that folder, I created a file called <code class="language-plaintext highlighter-rouge">__init__.py</code> and the <code class="language-plaintext highlighter-rouge">manifest.json</code>. This is the file that will be loaded by HA when it starts up.</p>
+
+<p>The manifest describes a custom component, the domain must match the name of the folder you’ve created.</p>
+
+<div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">{</span><span class="w">
+  </span><span class="nl">"domain"</span><span class="p">:</span><span class="w"> </span><span class="s2">"slack_presence_setter"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Slack Presence Setter"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"version"</span><span class="p">:</span><span class="w"> </span><span class="s2">"0.1.0"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"iot_class"</span><span class="p">:</span><span class="w"> </span><span class="s2">"local_push"</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div></div>
+
+<p>We then need some code that will run when the service is called.</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">import</span> <span class="nn">urllib3</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">import</span> <span class="nn">datetime</span>
+
+
+<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="p">.</span><span class="n">getLogger</span><span class="p">(</span><span class="n">__name__</span><span class="p">)</span>
+<span class="n">logger</span><span class="p">.</span><span class="n">setLevel</span><span class="p">(</span><span class="n">logging</span><span class="p">.</span><span class="n">INFO</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">setup</span><span class="p">(</span><span class="n">hass</span><span class="p">,</span> <span class="n">config</span><span class="p">):</span>
+    <span class="s">"""Set up the Slack presence setter component."""</span>
+
+    <span class="k">def</span> <span class="nf">update_snooze</span><span class="p">(</span><span class="n">api_key</span><span class="p">,</span> <span class="n">http</span><span class="p">,</span> <span class="n">snooze_enabled</span><span class="p">):</span>
+        <span class="s">""" Update the snooze status """</span>
+        <span class="k">if</span> <span class="n">snooze_enabled</span><span class="p">:</span>
+            <span class="n">r</span> <span class="o">=</span> <span class="n">http</span><span class="p">.</span><span class="n">request</span><span class="p">(</span><span class="s">"GET"</span><span class="p">,</span> <span class="sa">f</span><span class="s">"https://slack.com/api/dnd.setSnooze?num_minutes=6120"</span><span class="p">,</span>
+                             <span class="n">headers</span><span class="o">=</span><span class="p">{</span><span class="s">"Authorization"</span><span class="p">:</span> <span class="s">"Bearer "</span> <span class="o">+</span> <span class="n">api_key</span><span class="p">})</span>
+            <span class="n">logger</span><span class="p">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s">"Setting snooze for a long time"</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">r</span><span class="p">.</span><span class="n">status</span> <span class="o">!=</span> <span class="mi">200</span><span class="p">:</span>
+                <span class="n">logger</span><span class="p">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s">"Failed to set snooze"</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">r</span> <span class="o">=</span> <span class="n">http</span><span class="p">.</span><span class="n">request</span><span class="p">(</span><span class="s">"GET"</span><span class="p">,</span> <span class="sa">f</span><span class="s">"https://slack.com/api/dnd.endDnd"</span><span class="p">,</span>
+                             <span class="n">headers</span><span class="o">=</span><span class="p">{</span><span class="s">"Authorization"</span><span class="p">:</span> <span class="s">"Bearer "</span> <span class="o">+</span> <span class="n">api_key</span><span class="p">})</span>
+            <span class="n">logger</span><span class="p">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s">"Ending snooze"</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">r</span><span class="p">.</span><span class="n">status</span> <span class="o">!=</span> <span class="mi">200</span><span class="p">:</span>
+                <span class="n">logger</span><span class="p">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s">"Failed to end snooze"</span><span class="p">)</span>
+
+
+    <span class="k">def</span> <span class="nf">update_status</span><span class="p">(</span><span class="n">api_key</span><span class="p">,</span> <span class="n">http</span><span class="p">,</span> <span class="n">new_presence</span><span class="p">):</span>
+        <span class="s">""" Update the presence """</span>
+        <span class="n">r</span> <span class="o">=</span> <span class="n">http</span><span class="p">.</span><span class="n">request</span><span class="p">(</span><span class="s">"POST"</span><span class="p">,</span> <span class="sa">f</span><span class="s">"https://slack.com/api/users.setPresence?presence=</span><span class="si">{</span><span class="n">new_presence</span><span class="si">}</span><span class="s">"</span><span class="p">,</span>
+                         <span class="n">headers</span><span class="o">=</span><span class="p">{</span><span class="s">"Authorization"</span><span class="p">:</span> <span class="s">"Bearer "</span> <span class="o">+</span> <span class="n">api_key</span><span class="p">})</span>
+        <span class="n">logger</span><span class="p">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s">"Setting status to </span><span class="si">{</span><span class="n">new_presence</span><span class="si">}</span><span class="s">"</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">r</span><span class="p">.</span><span class="n">status</span> <span class="o">!=</span> <span class="mi">200</span><span class="p">:</span>
+            <span class="n">logger</span><span class="p">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s">"Failed to set the status to </span><span class="si">{</span><span class="n">new_presence</span><span class="si">}</span><span class="s">"</span><span class="p">)</span>
+
+        <span class="n">current_time</span> <span class="o">=</span> <span class="n">datetime</span><span class="p">.</span><span class="n">datetime</span><span class="p">.</span><span class="n">now</span><span class="p">().</span><span class="n">time</span><span class="p">()</span>
+        <span class="n">name</span> <span class="o">=</span> <span class="s">"presence_setter"</span>
+        <span class="n">logger</span><span class="p">.</span><span class="n">info</span><span class="p">(</span><span class="s">"Cron execution "</span> <span class="o">+</span> <span class="n">name</span> <span class="o">+</span> <span class="s">" ran at "</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">current_time</span><span class="p">))</span>
+
+
+    <span class="k">def</span> <span class="nf">handle_event</span><span class="p">(</span><span class="n">call</span><span class="p">):</span>
+        <span class="n">http</span> <span class="o">=</span> <span class="n">urllib3</span><span class="p">.</span><span class="n">PoolManager</span><span class="p">()</span>
+
+        <span class="n">status</span> <span class="o">=</span> <span class="n">call</span><span class="p">.</span><span class="n">data</span><span class="p">.</span><span class="n">get</span><span class="p">(</span><span class="s">"status"</span><span class="p">,</span> <span class="s">"away"</span><span class="p">)</span>
+        <span class="n">api_key</span> <span class="o">=</span> <span class="n">call</span><span class="p">.</span><span class="n">data</span><span class="p">.</span><span class="n">get</span><span class="p">(</span><span class="s">"api_key"</span><span class="p">,</span> <span class="bp">None</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">api_key</span><span class="p">:</span>
+            <span class="n">logger</span><span class="p">.</span><span class="n">error</span><span class="p">(</span><span class="s">"No api key available in the call data"</span><span class="p">)</span>
+            <span class="k">return</span>
+
+        <span class="k">if</span> <span class="n">status</span> <span class="o">==</span> <span class="s">"here"</span><span class="p">:</span>
+            <span class="n">update_status</span><span class="p">(</span><span class="n">api_key</span><span class="p">,</span> <span class="n">http</span><span class="p">,</span> <span class="s">"auto"</span><span class="p">)</span>
+            <span class="n">update_snooze</span><span class="p">(</span><span class="n">api_key</span><span class="p">,</span> <span class="n">http</span><span class="p">,</span> <span class="bp">False</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">status</span> <span class="o">==</span> <span class="s">"away"</span><span class="p">:</span>
+            <span class="n">update_status</span><span class="p">(</span><span class="n">api_key</span><span class="p">,</span> <span class="n">http</span><span class="p">,</span> <span class="s">"away"</span><span class="p">)</span>
+            <span class="n">update_snooze</span><span class="p">(</span><span class="n">api_key</span><span class="p">,</span> <span class="n">http</span><span class="p">,</span> <span class="bp">True</span><span class="p">)</span>
+
+    <span class="n">hass</span><span class="p">.</span><span class="n">services</span><span class="p">.</span><span class="n">register</span><span class="p">(</span><span class="s">"slack_presence_setter"</span><span class="p">,</span>
+                           <span class="s">"set_presence"</span><span class="p">,</span> <span class="n">handle_event</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="bp">True</span>
+
+</code></pre></div></div>
+
+<p>Breaking this down;</p>
+
+<ol>
+  <li>
+    <p>We have the outer function <code class="language-plaintext highlighter-rouge">setup</code> that is called by HA when it loads the component. This function registers the service <code class="language-plaintext highlighter-rouge">set_presence</code> with HA. This function must return <code class="language-plaintext highlighter-rouge">True</code> to tell Home Assistant that the component loaded successfully.</p>
+  </li>
+  <li>
+    <p>The <code class="language-plaintext highlighter-rouge">handle_event</code> function is called when the service is called. It takes the <code class="language-plaintext highlighter-rouge">call</code> object as a parameter. This object contains the data that was passed to the service. In this case, it contains the <code class="language-plaintext highlighter-rouge">status</code> and <code class="language-plaintext highlighter-rouge">api_key</code> that we need to update the Slack status.</p>
+  </li>
+  <li>
+    <p>The <code class="language-plaintext highlighter-rouge">update_status</code> function takes the <code class="language-plaintext highlighter-rouge">api_key</code> and <code class="language-plaintext highlighter-rouge">http</code> objects and uses them to call the Slack API to update the status. It takes the <code class="language-plaintext highlighter-rouge">new_presence</code> as a parameter which is the status we want to set.
+When sending the presence status, the relevant choices are <code class="language-plaintext highlighter-rouge">auto</code> for on and <code class="language-plaintext highlighter-rouge">away</code> for …. away.</p>
+  </li>
+  <li>
+    <p>The <code class="language-plaintext highlighter-rouge">update_snooze</code> function takes the <code class="language-plaintext highlighter-rouge">api_key</code> and <code class="language-plaintext highlighter-rouge">http</code> objects and uses them to call the Slack API to update the snooze status. It takes the <code class="language-plaintext highlighter-rouge">snooze_enabled</code> as a parameter which is a boolean that tells us if we want to snooze or not.
+When snoozing, the relevant choices are <code class="language-plaintext highlighter-rouge">dnd.setSnooze</code> for on and <code class="language-plaintext highlighter-rouge">dnd.endDnd</code> for …. away.</p>
+  </li>
+</ol>
+
+<p>Once you have this code in place you need to add an entry to <code class="language-plaintext highlighter-rouge">configuration.yaml</code> to include the component restart HA and the component should be loaded.</p>
+
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># rest of configuration.yaml</span>
+<span class="na">slack_presence_setter</span><span class="pi">:</span>
+</code></pre></div></div>
+
+<h3 id="setup-the-automation">Setup the automation</h3>
+
+<p>There are two ways you can create an automation, through the UI or as a YAML file. I prefer the YAML file as it’s easier to see what’s going on and it’s easier to share.</p>
+
+<p>In the <code class="language-plaintext highlighter-rouge">automations.yaml</code> file, I added the following:</p>
+
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="pi">-</span> <span class="na">id</span><span class="pi">:</span> <span class="s2">"</span><span class="s">set_slack_status_active"</span>
+  <span class="na">alias</span><span class="pi">:</span> <span class="s">Slack Active</span>
+  <span class="na">description</span><span class="pi">:</span> <span class="s2">"</span><span class="s">"</span>
+  <span class="na">trigger</span><span class="pi">:</span>
+    <span class="pi">-</span> <span class="na">platform</span><span class="pi">:</span> <span class="s">time_pattern</span>
+      <span class="na">hours</span><span class="pi">:</span> <span class="m">08</span>
+      <span class="na">minutes</span><span class="pi">:</span> <span class="s2">"</span><span class="s">55"</span>
+      <span class="na">seconds</span><span class="pi">:</span> <span class="s2">"</span><span class="s">00"</span>
+  <span class="na">condition</span><span class="pi">:</span>
+    <span class="pi">-</span> <span class="na">condition</span><span class="pi">:</span> <span class="s">time</span>
+      <span class="na">before</span><span class="pi">:</span> <span class="s">09:00:00</span>
+      <span class="na">after</span><span class="pi">:</span> <span class="s">08:00:00</span>
+      <span class="na">weekday</span><span class="pi">:</span>
+        <span class="pi">-</span> <span class="s">mon</span>
+        <span class="pi">-</span> <span class="s">tue</span>
+        <span class="pi">-</span> <span class="s">wed</span>
+        <span class="pi">-</span> <span class="s">thu</span>
+        <span class="pi">-</span> <span class="s">fri</span>
+  <span class="na">action</span><span class="pi">:</span>
+    <span class="pi">-</span> <span class="na">service</span><span class="pi">:</span> <span class="s">slack_presence_setter.set_presence</span>
+      <span class="na">data</span><span class="pi">:</span>
+        <span class="na">api_key</span><span class="pi">:</span> <span class="s2">"</span><span class="s">!secret</span><span class="nv"> </span><span class="s">api_key"</span>
+        <span class="na">status</span><span class="pi">:</span> <span class="s">here</span>
+  <span class="na">mode</span><span class="pi">:</span> <span class="s">single</span>
+<span class="pi">-</span> <span class="na">id</span><span class="pi">:</span> <span class="s2">"</span><span class="s">set_slack_status_inactive"</span>
+  <span class="na">alias</span><span class="pi">:</span> <span class="s">Slack Inactive</span>
+  <span class="na">description</span><span class="pi">:</span> <span class="s2">"</span><span class="s">"</span>
+  <span class="na">trigger</span><span class="pi">:</span>
+    <span class="pi">-</span> <span class="na">platform</span><span class="pi">:</span> <span class="s">time_pattern</span>
+      <span class="na">hours</span><span class="pi">:</span> <span class="m">17</span>
+      <span class="na">minutes</span><span class="pi">:</span> <span class="s2">"</span><span class="s">55"</span>
+      <span class="na">seconds</span><span class="pi">:</span> <span class="s2">"</span><span class="s">00"</span>
+  <span class="na">condition</span><span class="pi">:</span>
+    <span class="pi">-</span> <span class="na">condition</span><span class="pi">:</span> <span class="s">time</span>
+      <span class="na">before</span><span class="pi">:</span> <span class="s">18:00:00</span>
+      <span class="na">after</span><span class="pi">:</span> <span class="s">17:00:00</span>
+      <span class="na">weekday</span><span class="pi">:</span>
+        <span class="pi">-</span> <span class="s">mon</span>
+        <span class="pi">-</span> <span class="s">tue</span>
+        <span class="pi">-</span> <span class="s">wed</span>
+        <span class="pi">-</span> <span class="s">thu</span>
+        <span class="pi">-</span> <span class="s">fri</span>
+  <span class="na">action</span><span class="pi">:</span>
+    <span class="pi">-</span> <span class="na">service</span><span class="pi">:</span> <span class="s">slack_presence_setter.set_presence</span>
+      <span class="na">data</span><span class="pi">:</span>
+        <span class="na">api_key</span><span class="pi">:</span> <span class="s2">"</span><span class="s">!secret</span><span class="nv"> </span><span class="s">api_key"</span>
+        <span class="na">status</span><span class="pi">:</span> <span class="s">away</span>
+  <span class="na">mode</span><span class="pi">:</span> <span class="s">single</span>
+</code></pre></div></div>
+
+<p>This runs at <code class="language-plaintext highlighter-rouge">08:55</code> to set the status to active and <code class="language-plaintext highlighter-rouge">17:55</code> to set the status to inactive and disable notifications. This happens Monday to Friday.
+One thing you might notice is the <code class="language-plaintext highlighter-rouge">"!secret api_key"</code> - this is telling Home Assistant to pull the <code class="language-plaintext highlighter-rouge">api_key</code> I’ve pasted into <code class="language-plaintext highlighter-rouge">secrets.yaml</code> in the root of the home assistant config folder.</p>
+
+<h2 id="wrap-up">Wrap Up</h2>
+
+<p>Now, at 8:55 and 17:55, my Slack status is set to active and inactive respectively. I’ve also set up a notification to tell me when the status is changed so I know it’s working.</p>
+
+</div>
+
+            </div>
+        </main>
+    </div>
+
+    <footer class="wrapper-footer">
+        <div class="footer">
+    <span class="footer-text float-left">This work is licensed under <a rel="license" href="https://www.gnu.org/licenses/gpl-3.0.en.html" target="_blank">GPLv3</a></span>
+    <span class="footer-text float-right">
+    Site Updated: 2023-12-01  (<a href="/feed.xml" target="_blank">RSS</a>)
+  </span>
+</div>
+    </footer>
+</body>
+</html>

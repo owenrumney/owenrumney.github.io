@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<!-- Begin Jekyll SEO tag v2.6.1 -->
+<title>Introducing gitsearch-cli | Owen Rumney</title>
+<meta name="generator" content="Jekyll v4.2.1" />
+<meta property="og:title" content="Introducing gitsearch-cli" />
+<meta name="author" content="Owen Rumney" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="Description of a tool I’ve written that can be used to find github projects from the command line" />
+<meta property="og:description" content="Description of a tool I’ve written that can be used to find github projects from the command line" />
+<link rel="canonical" href="https://www.owenrumney.co.uk/gitsearch-cli/" />
+<meta property="og:url" content="https://www.owenrumney.co.uk/gitsearch-cli/" />
+<meta property="og:site_name" content="Owen Rumney" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2018-08-02T00:00:00+00:00" />
+<script type="application/ld+json">
+{"dateModified":"2018-08-02T00:00:00+00:00","datePublished":"2018-08-02T00:00:00+00:00","author":{"@type":"Person","name":"Owen Rumney"},"description":"Description of a tool I’ve written that can be used to find github projects from the command line","mainEntityOfPage":{"@type":"WebPage","@id":"https://www.owenrumney.co.uk/gitsearch-cli/"},"url":"https://www.owenrumney.co.uk/gitsearch-cli/","@type":"BlogPosting","headline":"Introducing gitsearch-cli","@context":"https://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+
+
+<meta name="keywords" content="python,git,programming" />
+
+<link rel="shortcut icon" href="/favicon.ico" />
+<link rel="apple-touch-icon" href="/favicon.ico"/>
+<link rel="stylesheet" type="text/css" href="/assets/css/styles.css" />
+<link rel="stylesheet" type="text/css" href="/assets/css/prism.css" />
+<script src="/assets/js/prism.js"></script>
+
+
+
+</head>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-TLCVNKXMFJ"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-TLCVNKXMFJ');
+</script>
+
+<body>
+    <div class="wrapper">
+        <header class="wrapper-header">
+            <div class="header">
+  <nav class="float-right">
+  
+  <a href="https://github.com/owenrumney" target="_blank"
+    ><img
+      src="/assets/images/github.svg"
+      style="color: white; display: inline-block"
+      height="30px"
+      alt="GitHub"
+  /></a>
+  
+  <a href="https://linkedin.com/in/owenrumney" target="_blank"
+    ><img
+      src="/assets/images/linkedin.svg"
+      style="color: white; display: inline-block"
+      height="30px"
+      alt="LinkedIn"
+  /></a>
+  
+  <a href="https://cv.owenrumney.co.uk" target="_blank"
+    ><img
+      src="/assets/images/resume.svg"
+      style="color: white; display: inline-block"
+      height="32px"
+      alt="Resume"
+  /></a>
+  
+</nav>
+
+  <a href="https://www.owenrumney.co.uk" target="_blank"><h1>Owen Rumney</h1></a>
+  <br />
+  <h5><i>Software Engineer</i></h5>
+  <br />
+
+  <hr />
+</div>
+
+        </header>
+
+        <main class="wrapper-main">
+            <div class="main-content">
+            <div class="post-info">
+    <h2>Introducing gitsearch-cli</h2>
+    <p>02 Aug 2018 - Owen Rumney</p>
+</div>
+
+<div class="post-content">
+<p>The first version of gitsearch-cli is now available. This command line interface allows you to search github repositories and users using keywords and (currently) a handful of additional criteria.</p>
+
+<h2 id="installation">Installation</h2>
+<p>To install git search you can use <code class="language-plaintext highlighter-rouge">pip3</code> with the following command;</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>pip3 <span class="nb">install </span>gitsearch-cli
+</code></pre></div></div>
+
+<h2 id="usage">Usage</h2>
+<p>By default the search will be scoped to look in repositories, however you can change the scope to look specifically for users.</p>
+
+<p>For additional help, just use;</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>git-search <span class="nt">--help</span>
+</code></pre></div></div>
+
+<h3 id="searching-for-users">Searching for Users</h3>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>git-search <span class="nt">--scope</span><span class="o">=</span><span class="nb">users </span>owen rumney
+
+or
+
+git-search <span class="nt">--scope</span><span class="o">=</span><span class="nb">users </span>owenrumney
+</code></pre></div></div>
+
+<p>This will yield the following results;</p>
+
+<table>
+  <thead>
+    <tr>
+      <th style="text-align: left">username</th>
+      <th style="text-align: left">url</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="text-align: left">owenrumney</td>
+      <td style="text-align: left">https://github.com/owenrumney</td>
+    </tr>
+  </tbody>
+</table>
+
+<h3 id="searching-for-repositories">Searching for repositories</h3>
+<p>When searching for repositories you can create a general search by keyword or focus the search by including the language and/or user.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>git-search <span class="nt">-l</span><span class="o">=</span>scala <span class="nt">-u</span><span class="o">=</span>apache spark
+</code></pre></div></div>
+<p>This will give the following result;</p>
+
+<table>
+  <thead>
+    <tr>
+      <th style="text-align: left">name</th>
+      <th style="text-align: left">owner</th>
+      <th style="text-align: left">url</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="text-align: left">fluo-muchos</td>
+      <td style="text-align: left">apache</td>
+      <td style="text-align: left">https://github.com/apache/fluo-muchos</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">predictionio</td>
+      <td style="text-align: left">apache</td>
+      <td style="text-align: left">https://github.com/apache/predictionio</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">spark</td>
+      <td style="text-align: left">apache</td>
+      <td style="text-align: left">https://github.com/apache/spark</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">spark-website</td>
+      <td style="text-align: left">apache</td>
+      <td style="text-align: left">https://github.com/apache/spark-website</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>If you want to only return results where the keyword is in the name, you can use the <code class="language-plaintext highlighter-rouge">--nameonly</code> flag</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>git-search <span class="nt">-l</span><span class="o">=</span>scala <span class="nt">-u</span><span class="o">=</span>apache spark <span class="nt">--nameonly</span>
+</code></pre></div></div>
+<p>This will give the following result;</p>
+
+<table>
+  <thead>
+    <tr>
+      <th style="text-align: left">name</th>
+      <th style="text-align: left">owner</th>
+      <th style="text-align: left">url</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="text-align: left">spark</td>
+      <td style="text-align: left">apache</td>
+      <td style="text-align: left">https://github.com/apache/spark</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">spark-website</td>
+      <td style="text-align: left">apache</td>
+      <td style="text-align: left">https://github.com/apache/spark-website</td>
+    </tr>
+  </tbody>
+</table>
+
+<h2 id="todo">TODO</h2>
+<ul class="task-list">
+  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" />Add date based options for search criteria</li>
+  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" />Refactor the code to be more pythonic</li>
+</ul>
+
+</div>
+
+            </div>
+        </main>
+    </div>
+
+    <footer class="wrapper-footer">
+        <div class="footer">
+    <span class="footer-text float-left">This work is licensed under <a rel="license" href="https://www.gnu.org/licenses/gpl-3.0.en.html" target="_blank">GPLv3</a></span>
+    <span class="footer-text float-right">
+    Site Updated: 2023-12-01  (<a href="/feed.xml" target="_blank">RSS</a>)
+  </span>
+</div>
+    </footer>
+</body>
+</html>

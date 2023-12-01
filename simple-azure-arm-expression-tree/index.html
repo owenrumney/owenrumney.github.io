@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<!-- Begin Jekyll SEO tag v2.6.1 -->
+<title>Parsing Azure ARM functions in Go | Owen Rumney</title>
+<meta name="generator" content="Jekyll v4.2.1" />
+<meta property="og:title" content="Parsing Azure ARM functions in Go" />
+<meta name="author" content="Owen Rumney" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="A simplified guide to parsing function expressions in Azure ARM templates" />
+<meta property="og:description" content="A simplified guide to parsing function expressions in Azure ARM templates" />
+<link rel="canonical" href="https://www.owenrumney.co.uk/simple-azure-arm-expression-tree/" />
+<meta property="og:url" content="https://www.owenrumney.co.uk/simple-azure-arm-expression-tree/" />
+<meta property="og:site_name" content="Owen Rumney" />
+<meta property="og:image" content="https://www.owenrumney.co.uk/assets/img/owen.png" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2022-09-23T00:00:00+00:00" />
+<script type="application/ld+json">
+{"dateModified":"2022-09-23T00:00:00+00:00","datePublished":"2022-09-23T00:00:00+00:00","author":{"@type":"Person","name":"Owen Rumney"},"description":"A simplified guide to parsing function expressions in Azure ARM templates","mainEntityOfPage":{"@type":"WebPage","@id":"https://www.owenrumney.co.uk/simple-azure-arm-expression-tree/"},"url":"https://www.owenrumney.co.uk/simple-azure-arm-expression-tree/","@type":"BlogPosting","image":"https://www.owenrumney.co.uk/assets/img/owen.png","headline":"Parsing Azure ARM functions in Go","@context":"https://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+
+
+<meta name="keywords" content="go,programming" />
+
+<link rel="shortcut icon" href="/favicon.ico" />
+<link rel="apple-touch-icon" href="/favicon.ico"/>
+<link rel="stylesheet" type="text/css" href="/assets/css/styles.css" />
+<link rel="stylesheet" type="text/css" href="/assets/css/prism.css" />
+<script src="/assets/js/prism.js"></script>
+
+
+
+</head>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-TLCVNKXMFJ"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-TLCVNKXMFJ');
+</script>
+
+<body>
+    <div class="wrapper">
+        <header class="wrapper-header">
+            <div class="header">
+  <nav class="float-right">
+  
+  <a href="https://github.com/owenrumney" target="_blank"
+    ><img
+      src="/assets/images/github.svg"
+      style="color: white; display: inline-block"
+      height="30px"
+      alt="GitHub"
+  /></a>
+  
+  <a href="https://linkedin.com/in/owenrumney" target="_blank"
+    ><img
+      src="/assets/images/linkedin.svg"
+      style="color: white; display: inline-block"
+      height="30px"
+      alt="LinkedIn"
+  /></a>
+  
+  <a href="https://cv.owenrumney.co.uk" target="_blank"
+    ><img
+      src="/assets/images/resume.svg"
+      style="color: white; display: inline-block"
+      height="32px"
+      alt="Resume"
+  /></a>
+  
+</nav>
+
+  <a href="https://www.owenrumney.co.uk" target="_blank"><h1>Owen Rumney</h1></a>
+  <br />
+  <h5><i>Software Engineer</i></h5>
+  <br />
+
+  <hr />
+</div>
+
+        </header>
+
+        <main class="wrapper-main">
+            <div class="main-content">
+            <div class="post-info">
+    <h2>Parsing Azure ARM functions in Go</h2>
+    <p>23 Sep 2022 - Owen Rumney</p>
+</div>
+
+<div class="post-content">
+<h3 id="an-introduction">An introduction</h3>
+
+<p>For those who don’t know, I’m one of the original creators of <a href="https://tfsec.dev" target="\_blank">tfsec</a> and I now work on <a href="https://trivy.dev" target="\_blank">Trivy</a> as an open source engineer at <a href="https://aquasec.com" target="\_blank">Aqua</a>. Together with <a href="https://twitter.com/liam_galvin" target="\_blank">@liam_galvin</a> I am working on adding scanning support for <code class="language-plaintext highlighter-rouge">Azure ARM Templates</code> and ultimately <code class="language-plaintext highlighter-rouge">bicep</code> to Trivy.</p>
+
+<p><code class="language-plaintext highlighter-rouge">Azure ARM Templates</code> are written in JSON and define the infrastructure that is going to be applied when the template is applied to the Azure resource group. In the same way we scan Terraform and CloudFormation, we need to parse the template into our common objects from <a href="https://github.com/aquasecurity/defsec" target="\_blank">defsec</a>; these abstractions allow the same checks to be run on the object regardless of which language was used to define it.</p>
+
+<h4 id="an-example">An example</h4>
+
+<p>Take for example an <code class="language-plaintext highlighter-rouge">S3 Bucket</code>, the bucket has the concept of encryption and it is either encrypted or not so the common object might look something like;</p>
+
+<div class="language-go highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">type</span> <span class="n">Bucket</span> <span class="k">struct</span> <span class="p">{</span>
+    <span class="n">Encrypted</span>      <span class="kt">bool</span>
+    <span class="n">Versioned</span>      <span class="kt">bool</span>
+    <span class="n">LoggingEnabled</span> <span class="kt">bool</span>
+    <span class="c">// ... more attributes</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>It doesn’t matter whether the source that was used to populate the object was Terraform;</p>
+
+<div class="language-hcl highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nx">resource</span> <span class="s2">"aws_s3_bucket_server_side_encryption_configuration"</span> <span class="s2">"example-bucket-encryption"</span> <span class="p">{</span>
+   <span class="nx">bucket</span> <span class="p">=</span> <span class="nx">aws_s3_bucket</span><span class="err">.</span><span class="nx">example</span><span class="err">-</span><span class="nx">bucket</span><span class="err">.</span><span class="nx">id</span>
+
+   <span class="nx">rule</span> <span class="p">{</span>
+     <span class="nx">apply_server_side_encryption_by_default</span> <span class="p">{</span>
+       <span class="nx">kms_master_key_id</span> <span class="p">=</span> <span class="nx">aws_kms_key</span><span class="err">.</span><span class="nx">mykey</span><span class="err">.</span><span class="nx">arn</span>
+       <span class="nx">sse_algorithm</span>     <span class="p">=</span> <span class="s2">"aws:kms"</span>
+     <span class="p">}</span>
+   <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>or CloudFormation</p>
+
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">Resources</span><span class="pi">:</span>
+  <span class="na">EncryptedBucket</span><span class="pi">:</span>
+    <span class="na">Type</span><span class="pi">:</span> <span class="s">AWS::S3::Bucket</span>
+    <span class="na">Properties</span><span class="pi">:</span>
+      <span class="na">BucketEncryption</span><span class="pi">:</span>
+        <span class="na">ServerSideEncryptionConfiguration</span><span class="pi">:</span>
+          <span class="pi">-</span> <span class="na">BucketKeyEnabled</span><span class="pi">:</span> <span class="no">true</span>
+            <span class="na">ServerSideEncryptionByDefault</span><span class="pi">:</span>
+              <span class="na">SSEAlgorithm</span><span class="pi">:</span> <span class="s">AES256</span>
+</code></pre></div></div>
+
+<p>The end result is the same and the check will work and the check can be applied;</p>
+
+<div class="language-go highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">if</span> <span class="n">bucket</span><span class="o">.</span><span class="n">Encrypted</span><span class="o">.</span><span class="n">IsFalse</span><span class="p">()</span> <span class="p">{</span>
+	<span class="n">results</span><span class="o">.</span><span class="n">Add</span><span class="p">(</span><span class="o">&amp;</span><span class="n">bucket</span><span class="p">,</span> <span class="s">"Bucket does not have encryption enabled"</span><span class="p">)</span>
+<span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+	<span class="n">results</span><span class="o">.</span><span class="n">AddPassed</span><span class="p">(</span><span class="o">&amp;</span><span class="n">bucket</span><span class="p">,</span> <span class="s">"Bucket encryption correctly configured"</span><span class="p">)</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<h3 id="azure-arm-template">Azure ARM Template</h3>
+
+<p>Back to the Azure ARM template. Functions can be used in the Template for dynamic values - take for example this PostgreSQL Configuration option which uses the <code class="language-plaintext highlighter-rouge">format</code> function</p>
+
+<div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">{</span><span class="w">
+  </span><span class="nl">"type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Microsoft.DBforPostgreSQL/servers/configurations"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"apiVersion"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2017-12-01"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"[format('{0}/{1}', 'myPostgreSQLServer', 'connection_throttling')]"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"properties"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+    </span><span class="nl">"value"</span><span class="p">:</span><span class="w"> </span><span class="s2">"OFF"</span><span class="w">
+  </span><span class="p">},</span><span class="w">
+  </span><span class="nl">"dependsOn"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+    </span><span class="s2">"[resourceId('Microsoft.DBforPostgreSQL/servers', 'myPostgreSQLServer')]"</span><span class="w">
+  </span><span class="p">]</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div></div>
+
+<p>The name uses the <code class="language-plaintext highlighter-rouge">format</code> function to join two values together with a <code class="language-plaintext highlighter-rouge">/</code>. When parsing this block of template code, we need to be able to resolve the intent of the function so we can know at scan time the <code class="language-plaintext highlighter-rouge">name</code> for the <code class="language-plaintext highlighter-rouge">configuration</code> should be <code class="language-plaintext highlighter-rouge">myPostgreSQLServer/connection_throttling</code> to ensure it is applied to the correct parent resource.</p>
+
+<h3 id="parsing-the-functions">Parsing the Functions</h3>
+
+<p>Finally, we reach the point of the blog post. How do we write a parser/evaluator for the function.</p>
+
+<blockquote>
+  <p>This code has been simplified in an attempt to keep it easy to follow</p>
+</blockquote>
+
+<p>We need a number of parts;</p>
+
+<h4 id="a-lexer">A Lexer</h4>
+
+<p>The lexer is going to break the function into its constituent parts - lets call these <code class="language-plaintext highlighter-rouge">tokens</code>. Using our example from before;</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>format('{0]{1}', 'myPostgreSQLServer', 'connection_throttling')
+</code></pre></div></div>
+
+<p>this is made up of the following tokens;</p>
+
+<table>
+  <thead>
+    <tr>
+      <th style="text-align: center">part</th>
+      <th>Token Type</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="text-align: center">format</td>
+      <td>TokenName</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">(</td>
+      <td>TokenOpenParen</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">‘{0}/{1}’</td>
+      <td>TokenLiteralString</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">,</td>
+      <td>TokenComma</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">‘myPostgreSQLServer’</td>
+      <td>TokenLiteralString</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">,</td>
+      <td>TokenComma</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">‘connection_throttling’</td>
+      <td>TokenLiteralString</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">)</td>
+      <td>TokenCloseParen</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>The lexer will read through the source string looking at each <code class="language-plaintext highlighter-rouge">Rune</code> and break down into logical tokens - core of the lexer just a loop over the runes</p>
+
+<div class="language-go highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">func</span> <span class="p">(</span><span class="n">l</span> <span class="o">*</span><span class="n">lexer</span><span class="p">)</span> <span class="n">Lex</span><span class="p">()</span> <span class="p">([]</span><span class="n">Token</span><span class="p">,</span> <span class="kt">error</span><span class="p">)</span> <span class="p">{</span>
+	<span class="k">var</span> <span class="n">tokens</span> <span class="p">[]</span><span class="n">Token</span>
+
+	<span class="k">for</span> <span class="p">{</span>
+		<span class="n">r</span><span class="p">,</span> <span class="n">err</span> <span class="o">:=</span> <span class="n">l</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+		<span class="k">if</span> <span class="n">err</span> <span class="o">!=</span> <span class="no">nil</span> <span class="p">{</span>
+			<span class="k">break</span>
+		<span class="p">}</span>
+
+		<span class="k">switch</span> <span class="n">r</span> <span class="p">{</span>
+		<span class="k">case</span> <span class="sc">' '</span><span class="p">,</span> <span class="sc">'\t'</span><span class="p">,</span> <span class="sc">'\r'</span><span class="o">:</span>
+			<span class="k">continue</span>
+		<span class="k">case</span> <span class="sc">'\n'</span><span class="o">:</span>
+			<span class="n">tokens</span> <span class="o">=</span> <span class="nb">append</span><span class="p">(</span><span class="n">tokens</span><span class="p">,</span> <span class="n">Token</span><span class="p">{</span><span class="n">Type</span><span class="o">:</span> <span class="n">TokenNewLine</span><span class="p">})</span>
+		<span class="k">case</span> <span class="sc">'('</span><span class="o">:</span>
+			<span class="n">tokens</span> <span class="o">=</span> <span class="nb">append</span><span class="p">(</span><span class="n">tokens</span><span class="p">,</span> <span class="n">Token</span><span class="p">{</span><span class="n">Type</span><span class="o">:</span> <span class="n">TokenOpenParen</span><span class="p">})</span>
+		<span class="k">case</span> <span class="sc">')'</span><span class="o">:</span>
+			<span class="n">tokens</span> <span class="o">=</span> <span class="nb">append</span><span class="p">(</span><span class="n">tokens</span><span class="p">,</span> <span class="n">Token</span><span class="p">{</span><span class="n">Type</span><span class="o">:</span> <span class="n">TokenCloseParen</span><span class="p">})</span>
+		<span class="k">case</span> <span class="sc">','</span><span class="o">:</span>
+			<span class="n">tokens</span> <span class="o">=</span> <span class="nb">append</span><span class="p">(</span><span class="n">tokens</span><span class="p">,</span> <span class="n">Token</span><span class="p">{</span><span class="n">Type</span><span class="o">:</span> <span class="n">TokenComma</span><span class="p">})</span>
+		<span class="k">case</span> <span class="sc">'.'</span><span class="o">:</span>
+			<span class="n">tokens</span> <span class="o">=</span> <span class="nb">append</span><span class="p">(</span><span class="n">tokens</span><span class="p">,</span> <span class="n">Token</span><span class="p">{</span><span class="n">Type</span><span class="o">:</span> <span class="n">TokenDot</span><span class="p">})</span>
+		<span class="k">case</span> <span class="sc">'"'</span><span class="p">,</span> <span class="sc">'\'</span><span class="err">'</span><span class="o">:</span>
+            <span class="c">// lex string keeps walking the runes till it finds a closing quote</span>
+			<span class="n">token</span><span class="p">,</span> <span class="n">err</span> <span class="o">:=</span> <span class="n">l</span><span class="o">.</span><span class="n">lexString</span><span class="p">(</span><span class="n">r</span><span class="p">)</span>
+			<span class="k">if</span> <span class="n">err</span> <span class="o">!=</span> <span class="no">nil</span> <span class="p">{</span>
+				<span class="k">return</span> <span class="no">nil</span><span class="p">,</span> <span class="n">fmt</span><span class="o">.</span><span class="n">Errorf</span><span class="p">(</span><span class="s">"string parse error: %w"</span><span class="p">,</span> <span class="n">err</span><span class="p">)</span>
+			<span class="p">}</span>
+			<span class="n">tokens</span> <span class="o">=</span> <span class="nb">append</span><span class="p">(</span><span class="n">tokens</span><span class="p">,</span> <span class="n">token</span><span class="p">)</span>
+		<span class="k">case</span> <span class="sc">'0'</span><span class="p">,</span> <span class="sc">'1'</span><span class="p">,</span> <span class="sc">'2'</span><span class="p">,</span> <span class="sc">'3'</span><span class="p">,</span> <span class="sc">'4'</span><span class="p">,</span> <span class="sc">'5'</span><span class="p">,</span> <span class="sc">'6'</span><span class="p">,</span> <span class="sc">'7'</span><span class="p">,</span> <span class="sc">'8'</span><span class="p">,</span> <span class="sc">'9'</span><span class="o">:</span>
+			<span class="n">l</span><span class="o">.</span><span class="n">unread</span><span class="p">()</span>
+			<span class="n">token</span><span class="p">,</span> <span class="n">err</span> <span class="o">:=</span> <span class="n">l</span><span class="o">.</span><span class="n">lexNumber</span><span class="p">()</span>
+			<span class="k">if</span> <span class="n">err</span> <span class="o">!=</span> <span class="no">nil</span> <span class="p">{</span>
+				<span class="k">return</span> <span class="no">nil</span><span class="p">,</span> <span class="n">fmt</span><span class="o">.</span><span class="n">Errorf</span><span class="p">(</span><span class="s">"number parse error: %w"</span><span class="p">,</span> <span class="n">err</span><span class="p">)</span>
+			<span class="p">}</span>
+			<span class="n">tokens</span> <span class="o">=</span> <span class="nb">append</span><span class="p">(</span><span class="n">tokens</span><span class="p">,</span> <span class="n">token</span><span class="p">)</span>
+		<span class="k">default</span><span class="o">:</span>
+			<span class="n">l</span><span class="o">.</span><span class="n">unread</span><span class="p">()</span>
+            <span class="c">// continue until the rune is not a alpha character</span>
+			<span class="n">tokens</span> <span class="o">=</span> <span class="nb">append</span><span class="p">(</span><span class="n">tokens</span><span class="p">,</span> <span class="n">l</span><span class="o">.</span><span class="n">lexKeyword</span><span class="p">())</span>
+		<span class="p">}</span>
+	<span class="p">}</span>
+
+	<span class="k">return</span> <span class="n">tokens</span><span class="p">,</span> <span class="no">nil</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<h4 id="token-walker">Token Walker</h4>
+
+<p>We now have a bunch of tokens that we need to turn into an evaluated result. We need to be able to traverse the tokens, looking at what they are.</p>
+
+<div class="language-go highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">type</span> <span class="n">tokenWalker</span> <span class="k">struct</span> <span class="p">{</span>
+	<span class="n">tokens</span>          <span class="p">[]</span><span class="n">Token</span>
+	<span class="n">currentPosition</span> <span class="kt">int</span>
+<span class="p">}</span>
+
+<span class="k">func</span> <span class="n">newTokenWalker</span><span class="p">(</span><span class="n">tokens</span> <span class="p">[]</span><span class="n">Token</span><span class="p">)</span> <span class="o">*</span><span class="n">tokenWalker</span> <span class="p">{</span>
+	<span class="k">return</span> <span class="o">&amp;</span><span class="n">tokenWalker</span><span class="p">{</span>
+		<span class="n">tokens</span><span class="o">:</span>          <span class="n">tokens</span><span class="p">,</span>
+		<span class="n">currentPosition</span><span class="o">:</span> <span class="m">0</span><span class="p">,</span>
+	<span class="p">}</span>
+<span class="p">}</span>
+
+<span class="c">// see what the next token is going to be without popping</span>
+<span class="k">func</span> <span class="p">(</span><span class="n">t</span> <span class="o">*</span><span class="n">tokenWalker</span><span class="p">)</span> <span class="n">peek</span><span class="p">()</span> <span class="n">Token</span> <span class="p">{</span>
+	<span class="k">if</span> <span class="n">t</span><span class="o">.</span><span class="n">currentPosition</span> <span class="o">&gt;=</span> <span class="nb">len</span><span class="p">(</span><span class="n">t</span><span class="o">.</span><span class="n">tokens</span><span class="p">)</span> <span class="p">{</span>
+		<span class="k">return</span> <span class="n">Token</span><span class="p">{}</span>
+	<span class="p">}</span>
+	<span class="k">return</span> <span class="n">t</span><span class="o">.</span><span class="n">tokens</span><span class="p">[</span><span class="n">t</span><span class="o">.</span><span class="n">currentPosition</span><span class="p">]</span>
+<span class="p">}</span>
+
+<span class="k">func</span> <span class="p">(</span><span class="n">t</span> <span class="o">*</span><span class="n">tokenWalker</span><span class="p">)</span> <span class="n">hasNext</span><span class="p">()</span> <span class="kt">bool</span> <span class="p">{</span>
+	<span class="k">return</span> <span class="n">t</span><span class="o">.</span><span class="n">currentPosition</span><span class="o">+</span><span class="m">1</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">t</span><span class="o">.</span><span class="n">tokens</span><span class="p">)</span>
+<span class="p">}</span>
+
+<span class="c">// if pop has been called and we need to use the value we can</span>
+<span class="c">// unpop to step back to the previous position</span>
+<span class="k">func</span> <span class="p">(</span><span class="n">t</span> <span class="o">*</span><span class="n">tokenWalker</span><span class="p">)</span> <span class="n">unPop</span><span class="p">()</span> <span class="p">{</span>
+	<span class="k">if</span> <span class="n">t</span><span class="o">.</span><span class="n">currentPosition</span> <span class="o">&gt;</span> <span class="m">0</span> <span class="p">{</span>
+		<span class="n">t</span><span class="o">.</span><span class="n">currentPosition</span><span class="o">--</span>
+	<span class="p">}</span>
+<span class="p">}</span>
+
+<span class="k">func</span> <span class="p">(</span><span class="n">t</span> <span class="o">*</span><span class="n">tokenWalker</span><span class="p">)</span> <span class="n">pop</span><span class="p">()</span> <span class="o">*</span><span class="n">Token</span> <span class="p">{</span>
+	<span class="k">if</span> <span class="o">!</span><span class="n">t</span><span class="o">.</span><span class="n">hasNext</span><span class="p">()</span> <span class="p">{</span>
+		<span class="k">return</span> <span class="no">nil</span>
+	<span class="p">}</span>
+
+	<span class="n">token</span> <span class="o">:=</span> <span class="n">t</span><span class="o">.</span><span class="n">tokens</span><span class="p">[</span><span class="n">t</span><span class="o">.</span><span class="n">currentPosition</span><span class="p">]</span>
+	<span class="n">t</span><span class="o">.</span><span class="n">currentPosition</span><span class="o">++</span>
+	<span class="k">return</span> <span class="o">&amp;</span><span class="n">token</span>
+<span class="p">}</span>
+
+</code></pre></div></div>
+
+<p>This block of code holds the tokens and allows us to move back and forward on the them, looking at whats coming.</p>
+
+<h4 id="expression-tree">Expression Tree</h4>
+
+<p>Now we are able to walk the tokens, we need to create the expression tree.</p>
+
+<div class="language-go highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">func</span> <span class="n">NewExpressionTree</span><span class="p">(</span><span class="n">code</span> <span class="kt">string</span><span class="p">)</span> <span class="p">(</span><span class="n">Node</span><span class="p">,</span> <span class="kt">error</span><span class="p">)</span> <span class="p">{</span>
+    <span class="c">// get the tokens using the lexer above</span>
+	<span class="n">tokens</span><span class="p">,</span> <span class="n">err</span> <span class="o">:=</span> <span class="n">lex</span><span class="p">(</span><span class="n">code</span><span class="p">)</span>
+	<span class="k">if</span> <span class="n">err</span> <span class="o">!=</span> <span class="no">nil</span> <span class="p">{</span>
+		<span class="k">return</span> <span class="no">nil</span><span class="p">,</span> <span class="n">err</span>
+	<span class="p">}</span>
+
+	<span class="c">// create a walker for the nodes</span>
+	<span class="n">tw</span> <span class="o">:=</span> <span class="n">newTokenWalker</span><span class="p">(</span><span class="n">tokens</span><span class="p">)</span>
+
+	<span class="c">// generate the root function</span>
+	<span class="k">return</span> <span class="n">newFunctionNode</span><span class="p">(</span><span class="n">tw</span><span class="p">),</span> <span class="no">nil</span>
+<span class="p">}</span>
+
+<span class="k">func</span> <span class="n">newFunctionNode</span><span class="p">(</span><span class="n">tw</span> <span class="o">*</span><span class="n">tokenWalker</span><span class="p">)</span> <span class="n">Node</span> <span class="p">{</span>
+	<span class="n">funcNode</span> <span class="o">:=</span> <span class="o">&amp;</span><span class="n">expression</span><span class="p">{</span>
+		<span class="n">name</span><span class="o">:</span> <span class="n">tw</span><span class="o">.</span><span class="n">pop</span><span class="p">()</span><span class="o">.</span><span class="n">Data</span><span class="o">.</span><span class="p">(</span><span class="kt">string</span><span class="p">),</span>
+	<span class="p">}</span>
+
+	<span class="k">for</span> <span class="n">tw</span><span class="o">.</span><span class="n">hasNext</span><span class="p">()</span> <span class="p">{</span>
+		<span class="n">token</span> <span class="o">:=</span> <span class="n">tw</span><span class="o">.</span><span class="n">pop</span><span class="p">()</span>
+		<span class="k">if</span> <span class="n">token</span> <span class="o">==</span> <span class="no">nil</span> <span class="p">{</span>
+			<span class="k">break</span>
+		<span class="p">}</span>
+
+        <span class="c">// depending on the TokenType we deal with each token differently</span>
+		<span class="k">switch</span> <span class="n">token</span><span class="o">.</span><span class="n">Type</span> <span class="p">{</span>
+		<span class="k">case</span> <span class="n">TokenCloseParen</span><span class="o">:</span>
+			<span class="k">return</span> <span class="n">funcNode</span>
+
+		<span class="k">case</span> <span class="n">TokenName</span><span class="o">:</span>
+			<span class="k">if</span> <span class="n">tw</span><span class="o">.</span><span class="n">peek</span><span class="p">()</span><span class="o">.</span><span class="n">Type</span> <span class="o">==</span> <span class="n">TokenOpenParen</span> <span class="p">{</span>
+                <span class="c">// this is a function so we need to go back a step and call the newFunctionNode</span>
+                <span class="c">// again to create the nested function tree</span>
+				<span class="n">tw</span><span class="o">.</span><span class="n">unPop</span><span class="p">()</span>
+				<span class="n">funcNode</span><span class="o">.</span><span class="n">args</span> <span class="o">=</span> <span class="nb">append</span><span class="p">(</span><span class="n">funcNode</span><span class="o">.</span><span class="n">args</span><span class="p">,</span> <span class="n">newFunctionNode</span><span class="p">(</span><span class="n">tw</span><span class="p">))</span>
+			<span class="p">}</span>
+		<span class="k">case</span> <span class="n">TokenLiteralString</span><span class="p">,</span> <span class="n">TokenLiteralInteger</span><span class="p">,</span> <span class="n">TokenLiteralFloat</span><span class="o">:</span>
+			<span class="n">funcNode</span><span class="o">.</span><span class="n">args</span> <span class="o">=</span> <span class="nb">append</span><span class="p">(</span><span class="n">funcNode</span><span class="o">.</span><span class="n">args</span><span class="p">,</span> <span class="n">expressionValue</span><span class="p">{</span><span class="n">token</span><span class="o">.</span><span class="n">Data</span><span class="p">})</span>
+		<span class="p">}</span>
+
+	<span class="p">}</span>
+	<span class="k">return</span> <span class="n">funcNode</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>This block takes the <code class="language-plaintext highlighter-rouge">code</code> - in this case the string with the function in it. The <code class="language-plaintext highlighter-rouge">code</code> is put through the lexer and we get the tokens that make it (see the table above for the tokens we have).</p>
+
+<p>The walker is then stepped through looking at each token to see what type it is - if its a name followed by an open bracket we can say its the start of a function and we will stop at the next closing bracket and that is the bounds of the function. Anything in between that is a literal value is treated as a verbatim argument.</p>
+
+<p>Our expression tree uses a <code class="language-plaintext highlighter-rouge">Node</code> interface with two types <code class="language-plaintext highlighter-rouge">expression</code> and <code class="language-plaintext highlighter-rouge">expressionValue</code> implementing the interface. The root <code class="language-plaintext highlighter-rouge">Node</code> will have each of its arguments <code class="language-plaintext highlighter-rouge">Evaluate</code> function called, if it is a literal value that will be returned verbatim, if it is an expression, it will be evaluated first; this allows us to nest the function calls.</p>
+
+<div class="language-go highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">type</span> <span class="n">Node</span> <span class="k">interface</span> <span class="p">{</span>
+	<span class="n">Evaluate</span><span class="p">()</span> <span class="k">interface</span><span class="p">{}</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>The <code class="language-plaintext highlighter-rouge">Node</code> interface has a single function called <code class="language-plaintext highlighter-rouge">Evaluate</code> to return any value.</p>
+
+<p>There are two types going to be used, both of these implement the interface.</p>
+
+<div class="language-go highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">type</span> <span class="n">expression</span> <span class="k">struct</span> <span class="p">{</span>
+	<span class="n">name</span> <span class="kt">string</span>
+	<span class="n">args</span> <span class="p">[]</span><span class="n">Node</span>
+<span class="p">}</span>
+
+<span class="k">type</span> <span class="n">expressionValue</span> <span class="k">struct</span> <span class="p">{</span>
+	<span class="n">val</span> <span class="k">interface</span><span class="p">{}</span>
+<span class="p">}</span>
+
+<span class="c">// for each of the arguments we need to get the evaluated value</span>
+<span class="c">// either a verbatim value or the function result</span>
+<span class="k">func</span> <span class="p">(</span><span class="n">f</span> <span class="n">expression</span><span class="p">)</span> <span class="n">Evaluate</span><span class="p">()</span> <span class="k">interface</span><span class="p">{}</span> <span class="p">{</span>
+	<span class="n">args</span> <span class="o">:=</span> <span class="nb">make</span><span class="p">([]</span><span class="k">interface</span><span class="p">{},</span> <span class="nb">len</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">args</span><span class="p">))</span>
+	<span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">arg</span> <span class="o">:=</span> <span class="k">range</span> <span class="n">f</span><span class="o">.</span><span class="n">args</span> <span class="p">{</span>
+		<span class="n">args</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">arg</span><span class="o">.</span><span class="n">Evaluate</span><span class="p">()</span>
+	<span class="p">}</span>
+
+	<span class="k">return</span> <span class="n">functions</span><span class="p">[</span><span class="n">name</span><span class="p">](</span><span class="n">args</span><span class="o">...</span><span class="p">)</span>
+<span class="p">}</span>
+
+
+<span class="c">// if the expressionValue arg is a nested expression, we</span>
+<span class="c">// need to evaluate that first</span>
+<span class="k">func</span> <span class="p">(</span><span class="n">e</span> <span class="n">expressionValue</span><span class="p">)</span> <span class="n">Evaluate</span><span class="p">()</span> <span class="k">interface</span><span class="p">{}</span> <span class="p">{</span>
+	<span class="k">if</span> <span class="n">f</span><span class="p">,</span> <span class="n">ok</span> <span class="o">:=</span> <span class="n">e</span><span class="o">.</span><span class="n">val</span><span class="o">.</span><span class="p">(</span><span class="n">expression</span><span class="p">);</span> <span class="n">ok</span> <span class="p">{</span>
+		<span class="k">return</span> <span class="n">f</span><span class="o">.</span><span class="n">Evaluate</span><span class="p">()</span>
+	<span class="p">}</span>
+	<span class="k">return</span> <span class="n">e</span><span class="o">.</span><span class="n">val</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>The last part of this is the call to <code class="language-plaintext highlighter-rouge">functions[name](args...)</code> which executes the function;</p>
+
+<div class="language-go highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">var</span> <span class="n">functions</span> <span class="o">=</span> <span class="k">map</span><span class="p">[</span><span class="kt">string</span><span class="p">]</span><span class="k">func</span><span class="p">(</span><span class="n">args</span> <span class="o">...</span><span class="k">interface</span><span class="p">{})</span> <span class="k">interface</span><span class="p">{}</span> <span class="p">{</span>
+    <span class="s">"format"</span><span class="o">:</span> <span class="n">Format</span>
+<span class="p">}</span>
+
+<span class="c">// The functions all have the same structure of accepting variadic options</span>
+<span class="c">// and returning an interface{}</span>
+<span class="k">func</span> <span class="n">Format</span><span class="p">(</span><span class="n">args</span> <span class="o">...</span><span class="k">interface</span><span class="p">{})</span> <span class="k">interface</span><span class="p">{}</span> <span class="p">{</span>
+	<span class="n">formatter</span> <span class="o">:=</span> <span class="n">generateFormatterString</span><span class="p">(</span><span class="n">args</span><span class="o">...</span><span class="p">)</span>
+
+	<span class="k">return</span> <span class="n">fmt</span><span class="o">.</span><span class="n">Sprintf</span><span class="p">(</span><span class="n">formatter</span><span class="p">,</span> <span class="n">args</span><span class="p">[</span><span class="m">1</span><span class="o">:</span><span class="p">]</span><span class="o">...</span><span class="p">)</span>
+<span class="p">}</span>
+
+<span class="c">// the formatter string has the wrong style placeholders, so using the</span>
+<span class="c">// args we can switch to the correct ones</span>
+<span class="k">func</span> <span class="n">generateFormatterString</span><span class="p">(</span><span class="n">args</span> <span class="o">...</span><span class="k">interface</span><span class="p">{})</span> <span class="kt">string</span> <span class="p">{</span>
+	<span class="n">formatter</span><span class="p">,</span> <span class="n">ok</span> <span class="o">:=</span> <span class="n">args</span><span class="p">[</span><span class="m">0</span><span class="p">]</span><span class="o">.</span><span class="p">(</span><span class="kt">string</span><span class="p">)</span>
+	<span class="k">if</span> <span class="o">!</span><span class="n">ok</span> <span class="p">{</span>
+		<span class="k">return</span> <span class="s">""</span>
+	<span class="p">}</span>
+	<span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">arg</span> <span class="o">:=</span> <span class="k">range</span> <span class="n">args</span><span class="p">[</span><span class="m">1</span><span class="o">:</span><span class="p">]</span> <span class="p">{</span>
+		<span class="k">switch</span> <span class="n">arg</span><span class="o">.</span><span class="p">(</span><span class="k">type</span><span class="p">)</span> <span class="p">{</span>
+		<span class="k">case</span> <span class="kt">string</span><span class="o">:</span>
+			<span class="n">formatter</span> <span class="o">=</span> <span class="n">strings</span><span class="o">.</span><span class="n">ReplaceAll</span><span class="p">(</span><span class="n">formatter</span><span class="p">,</span><span class="s">"{"</span><span class="o">+</span><span class="n">i</span><span class="o">+</span><span class="s">"}"</span><span class="p">,</span> <span class="s">"%s"</span><span class="p">)</span>
+		<span class="k">case</span> <span class="kt">int</span><span class="p">,</span> <span class="kt">int32</span><span class="p">,</span> <span class="kt">int64</span><span class="p">,</span> <span class="kt">uint</span><span class="p">,</span> <span class="kt">uint32</span><span class="p">,</span> <span class="kt">uint64</span><span class="o">:</span>
+			<span class="n">formatter</span> <span class="o">=</span> <span class="n">strings</span><span class="o">.</span><span class="n">ReplaceAll</span><span class="p">(</span><span class="n">formatter</span><span class="p">,</span><span class="s">"{"</span><span class="o">+</span><span class="n">i</span><span class="o">+</span><span class="s">"}"</span><span class="p">,</span> <span class="s">"%d"</span><span class="p">)</span>
+		<span class="k">case</span> <span class="kt">float64</span><span class="p">,</span> <span class="kt">float32</span><span class="o">:</span>
+			<span class="n">formatter</span> <span class="o">=</span> <span class="n">strings</span><span class="o">.</span><span class="n">ReplaceAll</span><span class="p">(</span><span class="n">formatter</span><span class="p">,</span><span class="s">"{"</span><span class="o">+</span><span class="n">i</span><span class="o">+</span><span class="s">"}"</span><span class="p">,</span> <span class="s">"%f"</span><span class="p">)</span>
+		<span class="p">}</span>
+	<span class="p">}</span>
+	<span class="k">return</span> <span class="n">formatter</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>when <code class="language-plaintext highlighter-rouge">functions["format"](args...)</code> is called, it gets the function from the map, passing the args through to the function to return the result of a <code class="language-plaintext highlighter-rouge">fmt.Sprintf</code></p>
+
+<h3 id="a-test">A Test</h3>
+
+<p>Lets finish with a test to demonstrate</p>
+
+<div class="language-go highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">func</span> <span class="n">Test_resolveFormatFunc</span><span class="p">(</span><span class="n">t</span> <span class="o">*</span><span class="n">testing</span><span class="o">.</span><span class="n">T</span><span class="p">)</span> <span class="p">{</span>
+
+	<span class="n">tests</span> <span class="o">:=</span> <span class="p">[]</span><span class="k">struct</span> <span class="p">{</span>
+		<span class="n">name</span>     <span class="kt">string</span>
+		<span class="n">expr</span>     <span class="kt">string</span>
+		<span class="n">expected</span> <span class="kt">string</span>
+	<span class="p">}{</span>
+		<span class="p">{</span>
+			<span class="n">name</span><span class="o">:</span>     <span class="s">"simple format call"</span><span class="p">,</span>
+			<span class="n">expr</span><span class="o">:</span>     <span class="s">"format('{0}/{1}', 'myPostgreSQLServer', 'log_checkpoints')"</span><span class="p">,</span>
+			<span class="n">expected</span><span class="o">:</span> <span class="s">"myPostgreSQLServer/log_checkpoints"</span><span class="p">,</span>
+		<span class="p">},</span>
+		<span class="p">{</span>
+			<span class="n">name</span><span class="o">:</span>     <span class="s">"simple format call with numbers"</span><span class="p">,</span>
+			<span class="n">expr</span><span class="o">:</span>     <span class="s">"format('{0} + {1} = {2}', 1, 2, 3)"</span><span class="p">,</span>
+			<span class="n">expected</span><span class="o">:</span> <span class="s">"1 + 2 = 3"</span><span class="p">,</span>
+		<span class="p">},</span>
+        <span class="p">{</span>
+			<span class="n">name</span><span class="o">:</span>     <span class="s">"format with nested format"</span><span class="p">,</span>
+			<span class="n">expr</span><span class="o">:</span>     <span class="s">"format('{0} + {1} = {2}', format('{0}', 1), 2, 3)"</span><span class="p">,</span>
+			<span class="n">expected</span><span class="o">:</span> <span class="s">"1 + 2 = 3"</span><span class="p">,</span>
+		<span class="p">},</span>
+	<span class="p">}</span>
+
+	<span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">tt</span> <span class="o">:=</span> <span class="k">range</span> <span class="n">tests</span> <span class="p">{</span>
+		<span class="n">t</span><span class="o">.</span><span class="n">Run</span><span class="p">(</span><span class="n">tt</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="k">func</span><span class="p">(</span><span class="n">t</span> <span class="o">*</span><span class="n">testing</span><span class="o">.</span><span class="n">T</span><span class="p">)</span> <span class="p">{</span>
+            <span class="n">et</span><span class="p">,</span> <span class="n">err</span> <span class="o">:=</span> <span class="n">expressions</span><span class="o">.</span><span class="n">NewExpressionTree</span><span class="p">(</span><span class="n">tt</span><span class="o">.</span><span class="n">expr</span><span class="p">)</span>
+            <span class="n">require</span><span class="o">.</span><span class="n">NoError</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">err</span><span class="p">)</span>
+
+            <span class="n">evaluatedValue</span> <span class="o">:=</span> <span class="n">et</span><span class="o">.</span><span class="n">Evaluate</span><span class="p">()</span>
+            <span class="n">assert</span><span class="o">.</span><span class="n">Equal</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">tt</span><span class="o">.</span><span class="n">expected</span><span class="p">,</span> <span class="n">resolvedValue</span><span class="o">.</span><span class="p">(</span><span class="kt">string</span><span class="p">))</span>
+		<span class="p">})</span>
+	<span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<h3 id="wrapping-up">Wrapping Up</h3>
+
+<p>There is a lot more to it, and a lot more work to implement each of the functions supported by ARM, but the general structure is now there to get started.</p>
+
+<p>Checkout <a href="https://github.com/aquasecurity/defsec/tree/master/pkg/scanners" target="\_blank">defsec</a> to learn more about how we parse <code class="language-plaintext highlighter-rouge">Terraform</code>, <code class="language-plaintext highlighter-rouge">CloudFormation</code>, <code class="language-plaintext highlighter-rouge">Dockerfile</code> <code class="language-plaintext highlighter-rouge">Kubernetes Manifests</code> and <code class="language-plaintext highlighter-rouge">Helm Charts</code> to name a few.</p>
+
+</div>
+
+            </div>
+        </main>
+    </div>
+
+    <footer class="wrapper-footer">
+        <div class="footer">
+    <span class="footer-text float-left">This work is licensed under <a rel="license" href="https://www.gnu.org/licenses/gpl-3.0.en.html" target="_blank">GPLv3</a></span>
+    <span class="footer-text float-right">
+    Site Updated: 2023-12-01  (<a href="/feed.xml" target="_blank">RSS</a>)
+  </span>
+</div>
+    </footer>
+</body>
+</html>

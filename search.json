@@ -1,0 +1,659 @@
+[
+  
+    {
+      "title"    : "Set Slack status using Home Assistant",
+      "category" : "programming",
+      "tags"     : "python, learning, and home-assistant",
+      "url"      : "/home-assistant-status-setter/",
+      "date"     : "30 Nov 2023"
+    } ,
+  
+    {
+      "title"    : "Sleeping responsively",
+      "category" : "programming",
+      "tags"     : "go and learning",
+      "url"      : "/responsive-sleep/",
+      "date"     : "01 Feb 2023"
+    } ,
+  
+    {
+      "title"    : "Controlling my office lights from my webcam!?!?",
+      "category" : "Niche",
+      "tags"     : "go and learning",
+      "url"      : "/dim-lights-on-camera/",
+      "date"     : "30 Nov 2022"
+    } ,
+  
+    {
+      "title"    : "Lightning introduction to Redis Graph",
+      "category" : "LearningProgramming",
+      "tags"     : "graph and learning",
+      "url"      : "/lightning-redis-graph-quickstart/",
+      "date"     : "06 Oct 2022"
+    } ,
+  
+    {
+      "title"    : "Leveraging Annotations in Go",
+      "category" : "Programming",
+      "tags"     : "go and programming",
+      "url"      : "/using-annotations-with-go/",
+      "date"     : "26 Sep 2022"
+    } ,
+  
+    {
+      "title"    : "Parsing Azure ARM functions in Go",
+      "category" : "Programming",
+      "tags"     : "go and programming",
+      "url"      : "/simple-azure-arm-expression-tree/",
+      "date"     : "23 Sep 2022"
+    } ,
+  
+    {
+      "title"    : "Introducing lazytrivy",
+      "category" : "Programming",
+      "tags"     : "go, programming, and tools",
+      "url"      : "/lazy-trivy-introduction/",
+      "date"     : "07 Sep 2022"
+    } ,
+  
+    {
+      "title"    : "Generics to the Rescue",
+      "category" : "Programming",
+      "tags"     : "programming and go",
+      "url"      : "/generics-to-the-rescue/",
+      "date"     : "11 Aug 2022"
+    } ,
+  
+    {
+      "title"    : "Deploying Prometheus to Kubernetes",
+      "category" : "ContainersSysAdmin",
+      "tags"     : "kubernetes, learning, and monitoring",
+      "url"      : "/running-prometheus-in-k8s/",
+      "date"     : "03 Aug 2022"
+    } ,
+  
+    {
+      "title"    : "Zero to k3d",
+      "category" : "Containers",
+      "tags"     : "kubernetes, docker, and learning",
+      "url"      : "/zero-to-k3d/",
+      "date"     : "07 Apr 2022"
+    } ,
+  
+    {
+      "title"    : "Creating minified CSS from SCSS",
+      "category" : "Programming",
+      "tags"     : "scss",
+      "url"      : "/creating-minified-css-from-sass/",
+      "date"     : "10 Jan 2022"
+    } ,
+  
+    {
+      "title"    : "Using cfsec - A Brief Guide",
+      "category" : "AWSProgramming",
+      "tags"     : "cloudformation and aws",
+      "url"      : "/using-cfsec/",
+      "date"     : "21 Nov 2021"
+    } ,
+  
+    {
+      "title"    : "PR Commit Commenting Library",
+      "category" : "Programming",
+      "tags"     : "git and go",
+      "url"      : "/go-github-pr-commenter/",
+      "date"     : "09 Nov 2020"
+    } ,
+  
+    {
+      "title"    : "Running tfsec as a Github Action",
+      "category" : "Programming",
+      "tags"     : "tfsec, terraform, go, git, and tools",
+      "url"      : "/running-tfsec-as-a-github-action/",
+      "date"     : "07 Nov 2020"
+    } ,
+  
+    {
+      "title"    : "Terraform Static Analysis with tfsec",
+      "category" : "TerraformTools",
+      "tags"     : "terraform, tools, and tfsec",
+      "url"      : "/terraform-static-analysis-with-tfsec-copy/",
+      "date"     : "11 Oct 2020"
+    } ,
+  
+    {
+      "title"    : "Building Jekyll Websites with Travis",
+      "category" : "Blogging",
+      "tags"     : "blogging",
+      "url"      : "/building-jekyll-websites-with-travis/",
+      "date"     : "04 Oct 2020"
+    } ,
+  
+    {
+      "title"    : "Using the AWS waiter",
+      "category" : "AWSProgramming",
+      "tags"     : "aws and python",
+      "url"      : "/using-the-aws-waiter/",
+      "date"     : "19 Feb 2020"
+    } ,
+  
+    {
+      "title"    : "Using Docker Multi stage build",
+      "category" : "ProgrammingSysAdminContainers",
+      "tags"     : "go, docker, and programming",
+      "url"      : "/using-docker-as-a-build-env/",
+      "date"     : "25 Jan 2020"
+    } ,
+  
+    {
+      "title"    : "Moving AWS Diagrams, aka Docker for cheapskates",
+      "category" : "AWSProgrammingContainers",
+      "tags"     : "aws, programming, docker, and tools",
+      "url"      : "/moving-aws-diagrams-as-a-cheapsake/",
+      "date"     : "11 Jan 2020"
+    } ,
+  
+    {
+      "title"    : "Adding Help to a Makefile",
+      "category" : "SysAdmin",
+      "tags"     : "make and documentation",
+      "url"      : "/help-in-make-file/",
+      "date"     : "16 Dec 2019"
+    } ,
+  
+    {
+      "title"    : "Combining rows into an array in pyspark",
+      "category" : "ProgrammingBig Data",
+      "tags"     : "programming and spark",
+      "url"      : "/pyspark-opposite-of-explode/",
+      "date"     : "30 May 2019"
+    } ,
+  
+    {
+      "title"    : "Testing private methods with ScalaTest",
+      "category" : "Programming",
+      "tags"     : "programming and testing",
+      "url"      : "/testing-private-methods/",
+      "date"     : "29 May 2019"
+    } ,
+  
+    {
+      "title"    : "Databricks Single SignOn with Azure Active Directory",
+      "category" : "Big DataSysAdmin",
+      "tags"     : "azure and sysadmin",
+      "url"      : "/databricks_with_azure_ad/",
+      "date"     : "23 May 2019"
+    } ,
+  
+    {
+      "title"    : "CIDR Cheatsheet for available IP Address",
+      "category" : "SysAdmin",
+      "tags"     : "sysadmin and networking",
+      "url"      : "/cidr-ips-cheatsheet/",
+      "date"     : "30 Apr 2019"
+    } ,
+  
+    {
+      "title"    : "git alias for concise history",
+      "category" : "SysAdmin",
+      "tags"     : "git",
+      "url"      : "/concise-git-log/",
+      "date"     : "03 Apr 2019"
+    } ,
+  
+    {
+      "title"    : "How it works - www.aws-glossary.info",
+      "category" : "AWS",
+      "tags"     : "aws and tools",
+      "url"      : "/aws-glossary-architecture/",
+      "date"     : "27 Feb 2019"
+    } ,
+  
+    {
+      "title"    : "Dynamic AWS Glossary",
+      "category" : "AWSProgramming",
+      "tags"     : "aws and tools",
+      "url"      : "/aws-glossary-info/",
+      "date"     : "21 Feb 2019"
+    } ,
+  
+    {
+      "title"    : "Delving in the depths of my github",
+      "category" : "",
+      "tags"     : "git and programming",
+      "url"      : "/time-flies-and-first-github/",
+      "date"     : "16 Feb 2019"
+    } ,
+  
+    {
+      "title"    : "Using Amazon SES with HP Scan-to-Email Printer",
+      "category" : "SysAdmin",
+      "tags"     : "aws and sysadmin",
+      "url"      : "/scan-to-email-with-hp-printer/",
+      "date"     : "28 Jan 2019"
+    } ,
+  
+    {
+      "title"    : "Creating a Kerberos Keytab file with ktutil",
+      "category" : "SysAdmin",
+      "tags"     : "linux",
+      "url"      : "/creating-a-keytab-file/",
+      "date"     : "23 Jan 2019"
+    } ,
+  
+    {
+      "title"    : "Creating a simple Dockerised Flask App",
+      "category" : "ContainersProgramming",
+      "tags"     : "docker and programming",
+      "url"      : "/creating-dockerised-flask-app/",
+      "date"     : "19 Jan 2019"
+    } ,
+  
+    {
+      "title"    : "Adding retry logic to urllib3 Python code",
+      "category" : "Programming",
+      "tags"     : "python and programming",
+      "url"      : "/retry-urllib3-requests/",
+      "date"     : "16 Jan 2019"
+    } ,
+  
+    {
+      "title"    : "Refreshing AWS credentials in Python",
+      "category" : "AWSProgramming",
+      "tags"     : "aws, python, and programming",
+      "url"      : "/implementing-refreshingawscredentials-python/",
+      "date"     : "15 Jan 2019"
+    } ,
+  
+    {
+      "title"    : "RefreshingAWSCredentials with .NET",
+      "category" : "AWSProgramming",
+      "tags"     : "aws and programming",
+      "url"      : "/implementing-refreshingawscredentials/",
+      "date"     : "09 Jan 2019"
+    } ,
+  
+    {
+      "title"    : "Generating test data with Faker",
+      "category" : "Programming",
+      "tags"     : "python, programming, and tools",
+      "url"      : "/generating-dummy-data-with-faker/",
+      "date"     : "07 Jan 2019"
+    } ,
+  
+    {
+      "title"    : "AWS EC2 Comparison",
+      "category" : "AWSTools",
+      "tags"     : "aws and tools",
+      "url"      : "/ec2-instance-comparison/",
+      "date"     : "06 Jan 2019"
+    } ,
+  
+    {
+      "title"    : "Bing of the Day revisited",
+      "category" : "AWSProgramming",
+      "tags"     : "aws, python, and programming",
+      "url"      : "/bing-of-the-day-revisited/",
+      "date"     : "04 Jan 2019"
+    } ,
+  
+    {
+      "title"    : "New Year, New Intentions",
+      "category" : "Blogging",
+      "tags"     : "blogging",
+      "url"      : "/new-year-new-intentions/",
+      "date"     : "02 Jan 2019"
+    } ,
+  
+    {
+      "title"    : "Introducing gitsearch-cli",
+      "category" : "Programming",
+      "tags"     : "python, git, and programming",
+      "url"      : "/gitsearch-cli/",
+      "date"     : "02 Aug 2018"
+    } ,
+  
+    {
+      "title"    : "Allow connection to dockerised elasticsearch other than localhost",
+      "category" : "ContainersSysAdmin",
+      "tags"     : "docker and linux",
+      "url"      : "/access-dockerised-elasticsearch-not-localhost/",
+      "date"     : "25 May 2018"
+    } ,
+  
+    {
+      "title"    : "Argument defaults in shell scripts",
+      "category" : "SysAdmin",
+      "tags"     : "bash",
+      "url"      : "/default-script-arguments/",
+      "date"     : "27 Jan 2018"
+    } ,
+  
+    {
+      "title"    : "Running Spark against HBase",
+      "category" : "Big DataProgramming",
+      "tags"     : "programming, spark, and hbase",
+      "url"      : "/spark-against-hbase/",
+      "date"     : "10 Nov 2017"
+    } ,
+  
+    {
+      "title"    : "Replacing an incorrect git commit message",
+      "category" : "Programming",
+      "tags"     : "git and programming",
+      "url"      : "/replacing-an-incorrect-commit-message/",
+      "date"     : "29 Aug 2017"
+    } ,
+  
+    {
+      "title"    : "TFL Cycling DataSet - Part 2",
+      "category" : "Big DataProgrammingLearning",
+      "tags"     : "python, programming, spark, and learning",
+      "url"      : "/tfl_cycling_data_part2/",
+      "date"     : "17 Jul 2017"
+    } ,
+  
+    {
+      "title"    : "TFL Cycling DataSet - Part 1",
+      "category" : "Big DataProgrammingLearning",
+      "tags"     : "python, programming, spark, and learning",
+      "url"      : "/tfl_cycling_data_part1/",
+      "date"     : "16 Jul 2017"
+    } ,
+  
+    {
+      "title"    : "CSV to Markdown table - Sublime Package",
+      "category" : "Programming",
+      "tags"     : "python and programming",
+      "url"      : "/csv-to-markdown-table/",
+      "date"     : "11 Apr 2017"
+    } ,
+  
+    {
+      "title"    : "Go routines and channels",
+      "category" : "Programming",
+      "tags"     : "go and programming",
+      "url"      : "/using-go-channels/",
+      "date"     : "05 Apr 2017"
+    } ,
+  
+    {
+      "title"    : "Monit",
+      "category" : "SysAdmin",
+      "tags"     : "monitoring and linux",
+      "url"      : "/monit-and-mmonit/",
+      "date"     : "17 Mar 2017"
+    } ,
+  
+    {
+      "title"    : "Using AWS Simple Email Service with Oozie in Cloudera",
+      "category" : "Big DataProgrammingAWS",
+      "tags"     : "aws, cloudera, and linux",
+      "url"      : "/cloudera-oozie-aws-ses/",
+      "date"     : "10 Mar 2017"
+    } ,
+  
+    {
+      "title"    : "Wordle Interpretation of CV",
+      "category" : "Random",
+      "tags"     : "random",
+      "url"      : "/owen_cv_wordle/",
+      "date"     : "14 Feb 2017"
+    } ,
+  
+    {
+      "title"    : "First go at creating a Garmin watch face",
+      "category" : "Programming",
+      "tags"     : "programming",
+      "url"      : "/first-garmin-watch-face/",
+      "date"     : "03 Jan 2016"
+    } ,
+  
+    {
+      "title"    : "Scala eXchange 2015 - Embracing the community",
+      "category" : "ConferenceProgramming",
+      "tags"     : "programming and conference",
+      "url"      : "/ScalaeXchange2015/",
+      "date"     : "10 Dec 2015"
+    } ,
+  
+    {
+      "title"    : "Unit testing HDFS code",
+      "category" : "Big DataProgramming",
+      "tags"     : "hadoop and programming",
+      "url"      : "/Unit-testing-with-MiniDFSCluster/",
+      "date"     : "02 Jul 2015"
+    } ,
+  
+    {
+      "title"    : "Writing a Flume Interceptor",
+      "category" : "Big DataProgramming",
+      "tags"     : "hadoop and programming",
+      "url"      : "/Flume-Interceptors/",
+      "date"     : "17 Jun 2015"
+    } ,
+  
+    {
+      "title"    : "Quick introduction to pyspark",
+      "category" : "ProgrammingSpark",
+      "tags"     : "python and spark",
+      "url"      : "/Looking-at-pyspark/",
+      "date"     : "13 Jan 2015"
+    } ,
+  
+    {
+      "title"    : "Client side encryption using Boto3 and AWS KMS",
+      "category" : "Amazon Web ServicesProgramming",
+      "tags"     : "aws, boto3, and encryption",
+      "url"      : "/Boto3-client-side-encryption-using-KMS/",
+      "date"     : "06 Jan 2015"
+    } ,
+  
+    {
+      "title"    : "Adventures with Spark, part two",
+      "category" : "ProgrammingSpark",
+      "tags"     : "spark and scala",
+      "url"      : "/Adventures_with_Spark_pt2/",
+      "date"     : "03 Dec 2014"
+    } ,
+  
+    {
+      "title"    : "AWS HTTPSConnectionPool max retries exceeded",
+      "category" : "Amazon Web Services",
+      "tags"     : "aws and awscli",
+      "url"      : "/AWS-Region-config/",
+      "date"     : "01 Dec 2014"
+    } ,
+  
+    {
+      "title"    : "Git hangs while unpacking objects (Windows)",
+      "category" : "SysAdmin",
+      "tags"     : "windows and git",
+      "url"      : "/Git-stalls-on-unpacking-objects/",
+      "date"     : "14 Oct 2014"
+    } ,
+  
+    {
+      "title"    : "Adventures with Spark, part one",
+      "category" : "ProgrammingSpark",
+      "tags"     : "spark and scala",
+      "url"      : "/Adventures_with_Spark_pt1/",
+      "date"     : "14 Sep 2014"
+    } ,
+  
+    {
+      "title"    : "Update Wallpaper from Bing (OSX)",
+      "category" : "Programming",
+      "tags"     : "bing, wallpaper, osx, and python",
+      "url"      : "/Update_Bing_Desktop_For_Mac/",
+      "date"     : "13 Sep 2014"
+    } ,
+  
+    {
+      "title"    : "Creating environment variables from the command line (Windows)",
+      "category" : "SysAdmin",
+      "tags"     : "windows",
+      "url"      : "/environment-variables-from-windows-command-line/",
+      "date"     : "13 Aug 2014"
+    } ,
+  
+    {
+      "title"    : "SFTP Connection Closed - password expired?",
+      "category" : "SysAdmin",
+      "tags"     : "linux",
+      "url"      : "/SFTP-Expired-User-Account/",
+      "date"     : "11 Jul 2014"
+    } ,
+  
+    {
+      "title"    : "Cross Join Columns in Excel",
+      "category" : "Programming",
+      "tags"     : "excel and programming",
+      "url"      : "/crossjoin-in-excel/",
+      "date"     : "03 Jul 2014"
+    } ,
+  
+    {
+      "title"    : "Using yum history",
+      "category" : "SysAdmin",
+      "tags"     : "linux",
+      "url"      : "/using-yum-history/",
+      "date"     : "25 Jun 2014"
+    } ,
+  
+    {
+      "title"    : "Office365 and SharePoint iPad Friendly",
+      "category" : "Office365",
+      "tags"     : "sharepoint",
+      "url"      : "/Office365-iPad-Friendly/",
+      "date"     : "06 Apr 2014"
+    } ,
+  
+    {
+      "title"    : "TMA470 first assignment returned",
+      "category" : "Learning",
+      "tags"     : "open university and learning",
+      "url"      : "/TMA470_First_assignment_back/",
+      "date"     : "18 Mar 2014"
+    } ,
+  
+    {
+      "title"    : "OU Final project finally started",
+      "category" : "RandomLearning",
+      "tags"     : "random, open university, and learning",
+      "url"      : "/OU-Final-Project-Started/",
+      "date"     : "04 Mar 2014"
+    } ,
+  
+    {
+      "title"    : "First attempt at a Force Directed Graph",
+      "category" : "ProgrammingLearning",
+      "tags"     : "programming, javascript, learning, and open university",
+      "url"      : "/D3.js-Force-Directed-Graph-Attempt1/",
+      "date"     : "14 Feb 2014"
+    } ,
+  
+    {
+      "title"    : "DIY Plyo box",
+      "category" : "Random",
+      "tags"     : "random",
+      "url"      : "/DIY-Plyobox/",
+      "date"     : "06 Feb 2014"
+    } ,
+  
+    {
+      "title"    : "rhn_register crashes while starting",
+      "category" : "SysAdmin",
+      "tags"     : "linux",
+      "url"      : "/rhn_register_crashes_while_starting/",
+      "date"     : "31 Jan 2014"
+    } ,
+  
+    {
+      "title"    : "SharePoint 2010/2013 Developer Dashboard",
+      "category" : "Office365",
+      "tags"     : "sharepoint",
+      "url"      : "/SharePoint-2010-2013-Developer-Dashboard/",
+      "date"     : "16 Jan 2014"
+    } ,
+  
+    {
+      "title"    : "Partitioning a large disk in RedHat",
+      "category" : "SysAdmin",
+      "tags"     : "linux",
+      "url"      : "/Partitioning-a-large-disk/",
+      "date"     : "13 Jan 2014"
+    } ,
+  
+    {
+      "title"    : "Deleting SQL database from the command line",
+      "category" : "",
+      "tags"     : "sql and sharepoint",
+      "url"      : "/Deleting-SQL-Database-From-Command-Line/",
+      "date"     : "12 Jan 2014"
+    } ,
+  
+    {
+      "title"    : "Moving to git pages",
+      "category" : "Blogging",
+      "tags"     : "blogging",
+      "url"      : "/Transfer-to-gitpages/",
+      "date"     : "07 Jan 2014"
+    } ,
+  
+    {
+      "title"    : "Windows to Linux transition",
+      "category" : "SysAdmin",
+      "tags"     : "linux",
+      "url"      : "/Windows-to-Linux/",
+      "date"     : "02 Jan 2014"
+    } ,
+  
+    {
+      "title"    : "Refresh Linux mounts after changes made to /etc/fstab",
+      "category" : "SysAdmin",
+      "tags"     : "linux and sysadmin",
+      "url"      : "/Refresh-mounts-after-fstab-update/",
+      "date"     : "20 Dec 2013"
+    } ,
+  
+    {
+      "title"    : "WPF Commands and Events with MVVM",
+      "category" : "Programming.NET",
+      "tags"     : "wpf and programming",
+      "url"      : "/WPF-Commands-And-InputBindings/",
+      "date"     : "12 Nov 2013"
+    } ,
+  
+    {
+      "title"    : "Focus on content on page load",
+      "category" : "Office365",
+      "tags"     : "sharepoint",
+      "url"      : "/Focus-on-content-page-load/",
+      "date"     : "15 Oct 2013"
+    } ,
+  
+    {
+      "title"    : "SharePoint and Office 365",
+      "category" : "Office365",
+      "tags"     : "sharepoint",
+      "url"      : "/SharePoint-2013-and-Office-365/",
+      "date"     : "06 Oct 2013"
+    } ,
+  
+    {
+      "title"    : "Creating pet projects and the Constant Reminder",
+      "category" : "Projects",
+      "tags"     : "projects and azure",
+      "url"      : "/creating-pet-projects-constant-reminder/",
+      "date"     : "29 Sep 2013"
+    } ,
+  
+    {
+      "title"    : "New blog, new platform",
+      "category" : "Blogging",
+      "tags"     : "blogging",
+      "url"      : "/new-blog-new-platform/",
+      "date"     : "27 Sep 2013"
+    } 
+  
+]

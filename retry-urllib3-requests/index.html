@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<!-- Begin Jekyll SEO tag v2.6.1 -->
+<title>Adding retry logic to urllib3 Python code | Owen Rumney</title>
+<meta name="generator" content="Jekyll v4.2.1" />
+<meta property="og:title" content="Adding retry logic to urllib3 Python code" />
+<meta name="author" content="Owen Rumney" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="Tutorial on the steps required to add retry logic to urllib3 requests" />
+<meta property="og:description" content="Tutorial on the steps required to add retry logic to urllib3 requests" />
+<link rel="canonical" href="https://www.owenrumney.co.uk/retry-urllib3-requests/" />
+<meta property="og:url" content="https://www.owenrumney.co.uk/retry-urllib3-requests/" />
+<meta property="og:site_name" content="Owen Rumney" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2019-01-16T00:00:00+00:00" />
+<script type="application/ld+json">
+{"dateModified":"2019-01-16T00:00:00+00:00","datePublished":"2019-01-16T00:00:00+00:00","author":{"@type":"Person","name":"Owen Rumney"},"description":"Tutorial on the steps required to add retry logic to urllib3 requests","mainEntityOfPage":{"@type":"WebPage","@id":"https://www.owenrumney.co.uk/retry-urllib3-requests/"},"url":"https://www.owenrumney.co.uk/retry-urllib3-requests/","@type":"BlogPosting","headline":"Adding retry logic to urllib3 Python code","@context":"https://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+
+
+<meta name="keywords" content="python,programming" />
+
+<link rel="shortcut icon" href="/favicon.ico" />
+<link rel="apple-touch-icon" href="/favicon.ico"/>
+<link rel="stylesheet" type="text/css" href="/assets/css/styles.css" />
+<link rel="stylesheet" type="text/css" href="/assets/css/prism.css" />
+<script src="/assets/js/prism.js"></script>
+
+
+
+</head>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-TLCVNKXMFJ"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-TLCVNKXMFJ');
+</script>
+
+<body>
+    <div class="wrapper">
+        <header class="wrapper-header">
+            <div class="header">
+  <nav class="float-right">
+  
+  <a href="https://github.com/owenrumney" target="_blank"
+    ><img
+      src="/assets/images/github.svg"
+      style="color: white; display: inline-block"
+      height="30px"
+      alt="GitHub"
+  /></a>
+  
+  <a href="https://linkedin.com/in/owenrumney" target="_blank"
+    ><img
+      src="/assets/images/linkedin.svg"
+      style="color: white; display: inline-block"
+      height="30px"
+      alt="LinkedIn"
+  /></a>
+  
+  <a href="https://cv.owenrumney.co.uk" target="_blank"
+    ><img
+      src="/assets/images/resume.svg"
+      style="color: white; display: inline-block"
+      height="32px"
+      alt="Resume"
+  /></a>
+  
+</nav>
+
+  <a href="https://www.owenrumney.co.uk" target="_blank"><h1>Owen Rumney</h1></a>
+  <br />
+  <h5><i>Software Engineer</i></h5>
+  <br />
+
+  <hr />
+</div>
+
+        </header>
+
+        <main class="wrapper-main">
+            <div class="main-content">
+            <div class="post-info">
+    <h2>Adding retry logic to urllib3 Python code</h2>
+    <p>16 Jan 2019 - Owen Rumney</p>
+</div>
+
+<div class="post-content">
+<p>In this post I’m going to cover the basics of implementing retry logic using urllib3.</p>
+
+<p>There is probably a solid argument saying “why aren’t you just using <a href="http://docs.python-requests.org/en/master/">requests</a>?”, as it happens, requests uses urllib3 and it’s Retry functionality.</p>
+
+<p>For the purposes of this post, lets imagine that we have a REST service and one of the resources is particularly popular, or flakey, and is throwing the occasional <a href="https://httpstatuses.com/503">503 HTTP Code</a>.</p>
+
+<p>Our initial code might look something like;</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">urllib3</span>
+
+<span class="n">http</span> <span class="o">=</span> <span class="n">urllib3</span><span class="p">.</span><span class="n">PoolManager</span><span class="p">()</span>
+<span class="n">r</span> <span class="o">=</span> <span class="n">http</span><span class="p">.</span><span class="n">request</span><span class="p">(</span><span class="s">'GET'</span><span class="p">,</span> <span class="s">'http://www.myflakyendpoint.com/dicey'</span><span class="p">)</span>
+<span class="k">if</span> <span class="n">r</span><span class="p">.</span><span class="n">status</span> <span class="o">==</span> <span class="mi">200</span><span class="p">:</span>
+    <span class="n">logger</span><span class="p">.</span><span class="n">info</span><span class="p">(</span><span class="s">'That was lucky'</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p>We have once chance to get it right. Yes, some convoluted while loop against the status code could be used, but thats ugly.</p>
+
+<p>Another option available to us is to make use of <code class="language-plaintext highlighter-rouge">urllib3.util.Retry</code> and get our request to retry a specified amount of times.</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">urllib3</span>
+<span class="kn">from</span> <span class="nn">urllib3.util</span> <span class="kn">import</span> <span class="n">Retry</span>
+<span class="kn">from</span> <span class="nn">urllib3.exceptions</span> <span class="kn">import</span> <span class="n">MaxRetryError</span>
+
+<span class="n">http</span> <span class="o">=</span> <span class="n">urllib3</span><span class="p">.</span><span class="n">PoolManager</span><span class="p">()</span>
+<span class="n">retry</span> <span class="o">=</span> <span class="n">Retry</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="n">raise_on_status</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">status_forcelist</span><span class="o">=</span><span class="nb">range</span><span class="p">(</span><span class="mi">500</span><span class="p">,</span> <span class="mi">600</span><span class="p">))</span>
+
+<span class="k">try</span><span class="p">:</span>
+    <span class="n">r</span> <span class="o">=</span> <span class="n">http</span><span class="p">.</span><span class="n">request</span><span class="p">(</span><span class="s">'GET'</span><span class="p">,</span> <span class="s">'http://www.myflakyendpoint.com/dicey'</span><span class="p">,</span> <span class="n">retries</span><span class="o">=</span><span class="n">retry</span><span class="p">)</span>
+<span class="k">except</span> <span class="n">MaxRetryError</span> <span class="k">as</span> <span class="n">m_err</span><span class="p">:</span>
+    <span class="n">logger</span><span class="p">.</span><span class="n">error</span><span class="p">(</span><span class="s">'Failed due to {}'</span><span class="p">.</span><span class="nb">format</span><span class="p">(</span><span class="n">m_err</span><span class="p">.</span><span class="n">reason</span><span class="p">))</span>
+</code></pre></div></div>
+
+<p>In this code we’ve created a <code class="language-plaintext highlighter-rouge">Retry</code> object telling it to retry a total of 3 times and throw an exception if all retries are exhausted. The <code class="language-plaintext highlighter-rouge">status_forcelist</code> is the HTTP status codes that will be considered to be failures.</p>
+
+<p>Some other interesting arguments for the <code class="language-plaintext highlighter-rouge">Retry</code> object are.</p>
+
+<table>
+  <thead>
+    <tr>
+      <th style="text-align: left">Argument</th>
+      <th style="text-align: left">Comment</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="text-align: left">total</td>
+      <td style="text-align: left">The total number of retries that are allowed. Trumps the combined figure of connect and read</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">read</td>
+      <td style="text-align: left">How many read retries that are allowed</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">connect</td>
+      <td style="text-align: left">How many connect errors that are allowed</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">redirect</td>
+      <td style="text-align: left">How many redirects to allow. This is handy to prevent redirect loops</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">method_whitelist</td>
+      <td style="text-align: left">Which pethos are allowed. By default only idempotent methods are allowed, ruling out POST</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">backoff_factor</td>
+      <td style="text-align: left">How much to increase the back off factor (see docs for more info)</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">raise_on_status</td>
+      <td style="text-align: left">Whether to return the failed status or raise an exception</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>For more information, see the <a href="https://urllib3.readthedocs.io/en/latest/reference/urllib3.util.html#module-urllib3.util.retry">urllib3 documentation</a></p>
+
+
+</div>
+
+            </div>
+        </main>
+    </div>
+
+    <footer class="wrapper-footer">
+        <div class="footer">
+    <span class="footer-text float-left">This work is licensed under <a rel="license" href="https://www.gnu.org/licenses/gpl-3.0.en.html" target="_blank">GPLv3</a></span>
+    <span class="footer-text float-right">
+    Site Updated: 2023-12-01  (<a href="/feed.xml" target="_blank">RSS</a>)
+  </span>
+</div>
+    </footer>
+</body>
+</html>

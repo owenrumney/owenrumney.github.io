@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<!-- Begin Jekyll SEO tag v2.6.1 -->
+<title>Go routines and channels | Owen Rumney</title>
+<meta name="generator" content="Jekyll v4.2.1" />
+<meta property="og:title" content="Go routines and channels" />
+<meta name="author" content="Owen Rumney" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="I’m having a bit of a dabble with Go, as a by product of working with Elastic Search beats." />
+<meta property="og:description" content="I’m having a bit of a dabble with Go, as a by product of working with Elastic Search beats." />
+<link rel="canonical" href="https://www.owenrumney.co.uk/using-go-channels/" />
+<meta property="og:url" content="https://www.owenrumney.co.uk/using-go-channels/" />
+<meta property="og:site_name" content="Owen Rumney" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2017-04-05T00:00:00+00:00" />
+<script type="application/ld+json">
+{"dateModified":"2017-04-05T00:00:00+00:00","datePublished":"2017-04-05T00:00:00+00:00","author":{"@type":"Person","name":"Owen Rumney"},"description":"I’m having a bit of a dabble with Go, as a by product of working with Elastic Search beats.","mainEntityOfPage":{"@type":"WebPage","@id":"https://www.owenrumney.co.uk/using-go-channels/"},"url":"https://www.owenrumney.co.uk/using-go-channels/","@type":"BlogPosting","headline":"Go routines and channels","@context":"https://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+
+
+<meta name="keywords" content="go,programming" />
+
+<link rel="shortcut icon" href="/favicon.ico" />
+<link rel="apple-touch-icon" href="/favicon.ico"/>
+<link rel="stylesheet" type="text/css" href="/assets/css/styles.css" />
+<link rel="stylesheet" type="text/css" href="/assets/css/prism.css" />
+<script src="/assets/js/prism.js"></script>
+
+
+
+</head>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-TLCVNKXMFJ"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-TLCVNKXMFJ');
+</script>
+
+<body>
+    <div class="wrapper">
+        <header class="wrapper-header">
+            <div class="header">
+  <nav class="float-right">
+  
+  <a href="https://github.com/owenrumney" target="_blank"
+    ><img
+      src="/assets/images/github.svg"
+      style="color: white; display: inline-block"
+      height="30px"
+      alt="GitHub"
+  /></a>
+  
+  <a href="https://linkedin.com/in/owenrumney" target="_blank"
+    ><img
+      src="/assets/images/linkedin.svg"
+      style="color: white; display: inline-block"
+      height="30px"
+      alt="LinkedIn"
+  /></a>
+  
+  <a href="https://cv.owenrumney.co.uk" target="_blank"
+    ><img
+      src="/assets/images/resume.svg"
+      style="color: white; display: inline-block"
+      height="32px"
+      alt="Resume"
+  /></a>
+  
+</nav>
+
+  <a href="https://www.owenrumney.co.uk" target="_blank"><h1>Owen Rumney</h1></a>
+  <br />
+  <h5><i>Software Engineer</i></h5>
+  <br />
+
+  <hr />
+</div>
+
+        </header>
+
+        <main class="wrapper-main">
+            <div class="main-content">
+            <div class="post-info">
+    <h2>Go routines and channels</h2>
+    <p>05 Apr 2017 - Owen Rumney</p>
+</div>
+
+<div class="post-content">
+<p>I’m having a bit of a dabble with Go, as a by product of working with Elastic Search beats.</p>
+
+<p>One thing I’ve been looking at today is the channels to allow two <code class="language-plaintext highlighter-rouge">go</code> routines to communicate with each other and I came up with a fairly cheesy way to play with implementing them.</p>
+
+<div class="language-go highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">package</span> <span class="n">main</span>
+
+<span class="k">import</span> <span class="s">"fmt"</span>
+
+<span class="k">func</span> <span class="n">ping</span><span class="p">(</span><span class="n">c</span> <span class="k">chan</span> <span class="kt">string</span><span class="p">)</span> <span class="p">{</span>
+	<span class="k">for</span> <span class="p">{</span>
+		<span class="n">msg</span> <span class="o">:=</span> <span class="o">&lt;-</span><span class="n">c</span>
+		<span class="k">if</span> <span class="n">msg</span> <span class="o">==</span> <span class="s">"pong"</span> <span class="p">{</span>
+			<span class="nb">println</span><span class="p">(</span><span class="s">" .... "</span> <span class="o">+</span> <span class="n">msg</span><span class="p">)</span>
+			<span class="n">c</span> <span class="o">&lt;-</span> <span class="s">"ping"</span>
+		<span class="p">}</span>
+	<span class="p">}</span>
+<span class="p">}</span>
+
+<span class="k">func</span> <span class="n">pong</span><span class="p">(</span><span class="n">c</span> <span class="k">chan</span> <span class="kt">string</span><span class="p">)</span> <span class="p">{</span>
+	<span class="k">for</span> <span class="p">{</span>
+		<span class="n">msg</span> <span class="o">:=</span> <span class="o">&lt;-</span><span class="n">c</span>
+		<span class="k">if</span> <span class="n">msg</span> <span class="o">==</span> <span class="s">"ping"</span> <span class="p">{</span>
+			<span class="nb">print</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+			<span class="n">c</span> <span class="o">&lt;-</span> <span class="s">"pong"</span>
+		<span class="p">}</span>
+	<span class="p">}</span>
+<span class="p">}</span>
+
+<span class="k">func</span> <span class="n">main</span><span class="p">()</span> <span class="p">{</span>
+	<span class="k">var</span> <span class="n">c</span> <span class="k">chan</span> <span class="kt">string</span> <span class="o">=</span> <span class="nb">make</span><span class="p">(</span><span class="k">chan</span> <span class="kt">string</span><span class="p">)</span>
+
+	<span class="k">go</span> <span class="n">ping</span><span class="p">(</span><span class="n">c</span><span class="p">)</span>
+	<span class="k">go</span> <span class="n">pong</span><span class="p">(</span><span class="n">c</span><span class="p">)</span>
+
+	<span class="n">c</span> <span class="o">&lt;-</span> <span class="s">"ping"</span>
+	<span class="k">var</span> <span class="n">input</span> <span class="kt">string</span>
+	<span class="n">fmt</span><span class="o">.</span><span class="n">Scanln</span><span class="p">(</span><span class="o">&amp;</span><span class="n">input</span><span class="p">)</span>
+<span class="p">}</span>
+
+</code></pre></div></div>
+
+<p>Using the <code class="language-plaintext highlighter-rouge">go</code> keyword to essentially start the <code class="language-plaintext highlighter-rouge">ping</code> and <code class="language-plaintext highlighter-rouge">pong</code> in the <code class="language-plaintext highlighter-rouge">logical processor</code> and run concurrently. They both get passed a special <code class="language-plaintext highlighter-rouge">chan</code> string that acts as a shared channel for them to synchronise against.</p>
+
+<p>The code results in an endless game of ping pong.</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>ping .... pong
+ping .... pong
+ping .... pong
+ping .... pong
+ping .... pong
+ping .... pong
+</code></pre></div></div>
+
+<p>There you go. Almost certainly not the best Go ever written, but a start.</p>
+
+</div>
+
+            </div>
+        </main>
+    </div>
+
+    <footer class="wrapper-footer">
+        <div class="footer">
+    <span class="footer-text float-left">This work is licensed under <a rel="license" href="https://www.gnu.org/licenses/gpl-3.0.en.html" target="_blank">GPLv3</a></span>
+    <span class="footer-text float-right">
+    Site Updated: 2023-12-01  (<a href="/feed.xml" target="_blank">RSS</a>)
+  </span>
+</div>
+    </footer>
+</body>
+</html>

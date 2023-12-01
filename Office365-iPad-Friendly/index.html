@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<!-- Begin Jekyll SEO tag v2.6.1 -->
+<title>Office365 and SharePoint iPad Friendly | Owen Rumney</title>
+<meta name="generator" content="Jekyll v4.2.1" />
+<meta property="og:title" content="Office365 and SharePoint iPad Friendly" />
+<meta name="author" content="Owen Rumney" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="I have been doing some work for a company who have a user base who primarily use iPads to access the SharePoint site. There was a requirement to allow those users to easily access the team site without getting their screens filled with the quick launch and the bloated title." />
+<meta property="og:description" content="I have been doing some work for a company who have a user base who primarily use iPads to access the SharePoint site. There was a requirement to allow those users to easily access the team site without getting their screens filled with the quick launch and the bloated title." />
+<link rel="canonical" href="https://www.owenrumney.co.uk/Office365-iPad-Friendly/" />
+<meta property="og:url" content="https://www.owenrumney.co.uk/Office365-iPad-Friendly/" />
+<meta property="og:site_name" content="Owen Rumney" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2014-04-06T00:00:00+00:00" />
+<script type="application/ld+json">
+{"dateModified":"2014-04-06T00:00:00+00:00","datePublished":"2014-04-06T00:00:00+00:00","author":{"@type":"Person","name":"Owen Rumney"},"description":"I have been doing some work for a company who have a user base who primarily use iPads to access the SharePoint site. There was a requirement to allow those users to easily access the team site without getting their screens filled with the quick launch and the bloated title.","mainEntityOfPage":{"@type":"WebPage","@id":"https://www.owenrumney.co.uk/Office365-iPad-Friendly/"},"url":"https://www.owenrumney.co.uk/Office365-iPad-Friendly/","@type":"BlogPosting","headline":"Office365 and SharePoint iPad Friendly","@context":"https://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+
+
+<meta name="keywords" content="sharepoint" />
+
+<link rel="shortcut icon" href="/favicon.ico" />
+<link rel="apple-touch-icon" href="/favicon.ico"/>
+<link rel="stylesheet" type="text/css" href="/assets/css/styles.css" />
+<link rel="stylesheet" type="text/css" href="/assets/css/prism.css" />
+<script src="/assets/js/prism.js"></script>
+
+
+
+</head>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-TLCVNKXMFJ"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-TLCVNKXMFJ');
+</script>
+
+<body>
+    <div class="wrapper">
+        <header class="wrapper-header">
+            <div class="header">
+  <nav class="float-right">
+  
+  <a href="https://github.com/owenrumney" target="_blank"
+    ><img
+      src="/assets/images/github.svg"
+      style="color: white; display: inline-block"
+      height="30px"
+      alt="GitHub"
+  /></a>
+  
+  <a href="https://linkedin.com/in/owenrumney" target="_blank"
+    ><img
+      src="/assets/images/linkedin.svg"
+      style="color: white; display: inline-block"
+      height="30px"
+      alt="LinkedIn"
+  /></a>
+  
+  <a href="https://cv.owenrumney.co.uk" target="_blank"
+    ><img
+      src="/assets/images/resume.svg"
+      style="color: white; display: inline-block"
+      height="32px"
+      alt="Resume"
+  /></a>
+  
+</nav>
+
+  <a href="https://www.owenrumney.co.uk" target="_blank"><h1>Owen Rumney</h1></a>
+  <br />
+  <h5><i>Software Engineer</i></h5>
+  <br />
+
+  <hr />
+</div>
+
+        </header>
+
+        <main class="wrapper-main">
+            <div class="main-content">
+            <div class="post-info">
+    <h2>Office365 and SharePoint iPad Friendly</h2>
+    <p>06 Apr 2014 - Owen Rumney</p>
+</div>
+
+<div class="post-content">
+<p>I have been doing some work for a company who have a user base who primarily use iPads to access the SharePoint site. There was a requirement to allow those users to easily access the team site without getting their screens filled with the quick launch and the bloated title.</p>
+
+<p>Initially, I solved this using by using JavaScript to set the page to full screen;</p>
+
+<div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+<span class="nb">window</span><span class="p">.</span><span class="nx">onload</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+
+    <span class="c1">//alert('has loaded');</span>
+    <span class="nx">SP</span><span class="p">.</span><span class="nx">SOD</span><span class="p">.</span><span class="nx">executeOrDelayUntilScriptLoaded</span><span class="p">(</span><span class="nx">goToFullScreen</span><span class="p">,</span> <span class="dl">'</span><span class="s1">sp.js</span><span class="dl">'</span><span class="p">);</span>
+    <span class="c1">// For use within normal web clients</span>
+    <span class="kd">function</span> <span class="nx">goToFullScreen</span><span class="p">()</span> <span class="p">{</span>
+    	<span class="c1">//alert('goToFullScreen');</span>
+    	<span class="kd">var</span> <span class="nx">isiPad</span> <span class="o">=</span> <span class="nb">navigator</span><span class="p">.</span><span class="nx">userAgent</span><span class="p">.</span><span class="nx">indexOf</span><span class="p">(</span><span class="dl">'</span><span class="s1">iPad</span><span class="dl">'</span><span class="p">)</span> <span class="o">!=</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span>
+    	<span class="k">if</span><span class="p">(</span><span class="nx">isiPad</span><span class="p">)</span> <span class="p">{</span>
+    		<span class="nx">setTimeout</span><span class="p">(</span><span class="nx">goFullScreen</span><span class="p">,</span> <span class="mi">500</span><span class="p">);</span>
+    	<span class="p">}</span>
+    <span class="p">}</span>
+
+    <span class="kd">function</span> <span class="nx">goFullScreen</span><span class="p">()</span> <span class="p">{</span>
+    	<span class="nx">SetFullScreenMode</span><span class="p">(</span><span class="kc">true</span><span class="p">);</span>
+    <span class="p">}</span>
+
+    <span class="nx">SP</span><span class="p">.</span><span class="nx">SOD</span><span class="p">.</span><span class="nx">notifyScriptLoadedAndExecuteWaitingJobs</span><span class="p">(</span><span class="dl">"</span><span class="s2">sp.js</span><span class="dl">"</span><span class="p">);</span>
+
+<span class="p">};</span>
+
+</code></pre></div></div>
+
+<p>The problem with this approach was the short delay from the page loading to the screen resizing to remove the side bar etc which was undesirable.</p>
+
+<p>I was asked to find a better way to remove the menus that was more instantaneous so I turned to css media queries.</p>
+
+<p>To achieve this, I looked at what the SharePoint <code class="language-plaintext highlighter-rouge">SetFullScreenMode</code> function actually did. I found that in addition to setting the cookie, it also applies the <code class="language-plaintext highlighter-rouge">ms-fullscreenmode</code> css class to the body element, which led me to the following CSS in the master page;</p>
+
+<div class="language-css highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+<span class="o">&lt;</span><span class="nt">style</span><span class="o">&gt;</span>
+
+	<span class="k">@media</span> <span class="n">only</span> <span class="n">screen</span> <span class="n">and</span> <span class="p">(</span><span class="n">min-device-width</span><span class="p">:</span> <span class="m">768px</span><span class="p">)</span> <span class="n">and</span> <span class="p">(</span><span class="n">max-device-width</span><span class="p">:</span> <span class="m">1024px</span><span class="p">){</span>
+
+		<span class="nf">#navresizerVerticalBar</span><span class="p">{</span>
+			<span class="nl">display</span><span class="p">:</span><span class="nb">none</span><span class="p">;</span>
+		<span class="p">}</span>
+		<span class="nf">#navresizerHorizontalBar</span><span class="p">{</span>
+			<span class="nl">display</span><span class="p">:</span><span class="nb">none</span><span class="p">;</span>
+		<span class="p">}</span>
+		<span class="nf">#s4-titlerow</span> <span class="p">{</span>
+			<span class="nl">display</span><span class="p">:</span><span class="nb">none</span> <span class="cp">!important</span><span class="p">;</span>
+		<span class="p">}</span>
+		<span class="nf">#sideNavBox</span> <span class="p">{</span>
+			<span class="nl">display</span><span class="p">:</span><span class="nb">none</span><span class="p">;</span>
+		<span class="p">}</span>
+		<span class="nf">#contentBox</span> <span class="p">{</span>
+			<span class="nl">margin-left</span><span class="p">:</span><span class="m">40px</span><span class="p">;</span>
+		<span class="p">}</span>
+		<span class="nf">#contentBox</span> <span class="p">{</span>
+			<span class="nl">margin-left</span><span class="p">:</span><span class="m">0px</span><span class="p">;</span>
+		<span class="p">}</span>
+	<span class="p">}</span>
+<span class="o">&lt;/</span><span class="nt">style</span><span class="o">&gt;</span>
+
+</code></pre></div></div>
+
+</div>
+
+            </div>
+        </main>
+    </div>
+
+    <footer class="wrapper-footer">
+        <div class="footer">
+    <span class="footer-text float-left">This work is licensed under <a rel="license" href="https://www.gnu.org/licenses/gpl-3.0.en.html" target="_blank">GPLv3</a></span>
+    <span class="footer-text float-right">
+    Site Updated: 2023-12-01  (<a href="/feed.xml" target="_blank">RSS</a>)
+  </span>
+</div>
+    </footer>
+</body>
+</html>

@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<!-- Begin Jekyll SEO tag v2.6.1 -->
+<title>Using the AWS waiter | Owen Rumney</title>
+<meta name="generator" content="Jekyll v4.2.1" />
+<meta property="og:title" content="Using the AWS waiter" />
+<meta name="author" content="Owen Rumney" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="Using the waiter to wait for something to happen in your lambda" />
+<meta property="og:description" content="Using the waiter to wait for something to happen in your lambda" />
+<link rel="canonical" href="https://www.owenrumney.co.uk/using-the-aws-waiter/" />
+<meta property="og:url" content="https://www.owenrumney.co.uk/using-the-aws-waiter/" />
+<meta property="og:site_name" content="Owen Rumney" />
+<meta property="og:image" content="https://www.owenrumney.co.uk/assets/img/" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2020-02-19T17:05:15+00:00" />
+<script type="application/ld+json">
+{"dateModified":"2020-02-19T17:05:15+00:00","datePublished":"2020-02-19T17:05:15+00:00","author":{"@type":"Person","name":"Owen Rumney"},"description":"Using the waiter to wait for something to happen in your lambda","mainEntityOfPage":{"@type":"WebPage","@id":"https://www.owenrumney.co.uk/using-the-aws-waiter/"},"url":"https://www.owenrumney.co.uk/using-the-aws-waiter/","@type":"BlogPosting","image":"https://www.owenrumney.co.uk/assets/img/","headline":"Using the AWS waiter","@context":"https://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+
+
+<meta name="keywords" content="aws,python" />
+
+<link rel="shortcut icon" href="/favicon.ico" />
+<link rel="apple-touch-icon" href="/favicon.ico"/>
+<link rel="stylesheet" type="text/css" href="/assets/css/styles.css" />
+<link rel="stylesheet" type="text/css" href="/assets/css/prism.css" />
+<script src="/assets/js/prism.js"></script>
+
+
+
+</head>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-TLCVNKXMFJ"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-TLCVNKXMFJ');
+</script>
+
+<body>
+    <div class="wrapper">
+        <header class="wrapper-header">
+            <div class="header">
+  <nav class="float-right">
+  
+  <a href="https://github.com/owenrumney" target="_blank"
+    ><img
+      src="/assets/images/github.svg"
+      style="color: white; display: inline-block"
+      height="30px"
+      alt="GitHub"
+  /></a>
+  
+  <a href="https://linkedin.com/in/owenrumney" target="_blank"
+    ><img
+      src="/assets/images/linkedin.svg"
+      style="color: white; display: inline-block"
+      height="30px"
+      alt="LinkedIn"
+  /></a>
+  
+  <a href="https://cv.owenrumney.co.uk" target="_blank"
+    ><img
+      src="/assets/images/resume.svg"
+      style="color: white; display: inline-block"
+      height="32px"
+      alt="Resume"
+  /></a>
+  
+</nav>
+
+  <a href="https://www.owenrumney.co.uk" target="_blank"><h1>Owen Rumney</h1></a>
+  <br />
+  <h5><i>Software Engineer</i></h5>
+  <br />
+
+  <hr />
+</div>
+
+        </header>
+
+        <main class="wrapper-main">
+            <div class="main-content">
+            <div class="post-info">
+    <h2>Using the AWS waiter</h2>
+    <p>19 Feb 2020 - Owen Rumney</p>
+</div>
+
+<div class="post-content">
+<p>The AWS SDK provides a number of <code class="language-plaintext highlighter-rouge">waiters</code> that allow you to block your code while waiting for a process to complete. One that we make use of in our managed ECS container rollout is the <code class="language-plaintext highlighter-rouge">services_stable</code> waiter. This will wait for a defined amount of time for an ECS service to become stable, or raise an exception.</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># bring in the boto3 import
+</span><span class="kn">import</span> <span class="nn">boto3</span>
+<span class="kn">import</span> <span class="nn">botocore</span>
+
+<span class="c1"># create a session object
+</span><span class="n">session</span> <span class="o">=</span> <span class="n">boto3</span><span class="p">.</span><span class="n">session</span><span class="p">.</span><span class="n">Session</span><span class="p">()</span>
+
+<span class="c1"># create an ECS client
+</span><span class="n">ecs</span> <span class="o">=</span> <span class="n">session</span><span class="p">.</span><span class="n">client</span><span class="p">(</span><span class="s">'ecs'</span><span class="p">)</span>
+
+<span class="c1"># trigger an update to the service
+</span><span class="n">ecs</span><span class="p">.</span><span class="n">update_service</span><span class="p">(</span><span class="n">cluster</span><span class="o">=</span><span class="s">'myCluster'</span><span class="p">,</span>
+									 <span class="n">service</span><span class="o">=</span><span class="s">'myService'</span><span class="p">,</span>
+                   <span class="n">taskDefinition</span><span class="o">=</span><span class="s">'myServiceTaskDefinition:10'</span><span class="p">)</span>
+
+<span class="c1"># create a waiter
+</span><span class="n">waiter</span> <span class="o">=</span> <span class="n">ecs</span><span class="p">.</span><span class="n">get_waiter</span><span class="p">(</span><span class="s">'services_stable'</span><span class="p">)</span>
+
+<span class="k">try</span><span class="p">:</span>
+	<span class="n">logger</span><span class="p">.</span><span class="n">info</span><span class="p">(</span><span class="s">'waiting for myService to become stable'</span><span class="p">)</span>
+
+	<span class="c1"># call the wait method passing in an array of services you want to wait for
+</span>	<span class="n">waiter</span><span class="p">.</span><span class="n">wait</span><span class="p">(</span><span class="n">cluster</span><span class="o">=</span><span class="s">'myCluster'</span><span class="p">,</span> <span class="n">services</span><span class="o">=</span><span class="p">[</span><span class="s">'myService'</span><span class="p">])</span>
+
+<span class="k">except</span> <span class="n">botocore</span><span class="p">.</span><span class="n">exceptions</span><span class="p">.</span><span class="n">WaitError</span> <span class="k">as</span> <span class="n">wex</span><span class="p">:</span>
+	<span class="n">logger</span><span class="p">.</span><span class="n">error</span><span class="p">(</span><span class="s">'The service '</span><span class="n">myService</span><span class="s">' didn'</span><span class="n">t</span> <span class="n">become</span> <span class="n">stable</span><span class="p">.</span> <span class="p">{}</span><span class="s">'.format(wex))
+</span></code></pre></div></div>
+
+<p>The Boto3 documentation has the available waiters for each service that supports them, for example the <code class="language-plaintext highlighter-rouge">ecs</code> waiters <a href="https://boto3.amazonaws.com/v1/documentation/api/1.9.42/reference/services/ecs.html#waiters">can be found here</a>.{:target=”_blank”}</p>
+
+<p>By default, the <code class="language-plaintext highlighter-rouge">ServicesStable</code> waiter will check every 15 seconds for 40 attempts. You can pass overrides into the wait call if required;</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">waiter</span><span class="p">.</span><span class="n">wait</span><span class="p">(</span><span class="n">cluster_name</span><span class="o">=</span><span class="s">'myCluster'</span><span class="p">,</span>
+						<span class="n">services</span><span class="o">=</span><span class="p">[</span><span class="s">'myService'</span><span class="p">],</span>
+					  <span class="n">WaiterConfig</span><span class="o">=</span><span class="p">{</span><span class="s">'Delay'</span><span class="p">:</span> <span class="mi">30</span><span class="p">,</span> <span class="s">'MaxAttempts'</span><span class="p">:</span> <span class="mi">10</span><span class="p">})</span>
+</code></pre></div></div>
+
+<p>This will wait for 5 minutes (300 seconds) for the service to become stable before throwing a <code class="language-plaintext highlighter-rouge">botocore.exceptions.WaitError</code> if not successful.</p>
+
+<p>If you’re waiting for a large number of services, its worth noting that you can only pass 10 services at a time, so you’ll need to chunk them.</p>
+
+</div>
+
+            </div>
+        </main>
+    </div>
+
+    <footer class="wrapper-footer">
+        <div class="footer">
+    <span class="footer-text float-left">This work is licensed under <a rel="license" href="https://www.gnu.org/licenses/gpl-3.0.en.html" target="_blank">GPLv3</a></span>
+    <span class="footer-text float-right">
+    Site Updated: 2023-12-01  (<a href="/feed.xml" target="_blank">RSS</a>)
+  </span>
+</div>
+    </footer>
+</body>
+</html>

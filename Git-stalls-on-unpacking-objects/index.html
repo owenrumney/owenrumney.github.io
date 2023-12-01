@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<!-- Begin Jekyll SEO tag v2.6.1 -->
+<title>Git hangs while unpacking objects (Windows) | Owen Rumney</title>
+<meta name="generator" content="Jekyll v4.2.1" />
+<meta property="og:title" content="Git hangs while unpacking objects (Windows)" />
+<meta name="author" content="Owen Rumney" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="I’m not sure if this is because we’re behind a proxy, the network has issues or my work laptop isn’t great, but for some reason the git clones very often hang during the unpacking of objects." />
+<meta property="og:description" content="I’m not sure if this is because we’re behind a proxy, the network has issues or my work laptop isn’t great, but for some reason the git clones very often hang during the unpacking of objects." />
+<link rel="canonical" href="https://www.owenrumney.co.uk/Git-stalls-on-unpacking-objects/" />
+<meta property="og:url" content="https://www.owenrumney.co.uk/Git-stalls-on-unpacking-objects/" />
+<meta property="og:site_name" content="Owen Rumney" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2014-10-14T00:00:00+00:00" />
+<script type="application/ld+json">
+{"dateModified":"2014-10-14T00:00:00+00:00","datePublished":"2014-10-14T00:00:00+00:00","author":{"@type":"Person","name":"Owen Rumney"},"description":"I’m not sure if this is because we’re behind a proxy, the network has issues or my work laptop isn’t great, but for some reason the git clones very often hang during the unpacking of objects.","mainEntityOfPage":{"@type":"WebPage","@id":"https://www.owenrumney.co.uk/Git-stalls-on-unpacking-objects/"},"url":"https://www.owenrumney.co.uk/Git-stalls-on-unpacking-objects/","@type":"BlogPosting","headline":"Git hangs while unpacking objects (Windows)","@context":"https://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+
+
+<meta name="keywords" content="windows,git" />
+
+<link rel="shortcut icon" href="/favicon.ico" />
+<link rel="apple-touch-icon" href="/favicon.ico"/>
+<link rel="stylesheet" type="text/css" href="/assets/css/styles.css" />
+<link rel="stylesheet" type="text/css" href="/assets/css/prism.css" />
+<script src="/assets/js/prism.js"></script>
+
+
+
+</head>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-TLCVNKXMFJ"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-TLCVNKXMFJ');
+</script>
+
+<body>
+    <div class="wrapper">
+        <header class="wrapper-header">
+            <div class="header">
+  <nav class="float-right">
+  
+  <a href="https://github.com/owenrumney" target="_blank"
+    ><img
+      src="/assets/images/github.svg"
+      style="color: white; display: inline-block"
+      height="30px"
+      alt="GitHub"
+  /></a>
+  
+  <a href="https://linkedin.com/in/owenrumney" target="_blank"
+    ><img
+      src="/assets/images/linkedin.svg"
+      style="color: white; display: inline-block"
+      height="30px"
+      alt="LinkedIn"
+  /></a>
+  
+  <a href="https://cv.owenrumney.co.uk" target="_blank"
+    ><img
+      src="/assets/images/resume.svg"
+      style="color: white; display: inline-block"
+      height="32px"
+      alt="Resume"
+  /></a>
+  
+</nav>
+
+  <a href="https://www.owenrumney.co.uk" target="_blank"><h1>Owen Rumney</h1></a>
+  <br />
+  <h5><i>Software Engineer</i></h5>
+  <br />
+
+  <hr />
+</div>
+
+        </header>
+
+        <main class="wrapper-main">
+            <div class="main-content">
+            <div class="post-info">
+    <h2>Git hangs while unpacking objects (Windows)</h2>
+    <p>14 Oct 2014 - Owen Rumney</p>
+</div>
+
+<div class="post-content">
+<p>I’m not sure if this is because we’re behind a proxy, the network has issues or my work laptop isn’t great, but for some reason the git clones very often hang during the unpacking of objects.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>remote: Counting objects: 21, <span class="k">done</span><span class="nb">.</span>
+remote: Total 21 <span class="o">(</span>delta 0<span class="o">)</span>, reused 0 <span class="o">(</span>delta 0<span class="o">)</span>
+Unpacking objects: 100% <span class="o">(</span>21/21<span class="o">)</span>, <span class="k">done</span><span class="nb">.</span>
+</code></pre></div></div>
+
+<p>There is a way to recover this, if you <code class="language-plaintext highlighter-rouge">Ctrl+C</code> to exit the git command then <code class="language-plaintext highlighter-rouge">cd</code> into the folder cloned into.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>git fsck
+
+notice: HEAD points to the unborn branch <span class="o">(</span>master<span class="o">)</span>
+Checking object directories: 100% <span class="o">(</span>256/256<span class="o">)</span>, <span class="k">done</span><span class="nb">.</span>
+notice: No default references
+dangling commit: 0a343894574c872348974a89347c387324324
+</code></pre></div></div>
+
+<p>The bit we’re interested in is the dangling commit, if we merge this commit manually all will be fine</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>git merge 0a343894574c872348974a89347c387324324
+</code></pre></div></div>
+
+<p>Job done, you should now have the completed clone.</p>
+
+</div>
+
+            </div>
+        </main>
+    </div>
+
+    <footer class="wrapper-footer">
+        <div class="footer">
+    <span class="footer-text float-left">This work is licensed under <a rel="license" href="https://www.gnu.org/licenses/gpl-3.0.en.html" target="_blank">GPLv3</a></span>
+    <span class="footer-text float-right">
+    Site Updated: 2023-12-01  (<a href="/feed.xml" target="_blank">RSS</a>)
+  </span>
+</div>
+    </footer>
+</body>
+</html>

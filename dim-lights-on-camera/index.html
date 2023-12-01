@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<!-- Begin Jekyll SEO tag v2.6.1 -->
+<title>Controlling my office lights from my webcam!?!? | Owen Rumney</title>
+<meta name="generator" content="Jekyll v4.2.1" />
+<meta property="og:title" content="Controlling my office lights from my webcam!?!?" />
+<meta name="author" content="Owen Rumney" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="A dirty, dirty hacky way to control my lights from my webcam" />
+<meta property="og:description" content="A dirty, dirty hacky way to control my lights from my webcam" />
+<link rel="canonical" href="https://www.owenrumney.co.uk/dim-lights-on-camera/" />
+<meta property="og:url" content="https://www.owenrumney.co.uk/dim-lights-on-camera/" />
+<meta property="og:site_name" content="Owen Rumney" />
+<meta property="og:image" content="https://www.owenrumney.co.uk/assets/img/owen.png" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2022-11-30T00:00:00+00:00" />
+<script type="application/ld+json">
+{"dateModified":"2022-11-30T00:00:00+00:00","datePublished":"2022-11-30T00:00:00+00:00","author":{"@type":"Person","name":"Owen Rumney"},"description":"A dirty, dirty hacky way to control my lights from my webcam","mainEntityOfPage":{"@type":"WebPage","@id":"https://www.owenrumney.co.uk/dim-lights-on-camera/"},"url":"https://www.owenrumney.co.uk/dim-lights-on-camera/","@type":"BlogPosting","image":"https://www.owenrumney.co.uk/assets/img/owen.png","headline":"Controlling my office lights from my webcam!?!?","@context":"https://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+
+
+<meta name="keywords" content="go,learning" />
+
+<link rel="shortcut icon" href="/favicon.ico" />
+<link rel="apple-touch-icon" href="/favicon.ico"/>
+<link rel="stylesheet" type="text/css" href="/assets/css/styles.css" />
+<link rel="stylesheet" type="text/css" href="/assets/css/prism.css" />
+<script src="/assets/js/prism.js"></script>
+
+
+
+</head>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-TLCVNKXMFJ"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-TLCVNKXMFJ');
+</script>
+
+<body>
+    <div class="wrapper">
+        <header class="wrapper-header">
+            <div class="header">
+  <nav class="float-right">
+  
+  <a href="https://github.com/owenrumney" target="_blank"
+    ><img
+      src="/assets/images/github.svg"
+      style="color: white; display: inline-block"
+      height="30px"
+      alt="GitHub"
+  /></a>
+  
+  <a href="https://linkedin.com/in/owenrumney" target="_blank"
+    ><img
+      src="/assets/images/linkedin.svg"
+      style="color: white; display: inline-block"
+      height="30px"
+      alt="LinkedIn"
+  /></a>
+  
+  <a href="https://cv.owenrumney.co.uk" target="_blank"
+    ><img
+      src="/assets/images/resume.svg"
+      style="color: white; display: inline-block"
+      height="32px"
+      alt="Resume"
+  /></a>
+  
+</nav>
+
+  <a href="https://www.owenrumney.co.uk" target="_blank"><h1>Owen Rumney</h1></a>
+  <br />
+  <h5><i>Software Engineer</i></h5>
+  <br />
+
+  <hr />
+</div>
+
+        </header>
+
+        <main class="wrapper-main">
+            <div class="main-content">
+            <div class="post-info">
+    <h2>Controlling my office lights from my webcam!?!?</h2>
+    <p>30 Nov 2022 - Owen Rumney</p>
+</div>
+
+<div class="post-content">
+<p>Full disclosure, this is a pretty niche blog post and the prerequisites for getting it working were enough to make me consider not posting.</p>
+
+<p>So what is it about? When I start a Zoom call, I want to dim the lights in my office for no other reason than I want to.</p>
+
+<p><img src="../images/lighting_dream.gif" alt="Lighting Dreams Come True" /></p>
+
+<h3 id="what-it-takes-to-achieve-this-dubious-setup">What it takes to achieve this dubious setup</h3>
+
+<ul>
+  <li>Amazon Alexa account</li>
+  <li>An Amazon Echo Dot</li>
+  <li>4 x GU10 RGB bulbs</li>
+  <li>A mkzense.com subscription ($5/yr)</li>
+  <li>Some filthy code</li>
+  <li>A couple of Alexa Routines</li>
+</ul>
+
+<h3 id="getting-it-started">Getting it started</h3>
+
+<h4 id="alexa-initial-setup">Alexa Initial Setup</h4>
+
+<p>First things first, install the GU10s or whatever light bulbs you’re going to be using and register them with Alexa. In my case, this required adding their associated app then discovering them in the Alexa app.</p>
+
+<p>It’s useful later if you’ve grouped them, mine are a group called <code class="language-plaintext highlighter-rouge">Owen Office</code></p>
+
+<p>Install the IFTTTTrigger Skill in Alexa and subscribe for a year. I looked at doing the same thing they’re doing, but I don’t think its achievable to host the API Gateway and Lambda for sufficiently cheap enough to make it worth not subscribing instead.</p>
+
+<p>When enabling the skill, you’ll be asked for some Triggers, I’ve called mine <code class="language-plaintext highlighter-rouge">CallStart</code> and <code class="language-plaintext highlighter-rouge">CallEnd</code> but you can do whatever.</p>
+
+<p>Now, go to <a href="https://mkzense.com/webhook">Mkzense Webhook</a> to submit your email address and get sent a token.</p>
+
+<p>The last thing to do is set up the routines;</p>
+
+<p><strong>Name:</strong> Anything sensible</p>
+
+<p><strong>Trigger:</strong> Smart Home -&gt; CallStart</p>
+
+<p><strong>Add Action:</strong> Smart Home -&gt; Groups -&gt; Owen Office -&gt; Select All</p>
+
+<p>Now, I have set mine to turn on the lights, set the brightness to 12% and the colour to blue - you do you!!</p>
+
+<p>It’ll look something like this</p>
+
+<p><img src="../images/callStart.jpg" alt="Call Start Routine" /></p>
+
+<h3 id="triggering-the-endpoint">Triggering the endpoint</h3>
+
+<p>This is where it gets a bit niche - I briefly looked at if there was hooks in Zoom where I could get the start and end of a call, but that wasn’t working so I looked a the webcam and if it had device hooks.</p>
+
+<p>Eventually, I settled on tailing the the <code class="language-plaintext highlighter-rouge">log</code> on my MacBook. I used the work of <a href="https://github.com/MaxSchaefer/macos-log-stream/blob/main/pkg/mls/logs.go">Max Schaefer</a> for inspiration.</p>
+
+<p>Essentially, an external process is started with the <code class="language-plaintext highlighter-rouge">log</code> command to <code class="language-plaintext highlighter-rouge">stream</code> and read the entries looking for <code class="language-plaintext highlighter-rouge">Cameras changed</code> events.</p>
+
+<p>The main logic of the stream processing is here</p>
+
+<div class="language-go highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">cmd</span> <span class="o">:=</span> <span class="n">exec</span><span class="o">.</span><span class="n">Command</span><span class="p">(</span><span class="s">"log"</span><span class="p">,</span> <span class="n">args</span><span class="o">...</span><span class="p">)</span>
+<span class="n">stdout</span><span class="p">,</span> <span class="n">err</span> <span class="o">:=</span> <span class="n">cmd</span><span class="o">.</span><span class="n">StdoutPipe</span><span class="p">()</span>
+<span class="k">if</span> <span class="n">err</span> <span class="o">!=</span> <span class="no">nil</span> <span class="p">{</span>
+	<span class="k">return</span> <span class="n">err</span>
+<span class="p">}</span>
+<span class="n">stderr</span><span class="p">,</span> <span class="n">err</span> <span class="o">:=</span> <span class="n">cmd</span><span class="o">.</span><span class="n">StderrPipe</span><span class="p">()</span>
+<span class="k">if</span> <span class="n">err</span> <span class="o">!=</span> <span class="no">nil</span> <span class="p">{</span>
+	<span class="k">return</span> <span class="n">err</span>
+<span class="p">}</span>
+<span class="k">go</span> <span class="k">func</span><span class="p">()</span> <span class="p">{</span>
+	<span class="n">logs</span><span class="o">.</span><span class="n">m</span><span class="o">.</span><span class="n">Lock</span><span class="p">()</span>
+	<span class="k">defer</span> <span class="n">logs</span><span class="o">.</span><span class="n">m</span><span class="o">.</span><span class="n">Unlock</span><span class="p">()</span>
+	<span class="n">cmd</span><span class="o">.</span><span class="n">Start</span><span class="p">()</span>
+	<span class="k">defer</span> <span class="n">cmd</span><span class="o">.</span><span class="n">Process</span><span class="o">.</span><span class="n">Kill</span><span class="p">()</span>
+	<span class="c">// drop first message</span>
+	<span class="n">bufio</span><span class="o">.</span><span class="n">NewReader</span><span class="p">(</span><span class="n">stdout</span><span class="p">)</span><span class="o">.</span><span class="n">ReadLine</span><span class="p">()</span>
+	<span class="n">dec</span> <span class="o">:=</span> <span class="n">json</span><span class="o">.</span><span class="n">NewDecoder</span><span class="p">(</span><span class="n">stdout</span><span class="p">)</span>
+	<span class="k">for</span> <span class="p">{</span>
+		<span class="k">select</span> <span class="p">{</span>
+		<span class="k">case</span> <span class="o">&lt;-</span><span class="n">logs</span><span class="o">.</span><span class="n">exit</span><span class="o">:</span>
+			<span class="k">return</span>
+		<span class="k">default</span><span class="o">:</span>
+			<span class="n">log</span> <span class="o">:=</span> <span class="n">Log</span><span class="p">{}</span>
+			<span class="k">if</span> <span class="n">err</span> <span class="o">:=</span> <span class="n">dec</span><span class="o">.</span><span class="n">Decode</span><span class="p">(</span><span class="o">&amp;</span><span class="n">log</span><span class="p">);</span> <span class="n">err</span> <span class="o">!=</span> <span class="no">nil</span> <span class="p">{</span>
+				<span class="k">continue</span>
+			<span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+				<span class="n">logs</span><span class="o">.</span><span class="n">Channel</span> <span class="o">&lt;-</span> <span class="n">log</span>
+			<span class="p">}</span>
+		<span class="p">}</span>
+	<span class="p">}</span>
+<span class="p">}()</span>
+</code></pre></div></div>
+
+<p>And consuming that log data is my main monitoring function.</p>
+
+<div class="language-go highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">logs</span> <span class="o">:=</span> <span class="n">newLogTail</span><span class="p">()</span>
+<span class="k">for</span> <span class="p">{</span>
+	<span class="k">func</span><span class="p">()</span> <span class="p">{</span>
+		<span class="k">defer</span> <span class="k">func</span><span class="p">()</span> <span class="p">{</span>
+			<span class="k">if</span> <span class="n">r</span> <span class="o">:=</span> <span class="nb">recover</span><span class="p">();</span> <span class="n">r</span> <span class="o">!=</span> <span class="no">nil</span> <span class="p">{</span>
+				<span class="n">fmt</span><span class="o">.</span><span class="n">Println</span><span class="p">(</span><span class="s">"Recovered "</span><span class="p">,</span> <span class="n">r</span><span class="p">)</span>
+			<span class="p">}</span>
+		<span class="p">}()</span>
+		<span class="k">if</span> <span class="n">err</span> <span class="o">:=</span> <span class="n">logs</span><span class="o">.</span><span class="n">StartGathering</span><span class="p">();</span> <span class="n">err</span> <span class="o">!=</span> <span class="no">nil</span> <span class="p">{</span>
+			<span class="n">fmt</span><span class="o">.</span><span class="n">Println</span><span class="p">(</span><span class="s">"Log gathering failed with error: %w"</span><span class="p">,</span> <span class="n">err</span><span class="p">)</span>
+			<span class="k">return</span>
+		<span class="p">}</span>
+		<span class="k">for</span> <span class="n">log</span> <span class="o">:=</span> <span class="k">range</span> <span class="n">logs</span><span class="o">.</span><span class="n">Channel</span> <span class="p">{</span>
+			<span class="k">if</span> <span class="n">strings</span><span class="o">.</span><span class="n">Contains</span><span class="p">(</span><span class="n">log</span><span class="o">.</span><span class="n">EventMessage</span><span class="p">,</span> <span class="s">"Cameras changed"</span><span class="p">)</span> <span class="p">{</span>
+				<span class="k">switch</span> <span class="n">log</span><span class="o">.</span><span class="n">EventMessage</span> <span class="p">{</span>
+				<span class="k">case</span> <span class="s">"Cameras changed to []"</span><span class="o">:</span>
+					<span class="n">fmt</span><span class="o">.</span><span class="n">Printf</span><span class="p">(</span><span class="s">"%s: Camera disconnected</span><span class="se">\n</span><span class="s">"</span><span class="p">,</span> <span class="n">log</span><span class="o">.</span><span class="n">Timestamp</span><span class="p">)</span>
+					<span class="n">http</span><span class="o">.</span><span class="n">Get</span><span class="p">(</span><span class="s">"https://mkzense.com/webhook/alexa/&lt;mytokengoeshere&gt;/CallEnd"</span><span class="p">)</span>
+				<span class="k">default</span><span class="o">:</span>
+					<span class="n">fmt</span><span class="o">.</span><span class="n">Printf</span><span class="p">(</span><span class="s">"%s: Camera connected</span><span class="se">\n</span><span class="s">"</span><span class="p">,</span> <span class="n">log</span><span class="o">.</span><span class="n">Timestamp</span><span class="p">)</span>
+					<span class="n">http</span><span class="o">.</span><span class="n">Get</span><span class="p">(</span><span class="s">"https://mkzense.com/webhook/alexa/&lt;mytokengoeshere&gt;/CallStart"</span>
+				<span class="p">}</span>
+			<span class="p">}</span>
+		<span class="p">}</span>
+	<span class="p">}()</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>There isn’t a great deal to explain - the logs get polled, if the event has <code class="language-plaintext highlighter-rouge">Cameras changed</code> in it then the even message is looked at to see there is an empty slice - which means its a disconnect, otherwise its a camera coming to life.</p>
+
+<p>Depending on the event, I either call the <code class="language-plaintext highlighter-rouge">CallStart</code> trigger or the <code class="language-plaintext highlighter-rouge">CallEnd</code> trigger and my Alexa routine is activated.</p>
+
+<h3 id="running-as-a-service">Running as a service</h3>
+
+<p>The last thing to do is running <code class="language-plaintext highlighter-rouge">webcam-watcher</code> as a service. I have zero experience of this with a Mac so I Googled and found LaunchAgents are a way to go.</p>
+
+<div class="language-xml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cp">&lt;?xml version="1.0" encoding="UTF-8"?&gt;</span>
+<span class="cp">&lt;!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd"&gt;</span>
+<span class="nt">&lt;plist</span> <span class="na">version=</span><span class="s">"1.0"</span><span class="nt">&gt;</span>
+<span class="nt">&lt;dict&gt;</span>
+	<span class="nt">&lt;key&gt;</span>Label<span class="nt">&lt;/key&gt;</span>
+	<span class="nt">&lt;string&gt;</span>com.owenrumney.webcam-watcher<span class="nt">&lt;/string&gt;</span>
+	<span class="nt">&lt;key&gt;</span>Program<span class="nt">&lt;/key&gt;</span>
+	<span class="nt">&lt;string&gt;</span>/Users/owen/code/owenrumney/webcam-watcher/webcam-watcher<span class="nt">&lt;/string&gt;</span>
+	<span class="nt">&lt;key&gt;</span>RunAtLoad<span class="nt">&lt;/key&gt;</span>
+	<span class="nt">&lt;true/&gt;</span>
+	<span class="nt">&lt;key&gt;</span>StandardErrorPath<span class="nt">&lt;/key&gt;</span>
+	<span class="nt">&lt;string&gt;</span>/tmp/com.owenrumney.webcam-watcher.stderr<span class="nt">&lt;/string&gt;</span>
+	<span class="nt">&lt;key&gt;</span>StandardOutPath<span class="nt">&lt;/key&gt;</span>
+	<span class="nt">&lt;string&gt;</span>/tmp/com.owenrumney.webcam-watcher.stdout<span class="nt">&lt;/string&gt;</span>
+<span class="nt">&lt;/dict&gt;</span>
+<span class="nt">&lt;/plist&gt;</span>
+
+</code></pre></div></div>
+
+<p>This launch agent goes in <code class="language-plaintext highlighter-rouge">~/Library/LaunchAgents/com.owenrumney.webcam-watcher.plist</code></p>
+
+<p>Then load and start it</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>launchctl load ~/Library/LaunchAgents/com.owenrumney.webcam-watcher.plist
+
+launchctl start com.owenrumney.webcam-watcher
+</code></pre></div></div>
+
+<p>You can check its actually running using</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>ps aux | <span class="nb">grep </span>webcam
+</code></pre></div></div>
+
+<h3 id="getting-the-codez">Getting the codez</h3>
+
+<p>If all that hasn’t put you off - you can get the code from the <a href="https://github.com/owenrumney/webcam-watcher">GitHub Repo</a></p>
+
+</div>
+
+            </div>
+        </main>
+    </div>
+
+    <footer class="wrapper-footer">
+        <div class="footer">
+    <span class="footer-text float-left">This work is licensed under <a rel="license" href="https://www.gnu.org/licenses/gpl-3.0.en.html" target="_blank">GPLv3</a></span>
+    <span class="footer-text float-right">
+    Site Updated: 2023-12-01  (<a href="/feed.xml" target="_blank">RSS</a>)
+  </span>
+</div>
+    </footer>
+</body>
+</html>

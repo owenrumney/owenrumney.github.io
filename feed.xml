@@ -1,0 +1,185 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Owen Rumney</title>
+    <description>Bits of blogging by Owen Rumney</description>
+    <link>https://www.owenrumney.co.uk/</link>
+    <atom:link href="https://www.owenrumney.co.uk/feed.xml" rel="self" type="application/rss+xml"/>
+    <pubDate>Fri, 01 Dec 2023 12:02:01 +0000</pubDate>
+    <lastBuildDate>Fri, 01 Dec 2023 12:02:01 +0000</lastBuildDate>
+    <generator>Jekyll v4.2.1</generator>
+    
+      <item>
+        <title>Set Slack status using Home Assistant</title>
+        <description>&lt;h1 id=&quot;the-brief&quot;&gt;The Brief&lt;/h1&gt; &lt;table&gt; &lt;tbody&gt; &lt;tr&gt; &lt;td&gt;Note: I am on week two of running a HomeAssistant service so I’m still learning. If you have any suggestions or improvements please let me know.&lt;/td&gt; &lt;/tr&gt; &lt;/tbody&gt; &lt;/table&gt; &lt;p&gt;I want to be able to set my Slack presence when I’m working and “Away” when I’m not. I want this to be automated so I don’t have to remember to do it and I want the notifications muted when I’m not working.&lt;/p&gt; &lt;h1 id=&quot;the-solution&quot;&gt;The Solution&lt;/h1&gt; &lt;h2 id=&quot;previous-solution&quot;&gt;Previous Solution&lt;/h2&gt; &lt;p&gt;The previous solution (which worked) was a Lambda running in AWS that was triggered by an...</description>
+        <pubDate>Thu, 30 Nov 2023 00:00:00 +0000</pubDate>
+        <link>https://www.owenrumney.co.uk/home-assistant-status-setter/</link>
+        <guid isPermaLink="true">https://www.owenrumney.co.uk/home-assistant-status-setter/</guid>
+        
+        <category>python</category>
+        
+        <category>learning</category>
+        
+        <category>home-assistant</category>
+        
+        
+        <category>programming</category>
+        
+      </item>
+    
+      <item>
+        <title>Sleeping responsively</title>
+        <description>&lt;p&gt;How do you have a long polling mechanism that can be cancelled even during it’s sleep? THis is a question I found myself facing recently with a CLI app that is polling AWS Cloud Watch&lt;/p&gt; &lt;p&gt;Let’s say you have a function that looks like this:&lt;/p&gt; &lt;div class=&quot;language-go highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;func&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Start&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;ctx&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;cancel&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;:=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;context&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;WithCancel&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;context&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Background&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;())&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;defer&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;cancel&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;c&quot;&gt;// create a channel for signals and listen for SIGINT and SIGTERM&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;c&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;:=&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;make&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;chan&lt;/span&gt; &lt;span...</description>
+        <pubDate>Wed, 01 Feb 2023 00:00:00 +0000</pubDate>
+        <link>https://www.owenrumney.co.uk/responsive-sleep/</link>
+        <guid isPermaLink="true">https://www.owenrumney.co.uk/responsive-sleep/</guid>
+        
+        <category>go</category>
+        
+        <category>learning</category>
+        
+        
+        <category>programming</category>
+        
+      </item>
+    
+      <item>
+        <title>Controlling my office lights from my webcam!?!?</title>
+        <description>&lt;p&gt;Full disclosure, this is a pretty niche blog post and the prerequisites for getting it working were enough to make me consider not posting.&lt;/p&gt; &lt;p&gt;So what is it about? When I start a Zoom call, I want to dim the lights in my office for no other reason than I want to.&lt;/p&gt; &lt;p&gt;&lt;img src=&quot;../images/lighting_dream.gif&quot; alt=&quot;Lighting Dreams Come True&quot; /&gt;&lt;/p&gt; &lt;h3 id=&quot;what-it-takes-to-achieve-this-dubious-setup&quot;&gt;What it takes to achieve this dubious setup&lt;/h3&gt; &lt;ul&gt; &lt;li&gt;Amazon Alexa account&lt;/li&gt; &lt;li&gt;An Amazon Echo Dot&lt;/li&gt; &lt;li&gt;4 x GU10 RGB bulbs&lt;/li&gt; &lt;li&gt;A mkzense.com subscription ($5/yr)&lt;/li&gt; &lt;li&gt;Some filthy code&lt;/li&gt; &lt;li&gt;A couple of Alexa Routines&lt;/li&gt; &lt;/ul&gt; &lt;h3 id=&quot;getting-it-started&quot;&gt;Getting it started&lt;/h3&gt; &lt;h4 id=&quot;alexa-initial-setup&quot;&gt;Alexa...</description>
+        <pubDate>Wed, 30 Nov 2022 00:00:00 +0000</pubDate>
+        <link>https://www.owenrumney.co.uk/dim-lights-on-camera/</link>
+        <guid isPermaLink="true">https://www.owenrumney.co.uk/dim-lights-on-camera/</guid>
+        
+        <category>go</category>
+        
+        <category>learning</category>
+        
+        
+        <category>Niche</category>
+        
+      </item>
+    
+      <item>
+        <title>Lightning introduction to Redis Graph</title>
+        <description>&lt;p&gt;I’m familiar with Redis as a fast cache and have used it as such in the past. A few days ago I saw someone using Redis Insights to interact with RedisGraph and it looked pretty cool.&lt;/p&gt; &lt;p&gt;I wasn’t aware that Redis Graph and Stream existed, so I’m keen to learn more about them. In this post I’m going to do a lightning tour of how I got started for anyone who wants to get stuck in quickly.&lt;/p&gt; &lt;h3 id=&quot;prerequisites&quot;&gt;Prerequisites&lt;/h3&gt; &lt;p&gt;The only thing you need to get started is Docker - I’m going to be launching Redis and Redis Insight using...</description>
+        <pubDate>Thu, 06 Oct 2022 00:00:00 +0000</pubDate>
+        <link>https://www.owenrumney.co.uk/lightning-redis-graph-quickstart/</link>
+        <guid isPermaLink="true">https://www.owenrumney.co.uk/lightning-redis-graph-quickstart/</guid>
+        
+        <category>graph</category>
+        
+        <category>learning</category>
+        
+        
+        <category>Learning</category>
+        
+        <category>Programming</category>
+        
+      </item>
+    
+      <item>
+        <title>Leveraging Annotations in Go</title>
+        <description>&lt;p&gt;In &lt;a href=&quot;https://github.com/aquasecurity/defsec&quot; target=&quot;\_blank&quot;&gt;defsec&lt;/a&gt;, we have a large number of Go objects which represent real world Cloud entities. A documented schema is required, but due to the number, it would be nice to automate the generation.&lt;/p&gt; &lt;p&gt;In this post, I’m going to give a simplified introduction to Annotations that can be used with &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;text/template&lt;/code&gt;in a struct to aid this.&lt;/p&gt; &lt;h3 id=&quot;s3-bucket-example&quot;&gt;S3 Bucket example&lt;/h3&gt; &lt;p&gt;Lets take the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;S3 bucket&lt;/code&gt; as an example. Regardless of how we create the bucket (Terraform, Ansible, CloudFormation etc), there are common attributes that reflect it.&lt;/p&gt; &lt;p&gt;Lets look at a simplified &lt;code class=&quot;language-plaintext...</description>
+        <pubDate>Mon, 26 Sep 2022 00:00:00 +0000</pubDate>
+        <link>https://www.owenrumney.co.uk/using-annotations-with-go/</link>
+        <guid isPermaLink="true">https://www.owenrumney.co.uk/using-annotations-with-go/</guid>
+        
+        <category>go</category>
+        
+        <category>programming</category>
+        
+        
+        <category>Programming</category>
+        
+      </item>
+    
+      <item>
+        <title>Parsing Azure ARM functions in Go</title>
+        <description>&lt;h3 id=&quot;an-introduction&quot;&gt;An introduction&lt;/h3&gt; &lt;p&gt;For those who don’t know, I’m one of the original creators of &lt;a href=&quot;https://tfsec.dev&quot; target=&quot;\_blank&quot;&gt;tfsec&lt;/a&gt; and I now work on &lt;a href=&quot;https://trivy.dev&quot; target=&quot;\_blank&quot;&gt;Trivy&lt;/a&gt; as an open source engineer at &lt;a href=&quot;https://aquasec.com&quot; target=&quot;\_blank&quot;&gt;Aqua&lt;/a&gt;. Together with &lt;a href=&quot;https://twitter.com/liam_galvin&quot; target=&quot;\_blank&quot;&gt;@liam_galvin&lt;/a&gt; I am working on adding scanning support for &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Azure ARM Templates&lt;/code&gt; and ultimately &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;bicep&lt;/code&gt; to Trivy.&lt;/p&gt; &lt;p&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Azure ARM Templates&lt;/code&gt; are written in JSON and define the infrastructure that is going to be applied when the template is applied to the Azure resource group. In the same way we scan Terraform and CloudFormation, we need...</description>
+        <pubDate>Fri, 23 Sep 2022 00:00:00 +0000</pubDate>
+        <link>https://www.owenrumney.co.uk/simple-azure-arm-expression-tree/</link>
+        <guid isPermaLink="true">https://www.owenrumney.co.uk/simple-azure-arm-expression-tree/</guid>
+        
+        <category>go</category>
+        
+        <category>programming</category>
+        
+        
+        <category>Programming</category>
+        
+      </item>
+    
+      <item>
+        <title>Introducing lazytrivy</title>
+        <description>&lt;blockquote&gt; &lt;p&gt;UPDATED 21st Sept 2022: v1.0.0 Release&lt;/p&gt; &lt;/blockquote&gt; &lt;h4 id=&quot;view-lazytrivy-on-github&quot;&gt;View &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;lazytrivy&lt;/code&gt; on &lt;a href=&quot;https://github.com/owenrumney/lazytrivy&quot; target=&quot;\_blank&quot;&gt;GitHub&lt;/a&gt;&lt;/h4&gt; &lt;p&gt;&lt;img src=&quot;../images/scan_all.png?raw=true&quot; alt=&quot;lazytrivy&quot; /&gt;&lt;/p&gt; &lt;p&gt;&lt;a href=&quot;https://trivy.dev&quot;&gt;Trivy&lt;/a&gt; is the go to scanner for vulnerabilities and is rapidly becoming the go to for all your scanning needs.&lt;/p&gt; &lt;p&gt;lazytrivy just makes the experience even easier. You can run &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;lazytrivy&lt;/code&gt; without remembering all the commands and get a quick summary of the vulnerabilities you have.&lt;/p&gt; &lt;h3 id=&quot;how-does-it-work&quot;&gt;How does it work?&lt;/h3&gt; &lt;p&gt;Trivy is released as a binary or a Docker image. In order to support Windows users, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;lazytrivy&lt;/code&gt; uses the docker image and mounts...</description>
+        <pubDate>Wed, 07 Sep 2022 00:00:00 +0000</pubDate>
+        <link>https://www.owenrumney.co.uk/lazy-trivy-introduction/</link>
+        <guid isPermaLink="true">https://www.owenrumney.co.uk/lazy-trivy-introduction/</guid>
+        
+        <category>go</category>
+        
+        <category>programming</category>
+        
+        <category>tools</category>
+        
+        
+        <category>Programming</category>
+        
+      </item>
+    
+      <item>
+        <title>Generics to the Rescue</title>
+        <description>&lt;p&gt;&lt;img src=&quot;../images/generics-to-the-rescue.png&quot; alt=&quot;Generics To the Rescue&quot; /&gt;&lt;/p&gt; &lt;h3 id=&quot;a-bit-of-background&quot;&gt;A bit of background&lt;/h3&gt; &lt;p&gt;I’m working on a tool that uses the &lt;a href=&quot;https://aws.github.io/aws-sdk-go-v2/docs/&quot; target=&quot;_blank&quot;&gt;AWS Go SDK&lt;/a&gt; to pull back a lot of information about an account using the API.&lt;/p&gt; &lt;p&gt;Some services require several secondary API calls - for example to get a full picture about an S3 bucket with details about encryption, policies, ACL, logging, versioning and Public Access Block configuration requires six more calls.&lt;/p&gt; &lt;p&gt;When dealing with a medium to large number of buckets, making these calls sequentially is time consuming; extrapolating that over many services and you have a...</description>
+        <pubDate>Thu, 11 Aug 2022 00:00:00 +0000</pubDate>
+        <link>https://www.owenrumney.co.uk/generics-to-the-rescue/</link>
+        <guid isPermaLink="true">https://www.owenrumney.co.uk/generics-to-the-rescue/</guid>
+        
+        <category>programming</category>
+        
+        <category>go</category>
+        
+        
+        <category>Programming</category>
+        
+      </item>
+    
+      <item>
+        <title>Deploying Prometheus to Kubernetes</title>
+        <description>&lt;h2 id=&quot;what-is-this-about&quot;&gt;What is this about?&lt;/h2&gt; &lt;p&gt;This blog post is kind of a learning in public exercise. The goal is to run Prometheus in my local K8s cluster and export Node metrics to it.&lt;/p&gt; &lt;p&gt;I’m using a cluster generated by &lt;a href=&quot;https://github.com/owenrumney/local_k8s&quot;&gt;my local_k8s&lt;/a&gt; project. Out of the box, this creates KVM hosted cluster on an Arch machine with an underlying NFS ready for Persisted Volumes; PRs and Issues welcome.&lt;/p&gt; &lt;h2 id=&quot;creating-the-namespace&quot;&gt;Creating the namespace&lt;/h2&gt; &lt;p&gt;The first thing we want to do is create a namespace to run the monitoring resources in. I’m going to call this &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;monitoring&lt;/code&gt;&lt;/p&gt; &lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div...</description>
+        <pubDate>Wed, 03 Aug 2022 00:00:00 +0000</pubDate>
+        <link>https://www.owenrumney.co.uk/running-prometheus-in-k8s/</link>
+        <guid isPermaLink="true">https://www.owenrumney.co.uk/running-prometheus-in-k8s/</guid>
+        
+        <category>kubernetes</category>
+        
+        <category>learning</category>
+        
+        <category>monitoring</category>
+        
+        
+        <category>Containers</category>
+        
+        <category>SysAdmin</category>
+        
+      </item>
+    
+      <item>
+        <title>Zero to k3d</title>
+        <description>&lt;p&gt;I have had an on/off relationship with Kubernetes for a number of years and want to spend some time really getting to know how to use it, run it and secure it.&lt;/p&gt; &lt;p&gt;I previously wrote some &lt;a href=&quot;https://github.com/owenrumney/local_k8s&quot;&gt;Anisble playbooks&lt;/a&gt; to run Kubernetes on my desktop then chatting to &lt;a href=&quot;https://twitter.com/alistair_hey&quot;&gt;@alistair_hey&lt;/a&gt; about running a local environment on my fairly underpowered laptop he suggested &lt;a href=&quot;https://k3d.io/v5.4.1/&quot;&gt;k3d&lt;/a&gt; … so the journey starts here.&lt;/p&gt; &lt;h2 id=&quot;prerequisites&quot;&gt;Prerequisites&lt;/h2&gt; &lt;p&gt;k3d is a wrapper for &lt;a href=&quot;https://github.com/rancher/k3s&quot;&gt;k3s&lt;/a&gt; but runs the cluster in Docker. This means that you will need Docker running on the machine (which I already have!)....</description>
+        <pubDate>Thu, 07 Apr 2022 00:00:00 +0000</pubDate>
+        <link>https://www.owenrumney.co.uk/zero-to-k3d/</link>
+        <guid isPermaLink="true">https://www.owenrumney.co.uk/zero-to-k3d/</guid>
+        
+        <category>kubernetes</category>
+        
+        <category>docker</category>
+        
+        <category>learning</category>
+        
+        
+        <category>Containers</category>
+        
+      </item>
+    
+  </channel>
+</rss>

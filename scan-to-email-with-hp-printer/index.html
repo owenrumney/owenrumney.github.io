@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<!-- Begin Jekyll SEO tag v2.6.1 -->
+<title>Using Amazon SES with HP Scan-to-Email Printer | Owen Rumney</title>
+<meta name="generator" content="Jekyll v4.2.1" />
+<meta property="og:title" content="Using Amazon SES with HP Scan-to-Email Printer" />
+<meta name="author" content="Owen Rumney" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="Walkthrough for using Amazon Simple Email Service to relay Scan-to-email messages" />
+<meta property="og:description" content="Walkthrough for using Amazon Simple Email Service to relay Scan-to-email messages" />
+<link rel="canonical" href="https://www.owenrumney.co.uk/scan-to-email-with-hp-printer/" />
+<meta property="og:url" content="https://www.owenrumney.co.uk/scan-to-email-with-hp-printer/" />
+<meta property="og:site_name" content="Owen Rumney" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2019-01-28T00:00:00+00:00" />
+<script type="application/ld+json">
+{"dateModified":"2019-01-28T00:00:00+00:00","datePublished":"2019-01-28T00:00:00+00:00","author":{"@type":"Person","name":"Owen Rumney"},"description":"Walkthrough for using Amazon Simple Email Service to relay Scan-to-email messages","mainEntityOfPage":{"@type":"WebPage","@id":"https://www.owenrumney.co.uk/scan-to-email-with-hp-printer/"},"url":"https://www.owenrumney.co.uk/scan-to-email-with-hp-printer/","@type":"BlogPosting","headline":"Using Amazon SES with HP Scan-to-Email Printer","@context":"https://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+
+
+<meta name="keywords" content="aws,sysadmin" />
+
+<link rel="shortcut icon" href="/favicon.ico" />
+<link rel="apple-touch-icon" href="/favicon.ico"/>
+<link rel="stylesheet" type="text/css" href="/assets/css/styles.css" />
+<link rel="stylesheet" type="text/css" href="/assets/css/prism.css" />
+<script src="/assets/js/prism.js"></script>
+
+
+
+</head>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-TLCVNKXMFJ"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-TLCVNKXMFJ');
+</script>
+
+<body>
+    <div class="wrapper">
+        <header class="wrapper-header">
+            <div class="header">
+  <nav class="float-right">
+  
+  <a href="https://github.com/owenrumney" target="_blank"
+    ><img
+      src="/assets/images/github.svg"
+      style="color: white; display: inline-block"
+      height="30px"
+      alt="GitHub"
+  /></a>
+  
+  <a href="https://linkedin.com/in/owenrumney" target="_blank"
+    ><img
+      src="/assets/images/linkedin.svg"
+      style="color: white; display: inline-block"
+      height="30px"
+      alt="LinkedIn"
+  /></a>
+  
+  <a href="https://cv.owenrumney.co.uk" target="_blank"
+    ><img
+      src="/assets/images/resume.svg"
+      style="color: white; display: inline-block"
+      height="32px"
+      alt="Resume"
+  /></a>
+  
+</nav>
+
+  <a href="https://www.owenrumney.co.uk" target="_blank"><h1>Owen Rumney</h1></a>
+  <br />
+  <h5><i>Software Engineer</i></h5>
+  <br />
+
+  <hr />
+</div>
+
+        </header>
+
+        <main class="wrapper-main">
+            <div class="main-content">
+            <div class="post-info">
+    <h2>Using Amazon SES with HP Scan-to-Email Printer</h2>
+    <p>28 Jan 2019 - Owen Rumney</p>
+</div>
+
+<div class="post-content">
+<h2 id="overview">Overview</h2>
+
+<p>We have just replaced our aging Canon MX885 Multi Function printer with a new colour Laser printer, an HP M281fdw multi function. One of the scanning options is to “Scan to Email”. This is something I’ve found really useful in my current clients office.</p>
+
+<h2 id="whats-the-issue-then">What’s the issue then?</h2>
+
+<p>The issue I found setting up this functionality is that I need to configure the printer to relay through an SMTP server to send the messages to me. This is a pain and I didn’t want to have to stand up a simple SMTP server here just so I could use this feature.</p>
+
+<p>My next thought was to try and use <code class="language-plaintext highlighter-rouge">smtp.gmail.com</code>. Even with the usual port and authenticating using my emails creds this still didn’t work properly so I figured why not make use of Amazon’s Simple Email Service. It’s simple, reliable and you can relay through it.</p>
+
+<h2 id="setting-it-up">Setting it up</h2>
+
+<p>The following steps should get you working - the key sticking points are making sure that you’ve verified that you can send to the email address you’re configuring.</p>
+
+<h3 id="verifying-the-email-address">Verifying the Email Address</h3>
+
+<p>First things first is to log into the AWS Console and navigate to <code class="language-plaintext highlighter-rouge">Simple Email Service</code>.</p>
+
+<p>Under <code class="language-plaintext highlighter-rouge">Identity Management</code> select <code class="language-plaintext highlighter-rouge">Email Addresses</code> then click the <code class="language-plaintext highlighter-rouge">Verify a New Email Address</code> button.</p>
+
+<p>This will being up the dialog where you can specify the email you want to approve.</p>
+
+<p><img src="../images/verify_email_address.png" alt="Verify an Email Address dialo" /></p>
+
+<p>Once you’ve submitted this, you’ll get an email to the specified address which you need to validate by clicking the link in the email. You should then see the email verified as below;</p>
+
+<p><img src="../images/verified_email_addresses.png" alt="Verified Email Addres" /></p>
+
+<h3 id="creating-the-smtp-credentials">Creating the SMTP credentials</h3>
+
+<p>The next thing you need to do is create some credentials with which to relay through the SMTP server with. Clicking on <code class="language-plaintext highlighter-rouge">SMTP Settings</code> under the <code class="language-plaintext highlighter-rouge">Email Sending</code> section will show you the details - as below;</p>
+
+<p><img src="../images/ses_smtp_relay_details.png" alt="SMTP Setting" /></p>
+
+<p>Click on the <code class="language-plaintext highlighter-rouge">Create My SMTP Credentials</code> button and either accept the IAM user name or change to something more appropriate</p>
+
+<p><img src="../images/create_ses_creds.png" alt="SES IAM Use" /></p>
+
+<p>Clicking <code class="language-plaintext highlighter-rouge">Create</code> will generate the new credentials for the IAM user which you can download and make a note of.</p>
+
+<p><img src="../images/creds_download.png" alt="IAM User Credential" /></p>
+
+<h3 id="configuring-the-printer">Configuring the Printer</h3>
+
+<p>Finally, we can update the configuration in the printer. In my case, the screen looks something like this.</p>
+
+<p><img src="../images/mfp_email_config.png" alt="MFP Email Config Scree" /></p>
+
+<p>Last step is to do a test scan and make sure it gets routed through your email.</p>
+
+</div>
+
+            </div>
+        </main>
+    </div>
+
+    <footer class="wrapper-footer">
+        <div class="footer">
+    <span class="footer-text float-left">This work is licensed under <a rel="license" href="https://www.gnu.org/licenses/gpl-3.0.en.html" target="_blank">GPLv3</a></span>
+    <span class="footer-text float-right">
+    Site Updated: 2023-12-01  (<a href="/feed.xml" target="_blank">RSS</a>)
+  </span>
+</div>
+    </footer>
+</body>
+</html>

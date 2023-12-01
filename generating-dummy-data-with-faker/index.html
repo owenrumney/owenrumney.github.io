@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<!-- Begin Jekyll SEO tag v2.6.1 -->
+<title>Generating test data with Faker | Owen Rumney</title>
+<meta name="generator" content="Jekyll v4.2.1" />
+<meta property="og:title" content="Generating test data with Faker" />
+<meta name="author" content="Owen Rumney" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="Using faker in python to generate test data that is reasonably meaningful" />
+<meta property="og:description" content="Using faker in python to generate test data that is reasonably meaningful" />
+<link rel="canonical" href="https://www.owenrumney.co.uk/generating-dummy-data-with-faker/" />
+<meta property="og:url" content="https://www.owenrumney.co.uk/generating-dummy-data-with-faker/" />
+<meta property="og:site_name" content="Owen Rumney" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2019-01-07T00:00:00+00:00" />
+<script type="application/ld+json">
+{"dateModified":"2019-01-07T00:00:00+00:00","datePublished":"2019-01-07T00:00:00+00:00","author":{"@type":"Person","name":"Owen Rumney"},"description":"Using faker in python to generate test data that is reasonably meaningful","mainEntityOfPage":{"@type":"WebPage","@id":"https://www.owenrumney.co.uk/generating-dummy-data-with-faker/"},"url":"https://www.owenrumney.co.uk/generating-dummy-data-with-faker/","@type":"BlogPosting","headline":"Generating test data with Faker","@context":"https://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+
+
+<meta name="keywords" content="python,programming,tools" />
+
+<link rel="shortcut icon" href="/favicon.ico" />
+<link rel="apple-touch-icon" href="/favicon.ico"/>
+<link rel="stylesheet" type="text/css" href="/assets/css/styles.css" />
+<link rel="stylesheet" type="text/css" href="/assets/css/prism.css" />
+<script src="/assets/js/prism.js"></script>
+
+
+
+</head>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-TLCVNKXMFJ"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-TLCVNKXMFJ');
+</script>
+
+<body>
+    <div class="wrapper">
+        <header class="wrapper-header">
+            <div class="header">
+  <nav class="float-right">
+  
+  <a href="https://github.com/owenrumney" target="_blank"
+    ><img
+      src="/assets/images/github.svg"
+      style="color: white; display: inline-block"
+      height="30px"
+      alt="GitHub"
+  /></a>
+  
+  <a href="https://linkedin.com/in/owenrumney" target="_blank"
+    ><img
+      src="/assets/images/linkedin.svg"
+      style="color: white; display: inline-block"
+      height="30px"
+      alt="LinkedIn"
+  /></a>
+  
+  <a href="https://cv.owenrumney.co.uk" target="_blank"
+    ><img
+      src="/assets/images/resume.svg"
+      style="color: white; display: inline-block"
+      height="32px"
+      alt="Resume"
+  /></a>
+  
+</nav>
+
+  <a href="https://www.owenrumney.co.uk" target="_blank"><h1>Owen Rumney</h1></a>
+  <br />
+  <h5><i>Software Engineer</i></h5>
+  <br />
+
+  <hr />
+</div>
+
+        </header>
+
+        <main class="wrapper-main">
+            <div class="main-content">
+            <div class="post-info">
+    <h2>Generating test data with Faker</h2>
+    <p>07 Jan 2019 - Owen Rumney</p>
+</div>
+
+<div class="post-content">
+<p>Python is one of those languages where if you can concieve it, there is probably already a library for it.</p>
+
+<p>One great library is Faker - this makes the generation of sensible test data much easier and removes a lot of the issues around having to using unrealistic junk values when creating it on your own.</p>
+
+<p>There is lots to see, and your probably best off <a href="https://faker.readthedocs.io/en/master/index.html">reading the docs</a>, but this is to give you an overview.</p>
+
+<h2 id="installation">Installation</h2>
+
+<p>Installation is simple, just use pip to install;</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">pip</span> <span class="n">install</span> <span class="n">faker</span>
+</code></pre></div></div>
+
+<h2 id="usage">Usage</h2>
+
+<p>Now that you have it installed, you can use python REPL or <a href="https://github.com/prompt-toolkit/ptpython">ptpython</a> to have a play.</p>
+
+<p>### Some basics</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">from</span> <span class="nn">faker</span> <span class="kn">import</span> <span class="n">Factory</span>
+
+<span class="n">fake</span> <span class="o">=</span> <span class="n">Factory</span><span class="p">.</span><span class="n">create</span><span class="p">()</span>
+<span class="n">fake</span><span class="p">.</span><span class="n">first_name</span><span class="p">(),</span> <span class="n">fake</span><span class="p">.</span><span class="n">last_name</span><span class="p">(),</span> <span class="n">fake</span><span class="p">.</span><span class="n">email</span><span class="p">()</span>
+</code></pre></div></div>
+
+<p>This will give you a tuple with a random name and email;</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">(</span><span class="s1">'Mary'</span>, <span class="s1">'Bennett'</span>, <span class="s1">'jamesrodriguez@hotmail.com'</span><span class="o">)</span>
+</code></pre></div></div>
+
+<h3 id="localisation">Localisation</h3>
+<p>If you want to get UK post codes, you can tell the factory a localisation to use when generating the data;</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">from</span> <span class="nn">faker</span> <span class="kn">import</span> <span class="n">Factory</span>
+
+<span class="n">fake</span> <span class="o">=</span> <span class="n">Factory</span><span class="p">.</span><span class="n">create</span><span class="p">(</span><span class="s">'en_GB'</span><span class="p">)</span>
+
+<span class="n">fake</span><span class="p">.</span><span class="n">street_address</span><span class="p">(),</span> <span class="n">fake</span><span class="p">.</span><span class="n">postcode</span><span class="p">()</span>
+</code></pre></div></div>
+
+<p>which will yield;</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">(</span><span class="s1">'Studio 54\nCollins fork'</span>, <span class="s1">'L2 7XP'</span><span class="o">)</span>
+</code></pre></div></div>
+
+<h3 id="synchronising-multiple-fakes">Synchronising Multiple Fakes</h3>
+
+<p>Everytime you call a method on the <code class="language-plaintext highlighter-rouge">fake</code> object you get a new value. If you wanted to synchronise two <code class="language-plaintext highlighter-rouge">fake</code> objects you can use the seed. This will mean that the each consecutive call from each <code class="language-plaintext highlighter-rouge">fake</code> will return the same value.</p>
+
+<p>This is probably more easily demonstrated in code;</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">from</span> <span class="nn">faker</span> <span class="kn">import</span> <span class="n">Factory</span>
+
+<span class="n">fake1</span> <span class="o">=</span> <span class="n">Factory</span><span class="p">.</span><span class="n">create</span><span class="p">()</span>
+<span class="n">fake2</span> <span class="o">=</span> <span class="n">Factory</span><span class="p">.</span><span class="n">create</span><span class="p">()</span>
+
+<span class="n">fake1</span><span class="p">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">12345</span><span class="p">)</span>
+<span class="n">fake2</span><span class="p">.</span><span class="n">seed_instance</span><span class="p">(</span><span class="mi">12345</span><span class="p">)</span>
+
+<span class="n">fake1</span><span class="p">.</span><span class="n">name</span><span class="p">(),</span> <span class="n">fake2</span><span class="p">.</span><span class="n">name</span><span class="p">()</span>
+<span class="n">fake1</span><span class="p">.</span><span class="n">name</span><span class="p">(),</span> <span class="n">fake2</span><span class="p">.</span><span class="n">name</span><span class="p">()</span>
+</code></pre></div></div>
+
+<p>This will result in a tuple containing the same name across synchronised <code class="language-plaintext highlighter-rouge">fake</code> objects.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">(</span><span class="s1">'Adam Bryan'</span>, <span class="s1">'Adam Bryan'</span><span class="o">)</span>
+<span class="o">(</span><span class="s1">'Jacob Lee'</span>, <span class="s1">'Jacob Lee'</span><span class="o">)</span>
+</code></pre></div></div>
+
+<h3 id="making-it-a-bit-more-interesting">Making it a bit more interesting</h3>
+
+<p>In a previous pose I fiddled with credit card data where I created test data. Faker can be used to help out here. The code below isn’t an example of amazing Python, its just simple code to show it working.</p>
+
+<p>First, we bring in the imports that are going to be used;</p>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">csv</span>
+<span class="kn">import</span> <span class="nn">random</span>
+<span class="kn">from</span> <span class="nn">faker</span> <span class="kn">import</span> <span class="n">Factory</span>
+<span class="kn">from</span> <span class="nn">faker.providers</span> <span class="kn">import</span> <span class="n">credit_card</span>
+</code></pre></div></div>
+
+<p>Some helper methods, these are just to keep things clean</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">get_transaction_amount</span><span class="p">():</span>
+    <span class="k">return</span> <span class="nb">round</span><span class="p">(</span><span class="n">random</span><span class="p">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1000</span><span class="p">)</span> <span class="o">*</span> <span class="n">random</span><span class="p">.</span><span class="n">random</span><span class="p">(),</span> <span class="mi">2</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">get_transaction_date</span><span class="p">(</span><span class="n">fake</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">fake</span><span class="p">.</span><span class="n">date_time_between</span><span class="p">(</span><span class="n">start_date</span><span class="o">=</span><span class="s">'-30y'</span><span class="p">,</span> <span class="n">end_date</span><span class="o">=</span><span class="s">'now'</span><span class="p">).</span><span class="n">isoformat</span><span class="p">()</span>
+</code></pre></div></div>
+
+<p>Some more helpers for the creation of records for our customer and transaction</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">create_customer_record</span><span class="p">(</span><span class="n">customer_id</span><span class="p">):</span>
+    <span class="n">fake</span> <span class="o">=</span> <span class="n">Factory</span><span class="p">.</span><span class="n">create</span><span class="p">(</span><span class="s">'en_GB'</span><span class="p">)</span>
+    <span class="k">return</span> <span class="p">[</span><span class="n">customer_id</span><span class="p">,</span> <span class="n">fake</span><span class="p">.</span><span class="n">first_name</span><span class="p">(),</span> <span class="n">fake</span><span class="p">.</span><span class="n">last_name</span><span class="p">(),</span> <span class="n">fake</span><span class="p">.</span><span class="n">street_address</span><span class="p">().</span><span class="n">replace</span><span class="p">(</span><span class="s">'</span><span class="se">\n</span><span class="s">'</span><span class="p">,</span> <span class="s">', '</span><span class="p">),</span> <span class="n">fake</span><span class="p">.</span><span class="n">city</span><span class="p">(),</span> <span class="n">fake</span><span class="p">.</span><span class="n">postcode</span><span class="p">(),</span> <span class="n">fake</span><span class="p">.</span><span class="n">email</span><span class="p">()]</span>
+
+<span class="k">def</span> <span class="nf">create_financials_record</span><span class="p">(</span><span class="n">customer_id</span><span class="p">):</span>
+    <span class="n">fake</span> <span class="o">=</span> <span class="n">Factory</span><span class="p">.</span><span class="n">create</span><span class="p">(</span><span class="s">'en_GB'</span><span class="p">)</span>
+    <span class="k">return</span> <span class="p">[</span><span class="n">customer_id</span><span class="p">,</span> <span class="n">fake</span><span class="p">.</span><span class="n">credit_card_number</span><span class="p">(),</span> <span class="n">get_transaction_amount</span><span class="p">(),</span> <span class="n">get_transaction_date</span><span class="p">(</span><span class="n">fake</span><span class="p">)]</span>
+</code></pre></div></div>
+
+<p>A helper function to save the records to file</p>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">flush_records</span><span class="p">(</span><span class="n">records</span><span class="p">,</span> <span class="n">filename</span><span class="p">):</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s">'a'</span><span class="p">)</span> <span class="k">as</span> <span class="nb">file</span><span class="p">:</span>
+        <span class="n">csv_writer</span><span class="o">=</span><span class="n">csv</span><span class="p">.</span><span class="n">writer</span><span class="p">(</span><span class="nb">file</span><span class="p">,</span> <span class="n">delimiter</span> <span class="o">=</span> <span class="s">','</span><span class="p">,</span> <span class="n">quotechar</span> <span class="o">=</span> <span class="s">'"'</span><span class="p">,</span> <span class="n">quoting</span> <span class="o">=</span> <span class="n">csv</span><span class="p">.</span><span class="n">QUOTE_MINIMAL</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">record</span> <span class="ow">in</span> <span class="n">records</span><span class="p">:</span>
+            <span class="n">csv_writer</span><span class="p">.</span><span class="n">writerow</span><span class="p">(</span><span class="n">record</span><span class="p">)</span>
+    <span class="n">records</span><span class="p">.</span><span class="n">clear</span><span class="p">()</span>
+</code></pre></div></div>
+
+<p>Finally the main calling block to create the records</p>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">create_customer_files</span><span class="p">(</span><span class="n">customer_count</span><span class="o">=</span><span class="mi">100</span><span class="p">):</span>
+    <span class="n">customer_records</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">financial_records</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="nb">id</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">customer_count</span><span class="p">):</span>
+        <span class="n">customer_id</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="nb">id</span><span class="p">).</span><span class="n">zfill</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
+        <span class="n">customer_records</span><span class="p">.</span><span class="n">append</span><span class="p">(</span><span class="n">create_customer_record</span><span class="p">(</span><span class="n">customer_id</span><span class="p">))</span>
+        <span class="n">financial_records</span><span class="p">.</span><span class="n">append</span><span class="p">(</span><span class="n">create_financials_record</span><span class="p">(</span><span class="n">customer_id</span><span class="p">))</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">customer_records</span><span class="p">)</span> <span class="o">==</span> <span class="mi">100</span><span class="p">:</span>
+            <span class="n">flush_records</span><span class="p">(</span><span class="n">customer_records</span><span class="p">,</span> <span class="s">'customer.csv'</span><span class="p">)</span>
+            <span class="n">flush_records</span><span class="p">(</span><span class="n">financial_records</span><span class="p">,</span> <span class="s">'financials.csv'</span><span class="p">)</span>
+    <span class="n">flush_records</span><span class="p">(</span><span class="n">customer_records</span><span class="p">,</span> <span class="s">'customer.csv'</span><span class="p">)</span>
+    <span class="n">flush_records</span><span class="p">(</span><span class="n">financial_records</span><span class="p">,</span> <span class="s">'financials.csv'</span><span class="p">)</span>
+
+<span class="n">create_customer_files</span><span class="p">()</span>
+</code></pre></div></div>
+
+<p>Once we run this, we’ll have 2 files with customer details and a credit card transaction.</p>
+
+<p>Customer records</p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>0000000001,Clifford,Turner,<span class="s2">"Flat 17, Smith crescent"</span>,Johnsonborough,DN5 7JJ,ucooper@gmail.com
+0000000002,Amy,Clements,<span class="s2">"Studio 96s, Anne harbor"</span>,Maureenfurt,LA53 8HZ,marshalllee@williams-hart.info
+0000000003,Robin,Sinclair,5 Lesley motorway,Bryanbury,E2 9EU,sheilawhitehead@miles.com
+</code></pre></div></div>
+
+<p>Financial records</p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>0000000001,4851450166907,179.28,2009-06-01T07:03:43
+0000000002,370196022599953,229.46,2017-12-11T10:14:59
+0000000003,4285121047016,10.61,1995-04-23T23:54:19
+</code></pre></div></div>
+
+<p>By sharing the customer ID across both files we have some semblence of referential integrity.</p>
+
+<p>This code only creates a single transaction per customer, it can be easily modified to create multiple transactions by adjusting the <code class="language-plaintext highlighter-rouge">create_financial_records</code> to take an optional argument of <code class="language-plaintext highlighter-rouge">transaction_count=1</code> and updating the <code class="language-plaintext highlighter-rouge">append</code> to handle an array of arrays
+```</p>
+
+
+</div>
+
+            </div>
+        </main>
+    </div>
+
+    <footer class="wrapper-footer">
+        <div class="footer">
+    <span class="footer-text float-left">This work is licensed under <a rel="license" href="https://www.gnu.org/licenses/gpl-3.0.en.html" target="_blank">GPLv3</a></span>
+    <span class="footer-text float-right">
+    Site Updated: 2023-12-01  (<a href="/feed.xml" target="_blank">RSS</a>)
+  </span>
+</div>
+    </footer>
+</body>
+</html>

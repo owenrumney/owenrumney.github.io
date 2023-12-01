@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<!-- Begin Jekyll SEO tag v2.6.1 -->
+<title>Client side encryption using Boto3 and AWS KMS | Owen Rumney</title>
+<meta name="generator" content="Jekyll v4.2.1" />
+<meta property="og:title" content="Client side encryption using Boto3 and AWS KMS" />
+<meta name="author" content="Owen Rumney" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="Towards the end of 2014 Amazon released the KMS service to provide a cheaper cut down offering for Key Management Services than those provided with the CloudHSM solutions (although it still uses hardware HSM underneath)." />
+<meta property="og:description" content="Towards the end of 2014 Amazon released the KMS service to provide a cheaper cut down offering for Key Management Services than those provided with the CloudHSM solutions (although it still uses hardware HSM underneath)." />
+<link rel="canonical" href="https://www.owenrumney.co.uk/Boto3-client-side-encryption-using-KMS/" />
+<meta property="og:url" content="https://www.owenrumney.co.uk/Boto3-client-side-encryption-using-KMS/" />
+<meta property="og:site_name" content="Owen Rumney" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2015-01-06T00:00:00+00:00" />
+<script type="application/ld+json">
+{"dateModified":"2015-01-06T00:00:00+00:00","datePublished":"2015-01-06T00:00:00+00:00","author":{"@type":"Person","name":"Owen Rumney"},"description":"Towards the end of 2014 Amazon released the KMS service to provide a cheaper cut down offering for Key Management Services than those provided with the CloudHSM solutions (although it still uses hardware HSM underneath).","mainEntityOfPage":{"@type":"WebPage","@id":"https://www.owenrumney.co.uk/Boto3-client-side-encryption-using-KMS/"},"url":"https://www.owenrumney.co.uk/Boto3-client-side-encryption-using-KMS/","@type":"BlogPosting","headline":"Client side encryption using Boto3 and AWS KMS","@context":"https://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+
+
+<meta name="keywords" content="aws,boto3,encryption" />
+
+<link rel="shortcut icon" href="/favicon.ico" />
+<link rel="apple-touch-icon" href="/favicon.ico"/>
+<link rel="stylesheet" type="text/css" href="/assets/css/styles.css" />
+<link rel="stylesheet" type="text/css" href="/assets/css/prism.css" />
+<script src="/assets/js/prism.js"></script>
+
+
+
+</head>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-TLCVNKXMFJ"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-TLCVNKXMFJ');
+</script>
+
+<body>
+    <div class="wrapper">
+        <header class="wrapper-header">
+            <div class="header">
+  <nav class="float-right">
+  
+  <a href="https://github.com/owenrumney" target="_blank"
+    ><img
+      src="/assets/images/github.svg"
+      style="color: white; display: inline-block"
+      height="30px"
+      alt="GitHub"
+  /></a>
+  
+  <a href="https://linkedin.com/in/owenrumney" target="_blank"
+    ><img
+      src="/assets/images/linkedin.svg"
+      style="color: white; display: inline-block"
+      height="30px"
+      alt="LinkedIn"
+  /></a>
+  
+  <a href="https://cv.owenrumney.co.uk" target="_blank"
+    ><img
+      src="/assets/images/resume.svg"
+      style="color: white; display: inline-block"
+      height="32px"
+      alt="Resume"
+  /></a>
+  
+</nav>
+
+  <a href="https://www.owenrumney.co.uk" target="_blank"><h1>Owen Rumney</h1></a>
+  <br />
+  <h5><i>Software Engineer</i></h5>
+  <br />
+
+  <hr />
+</div>
+
+        </header>
+
+        <main class="wrapper-main">
+            <div class="main-content">
+            <div class="post-info">
+    <h2>Client side encryption using Boto3 and AWS KMS</h2>
+    <p>06 Jan 2015 - Owen Rumney</p>
+</div>
+
+<div class="post-content">
+<p>Towards the end of 2014 Amazon released the KMS service to provide a cheaper cut down offering for <a href="http://aws.amazon.com/kms/">Key Management Services</a> than those provided with the CloudHSM solutions (although it still uses hardware HSM underneath).</p>
+
+<p>KMS service can be accessed through IAM service at the bottom option on the left side menu is <strong>Encryption Keys</strong>. May sure you change the region filter to the correct region before creating or trying to view your customer keys.</p>
+
+<p>To create the customer key click the <strong>Create Key</strong> button and follow through the instructions to create a new master key - take a note of the <strong>Key ID</strong> then you’re ready to go.</p>
+
+<p>You need a couple of libraries before you start, for testing I use <a href="https://pypi.python.org/pypi/virtualenv">virtualenv</a></p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>bin/pip <span class="nb">install </span>boto3
+
+bin/pip <span class="nb">install </span>pycrypto
+</code></pre></div></div>
+
+<p>##Encrypting</p>
+
+<p>I’m using <a href="https://pypi.python.org/pypi/pycrypto/2.6.1">PyCrypto</a> library for no other reason than it appeared in the most results when I was looking for a library.</p>
+
+<p>I won’t go into much detail on the code because I don’t know much about encryption so I cobbled this together from the information in the pycrypto page.</p>
+
+<p>The key that is going to be supplied is the data key generated from the AWS key management service.</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">from</span> <span class="nn">Crypto</span> <span class="kn">import</span> <span class="n">Random</span>
+<span class="kn">from</span> <span class="nn">Crypto.Cipher</span> <span class="kn">import</span> <span class="n">AES</span>
+
+<span class="k">def</span> <span class="nf">pad</span><span class="p">(</span><span class="n">s</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">s</span> <span class="o">+</span> <span class="sa">b</span><span class="s">"/0"</span> <span class="o">*</span><span class="p">(</span><span class="n">AES</span><span class="p">.</span><span class="n">block_size</span> <span class="o">-</span> <span class="nb">len</span><span class="p">(</span><span class="n">s</span><span class="p">)</span> <span class="o">%</span> <span class="n">AES</span><span class="p">.</span><span class="n">block_size</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">encrypt</span><span class="p">(</span><span class="n">message</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">key_size</span><span class="o">=</span><span class="mi">256</span><span class="p">):</span>
+    <span class="n">message</span> <span class="o">=</span> <span class="n">pad</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
+    <span class="n">iv</span> <span class="o">=</span> <span class="n">Random</span><span class="p">.</span><span class="n">new</span><span class="p">().</span><span class="n">read</span><span class="p">(</span><span class="n">AES</span><span class="p">.</span><span class="n">block_size</span><span class="p">)</span>
+    <span class="n">cipher</span> <span class="o">=</span> <span class="n">AES</span><span class="p">.</span><span class="n">new</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">AES</span><span class="p">.</span><span class="n">MODE_CBC</span><span class="p">,</span> <span class="n">iv</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">iv</span> <span class="o">+</span> <span class="n">cipher</span><span class="p">.</span><span class="n">encrypt</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">decrypt</span><span class="p">(</span><span class="n">ciphertext</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
+    <span class="n">iv</span> <span class="o">=</span> <span class="n">ciphertext</span><span class="p">[:</span><span class="n">AES</span><span class="p">.</span><span class="n">block_size</span><span class="p">]</span>
+    <span class="n">cipher</span> <span class="o">=</span> <span class="n">AES</span><span class="p">.</span><span class="n">new</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">AES</span><span class="p">.</span><span class="n">MODE_CBC</span><span class="p">,</span> <span class="n">iv</span><span class="p">)</span>
+    <span class="n">plaintext</span> <span class="o">=</span> <span class="n">cipher</span><span class="p">.</span><span class="n">decrypt</span><span class="p">(</span><span class="n">ciphertext</span><span class="p">[</span><span class="n">AES</span><span class="p">.</span><span class="n">block_size</span><span class="p">:])</span>
+    <span class="k">return</span> <span class="n">plaintext</span><span class="p">.</span><span class="n">rstrip</span><span class="p">(</span><span class="sa">b</span><span class="s">"</span><span class="se">\0</span><span class="s">"</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">encrypt_file</span><span class="p">(</span><span class="n">file_name</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">file_name</span><span class="p">,</span> <span class="s">'rb'</span><span class="p">)</span> <span class="k">as</span> <span class="n">fo</span><span class="p">:</span>
+        <span class="n">plaintext</span> <span class="o">=</span> <span class="n">fo</span><span class="p">.</span><span class="n">read</span><span class="p">()</span>
+    <span class="n">enc</span> <span class="o">=</span> <span class="n">encrypt</span><span class="p">(</span><span class="n">plaintext</span><span class="p">,</span> <span class="n">key</span><span class="p">)</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">file_name</span> <span class="o">+</span> <span class="s">".enc"</span><span class="p">,</span> <span class="s">'wb'</span><span class="p">)</span> <span class="k">as</span> <span class="n">fo</span><span class="p">:</span>
+        <span class="n">fo</span><span class="p">.</span><span class="n">write</span><span class="p">(</span><span class="n">enc</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">decrypt_file</span><span class="p">(</span><span class="n">file_name</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">file_name</span><span class="p">,</span> <span class="s">'rb'</span><span class="p">)</span> <span class="k">as</span> <span class="n">fo</span><span class="p">:</span>
+        <span class="n">ciphertext</span> <span class="o">=</span> <span class="n">fo</span><span class="p">.</span><span class="n">read</span><span class="p">()</span>
+    <span class="n">dec</span> <span class="o">=</span> <span class="n">decrypt</span><span class="p">(</span><span class="n">ciphertext</span><span class="p">,</span> <span class="n">key</span><span class="p">)</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">file_name</span><span class="p">[:</span><span class="o">-</span><span class="mi">4</span><span class="p">],</span> <span class="s">'wb'</span><span class="p">)</span> <span class="k">as</span> <span class="n">fo</span><span class="p">:</span>
+        <span class="n">fo</span><span class="p">.</span><span class="n">write</span><span class="p">(</span><span class="n">dec</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p>##Creating the data key to encrypt</p>
+
+<p>For each item I want to encrypt I am going to create a new data key - this is a key that is generated in the KMS and the master key for the customer is used to encrypt it.</p>
+
+<p>The call to the api returns the plaintext key and the cipher version for storage with the encrypted file (in the case of S3 you could upload the base64 encoded version to a metadata flag)</p>
+
+<p>In this code, customer_key is the KeyId from the AWS console for the key you created at the start - its a guid.</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">boto3</span>
+
+<span class="n">kms</span> <span class="o">=</span> <span class="n">boto3</span><span class="p">.</span><span class="n">client</span><span class="p">(</span><span class="s">'kms'</span><span class="p">)</span>
+<span class="n">data_key_req</span> <span class="o">=</span> <span class="n">kms</span><span class="p">.</span><span class="n">generate_data_key</span><span class="p">(</span><span class="n">KeyId</span><span class="o">=</span><span class="n">customer_key</span><span class="p">,</span> <span class="n">KeySpec</span><span class="o">=</span><span class="s">'AES_256'</span><span class="p">)</span>
+<span class="n">data_key</span> <span class="o">=</span> <span class="n">data_key_req</span><span class="p">[</span><span class="s">'Plaintext'</span><span class="p">]</span>
+<span class="n">data_key_ciphered</span> <span class="o">=</span> <span class="n">data_key_req</span><span class="p">[</span><span class="s">'CiphertextBlob'</span><span class="p">]</span>
+
+<span class="n">encrypt_file</span><span class="p">(</span><span class="n">filepath</span><span class="p">,</span> <span class="n">data_key</span><span class="p">)</span>
+
+</code></pre></div></div>
+
+<p>This will create a new encrypted file for file <code class="language-plaintext highlighter-rouge">test.txt</code> it would create a new file <code class="language-plaintext highlighter-rouge">test.txt.enc</code></p>
+
+<p>if you were going to upload to s3, you might use something like;</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">base64</span>
+
+<span class="n">s3</span> <span class="o">=</span> <span class="n">boto3</span><span class="p">.</span><span class="n">client</span><span class="p">(</span><span class="s">'s3'</span><span class="p">)</span>
+<span class="n">s3</span><span class="p">.</span><span class="n">put_object</span><span class="p">(</span><span class="n">Bucket</span><span class="o">=</span><span class="s">'mybucketname'</span><span class="p">,</span> <span class="n">Body</span><span class="o">=</span><span class="nb">open</span><span class="p">(</span><span class="s">'test.txt.enc'</span><span class="p">,</span> <span class="s">'r'</span><span class="p">),</span>
+<span class="n">Key</span><span class="o">=</span><span class="s">'test.txt'</span><span class="p">,</span> <span class="n">Metadata</span><span class="o">=</span><span class="p">{</span><span class="s">'encryption-key'</span><span class="p">:</span> <span class="n">base64</span><span class="p">.</span><span class="n">b64encode</span><span class="p">(</span><span class="n">data_key_ciphered</span><span class="p">)})</span>
+
+</code></pre></div></div>
+
+</div>
+
+            </div>
+        </main>
+    </div>
+
+    <footer class="wrapper-footer">
+        <div class="footer">
+    <span class="footer-text float-left">This work is licensed under <a rel="license" href="https://www.gnu.org/licenses/gpl-3.0.en.html" target="_blank">GPLv3</a></span>
+    <span class="footer-text float-right">
+    Site Updated: 2023-12-01  (<a href="/feed.xml" target="_blank">RSS</a>)
+  </span>
+</div>
+    </footer>
+</body>
+</html>

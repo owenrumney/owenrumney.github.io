@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<!-- Begin Jekyll SEO tag v2.6.1 -->
+<title>WPF Commands and Events with MVVM | Owen Rumney</title>
+<meta name="generator" content="Jekyll v4.2.1" />
+<meta property="og:title" content="WPF Commands and Events with MVVM" />
+<meta name="author" content="Owen Rumney" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="I have been doing some revision on my WPF, particularly around ModelView-View-Model pattern. One thing that I’ve always found a bit difficult to get right is the handling of events on the window and getting them back to the view model." />
+<meta property="og:description" content="I have been doing some revision on my WPF, particularly around ModelView-View-Model pattern. One thing that I’ve always found a bit difficult to get right is the handling of events on the window and getting them back to the view model." />
+<link rel="canonical" href="https://www.owenrumney.co.uk/WPF-Commands-And-InputBindings/" />
+<meta property="og:url" content="https://www.owenrumney.co.uk/WPF-Commands-And-InputBindings/" />
+<meta property="og:site_name" content="Owen Rumney" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2013-11-12T00:00:00+00:00" />
+<script type="application/ld+json">
+{"dateModified":"2013-11-12T00:00:00+00:00","datePublished":"2013-11-12T00:00:00+00:00","author":{"@type":"Person","name":"Owen Rumney"},"description":"I have been doing some revision on my WPF, particularly around ModelView-View-Model pattern. One thing that I’ve always found a bit difficult to get right is the handling of events on the window and getting them back to the view model.","mainEntityOfPage":{"@type":"WebPage","@id":"https://www.owenrumney.co.uk/WPF-Commands-And-InputBindings/"},"url":"https://www.owenrumney.co.uk/WPF-Commands-And-InputBindings/","@type":"BlogPosting","headline":"WPF Commands and Events with MVVM","@context":"https://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+
+
+<meta name="keywords" content="wpf,programming" />
+
+<link rel="shortcut icon" href="/favicon.ico" />
+<link rel="apple-touch-icon" href="/favicon.ico"/>
+<link rel="stylesheet" type="text/css" href="/assets/css/styles.css" />
+<link rel="stylesheet" type="text/css" href="/assets/css/prism.css" />
+<script src="/assets/js/prism.js"></script>
+
+
+
+</head>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-TLCVNKXMFJ"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-TLCVNKXMFJ');
+</script>
+
+<body>
+    <div class="wrapper">
+        <header class="wrapper-header">
+            <div class="header">
+  <nav class="float-right">
+  
+  <a href="https://github.com/owenrumney" target="_blank"
+    ><img
+      src="/assets/images/github.svg"
+      style="color: white; display: inline-block"
+      height="30px"
+      alt="GitHub"
+  /></a>
+  
+  <a href="https://linkedin.com/in/owenrumney" target="_blank"
+    ><img
+      src="/assets/images/linkedin.svg"
+      style="color: white; display: inline-block"
+      height="30px"
+      alt="LinkedIn"
+  /></a>
+  
+  <a href="https://cv.owenrumney.co.uk" target="_blank"
+    ><img
+      src="/assets/images/resume.svg"
+      style="color: white; display: inline-block"
+      height="32px"
+      alt="Resume"
+  /></a>
+  
+</nav>
+
+  <a href="https://www.owenrumney.co.uk" target="_blank"><h1>Owen Rumney</h1></a>
+  <br />
+  <h5><i>Software Engineer</i></h5>
+  <br />
+
+  <hr />
+</div>
+
+        </header>
+
+        <main class="wrapper-main">
+            <div class="main-content">
+            <div class="post-info">
+    <h2>WPF Commands and Events with MVVM</h2>
+    <p>12 Nov 2013 - Owen Rumney</p>
+</div>
+
+<div class="post-content">
+<p>I have been doing some revision on my WPF, particularly around ModelView-View-Model pattern. One thing that I’ve always found a bit difficult to get right is the handling of events on the window and getting them back to the view model.</p>
+
+<p>I personally believe that the goal of a completely empty code behind should be a best efforts approach rather than mandatory, sometime there is a need for purely UI related code and this, in my view is the correct place.</p>
+
+<p>I wanted to trigger a command when a key was pressed in a TextBox on my Window, in the past I’ve used the PreviewKeyDown and had a handler in the code-behind which has invoked the command on the ViewModel; this has never seemed correct or particularly satisfying.
+In my current play project I decided to find a better way to achieve this and I think I have - InputBindings.</p>
+
+<p>On my ViewModel I have a DelegateCommand called AddTicker which I pass delegates for the Execute and CanExecute,</p>
+
+<div class="language-csharp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">public</span> <span class="n">ICommand</span> <span class="n">AddTicker</span> <span class="p">{</span><span class="k">get</span><span class="p">;</span> <span class="k">private</span> <span class="k">set</span><span class="p">;}</span>
+</code></pre></div></div>
+
+<p>to bind to this from a button is easy, and now the same can be said for a Key press using the following XAML;</p>
+
+<div class="language-xml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nt">&lt;TextBox.InputBindings&gt;</span>
+<span class="nt">&lt;KeyBinding</span> <span class="na">Key=</span><span class="s">"Return"</span> <span class="na">Command=</span><span class="s">"{Binding AddTicker}"</span><span class="nt">&gt;&lt;/KeyBinding&gt;</span>
+<span class="nt">&lt;/TextBox.InputBindings&gt;</span>
+</code></pre></div></div>
+
+<p>As an aside, it took me a while to remember how to get the CanExecuteChanged to fire without some ugly callback mechanism, I knew it involved a registration and it eventually came to me;</p>
+
+<div class="language-csharp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">CommandManager</span><span class="p">.</span><span class="n">RequerySuggested</span> <span class="p">+=</span> <span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">e</span><span class="p">)</span> <span class="p">=&gt;</span> <span class="nf">RaiseCanExecuteChanged</span><span class="p">();</span>
+
+<span class="k">public</span> <span class="k">void</span> <span class="nf">RaiseCanExecuteChanged</span><span class="p">()</span>
+<span class="p">{</span>
+<span class="k">if</span> <span class="p">(</span><span class="n">CanExecuteChanged</span> <span class="p">!=</span> <span class="k">null</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="nf">CanExecuteChanged</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="n">EventArgs</span><span class="p">.</span><span class="n">Empty</span><span class="p">);</span>
+<span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+</div>
+
+            </div>
+        </main>
+    </div>
+
+    <footer class="wrapper-footer">
+        <div class="footer">
+    <span class="footer-text float-left">This work is licensed under <a rel="license" href="https://www.gnu.org/licenses/gpl-3.0.en.html" target="_blank">GPLv3</a></span>
+    <span class="footer-text float-right">
+    Site Updated: 2023-12-01  (<a href="/feed.xml" target="_blank">RSS</a>)
+  </span>
+</div>
+    </footer>
+</body>
+</html>

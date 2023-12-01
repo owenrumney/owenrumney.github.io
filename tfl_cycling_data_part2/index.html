@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<!-- Begin Jekyll SEO tag v2.6.1 -->
+<title>TFL Cycling DataSet - Part 2 | Owen Rumney</title>
+<meta name="generator" content="Jekyll v4.2.1" />
+<meta property="og:title" content="TFL Cycling DataSet - Part 2" />
+<meta name="author" content="Owen Rumney" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="Following on from part 1 of this mini series. I’ve got my local environment ready to go and I have pulled down some test data to work with." />
+<meta property="og:description" content="Following on from part 1 of this mini series. I’ve got my local environment ready to go and I have pulled down some test data to work with." />
+<link rel="canonical" href="https://www.owenrumney.co.uk/tfl_cycling_data_part2/" />
+<meta property="og:url" content="https://www.owenrumney.co.uk/tfl_cycling_data_part2/" />
+<meta property="og:site_name" content="Owen Rumney" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2017-07-17T00:00:00+00:00" />
+<script type="application/ld+json">
+{"dateModified":"2017-07-17T00:00:00+00:00","datePublished":"2017-07-17T00:00:00+00:00","author":{"@type":"Person","name":"Owen Rumney"},"description":"Following on from part 1 of this mini series. I’ve got my local environment ready to go and I have pulled down some test data to work with.","mainEntityOfPage":{"@type":"WebPage","@id":"https://www.owenrumney.co.uk/tfl_cycling_data_part2/"},"url":"https://www.owenrumney.co.uk/tfl_cycling_data_part2/","@type":"BlogPosting","headline":"TFL Cycling DataSet - Part 2","@context":"https://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+
+
+<meta name="keywords" content="python,programming,spark,learning" />
+
+<link rel="shortcut icon" href="/favicon.ico" />
+<link rel="apple-touch-icon" href="/favicon.ico"/>
+<link rel="stylesheet" type="text/css" href="/assets/css/styles.css" />
+<link rel="stylesheet" type="text/css" href="/assets/css/prism.css" />
+<script src="/assets/js/prism.js"></script>
+
+
+
+</head>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-TLCVNKXMFJ"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-TLCVNKXMFJ');
+</script>
+
+<body>
+    <div class="wrapper">
+        <header class="wrapper-header">
+            <div class="header">
+  <nav class="float-right">
+  
+  <a href="https://github.com/owenrumney" target="_blank"
+    ><img
+      src="/assets/images/github.svg"
+      style="color: white; display: inline-block"
+      height="30px"
+      alt="GitHub"
+  /></a>
+  
+  <a href="https://linkedin.com/in/owenrumney" target="_blank"
+    ><img
+      src="/assets/images/linkedin.svg"
+      style="color: white; display: inline-block"
+      height="30px"
+      alt="LinkedIn"
+  /></a>
+  
+  <a href="https://cv.owenrumney.co.uk" target="_blank"
+    ><img
+      src="/assets/images/resume.svg"
+      style="color: white; display: inline-block"
+      height="32px"
+      alt="Resume"
+  /></a>
+  
+</nav>
+
+  <a href="https://www.owenrumney.co.uk" target="_blank"><h1>Owen Rumney</h1></a>
+  <br />
+  <h5><i>Software Engineer</i></h5>
+  <br />
+
+  <hr />
+</div>
+
+        </header>
+
+        <main class="wrapper-main">
+            <div class="main-content">
+            <div class="post-info">
+    <h2>TFL Cycling DataSet - Part 2</h2>
+    <p>17 Jul 2017 - Owen Rumney</p>
+</div>
+
+<div class="post-content">
+<p>Following on from <a href="/tfl_cycling_data_part1/">part 1</a> of this mini series. I’ve got my local environment ready to go and I have pulled down some test data to work with.</p>
+
+<p>The next step is to start having a look at some of the data.</p>
+
+<h2 id="loading-in-the-data">Loading in the data</h2>
+
+<p>We know that the data is in <code class="language-plaintext highlighter-rouge">csv</code> format so can use the Spark <code class="language-plaintext highlighter-rouge">read</code> functionality to bring it in. With the single file in this local environment it’s a case of;</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">data</span> <span class="o">=</span> <span class="n">spark</span><span class="p">.</span><span class="n">read</span><span class="p">.</span><span class="n">csv</span><span class="p">(</span><span class="s">'01aJourneyDataExtract10Jan16-23Jan16.csv'</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">inferSchema</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">data</span><span class="p">.</span><span class="n">columns</span><span class="p">:</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="p">.</span><span class="n">withColumnRenamed</span><span class="p">(</span> <span class="n">col</span><span class="p">,</span> <span class="n">col</span><span class="p">.</span><span class="n">replace</span><span class="p">(</span><span class="s">" "</span><span class="p">,</span> <span class="s">""</span><span class="p">))</span>
+</code></pre></div></div>
+
+<p>This line will create a <code class="language-plaintext highlighter-rouge">DataFrame</code> called data and load the csv input into it. By setting <code class="language-plaintext highlighter-rouge">header</code> to <code class="language-plaintext highlighter-rouge">True</code> we are saying that the first row of the data is a header row.</p>
+
+<p><code class="language-plaintext highlighter-rouge">inferSchema</code> will ask Spark to have a go at working out the correct types for the columns that are being brought in.</p>
+
+<h2 id="quick-cleanup">Quick Cleanup</h2>
+
+<p>Even though <code class="language-plaintext highlighter-rouge">inferSchema</code> was used, if we call <code class="language-plaintext highlighter-rouge">data.describe()</code> we can see that the type of the dates is <code class="language-plaintext highlighter-rouge">string</code>. I’m going to put that down to the fact that these dates are in UK format.</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>DataFrame[description: string
+, RentalId: string
+, Duration: string
+, BikeId: string
+, EndDate: string
+, EndStationId: string
+, EndStationName: string
+, StartDate: string
+, StartStationId: string
+, StartStationName: string]
+</code></pre></div></div>
+
+<p>I think I’m going to want these to be dates later on, so I’m going to convert them to <code class="language-plaintext highlighter-rouge">timestamps</code> now.</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">from</span> <span class="nn">pyspark.sql.functions</span> <span class="kn">import</span> <span class="n">unix_timestamp</span>
+<span class="n">dated_data</span> <span class="o">=</span> <span class="n">data</span><span class="p">.</span><span class="n">select</span><span class="p">(</span><span class="s">'RentalId'</span> \
+           <span class="p">,</span><span class="n">unix_timestamp</span><span class="p">(</span><span class="s">'StartDate'</span><span class="p">,</span> <span class="s">'dd/MM/yyyy HH:mm'</span><span class="p">).</span><span class="n">cast</span><span class="p">(</span><span class="s">"double"</span><span class="p">).</span><span class="n">cast</span><span class="p">(</span><span class="s">"timestamp"</span><span class="p">).</span><span class="n">alias</span><span class="p">(</span><span class="s">'StartDate'</span><span class="p">)</span> \
+           <span class="p">,</span><span class="n">unix_timestamp</span><span class="p">(</span><span class="s">'EndDate'</span><span class="p">,</span> <span class="s">'dd/MM/yyyy HH:mm'</span><span class="p">).</span><span class="n">cast</span><span class="p">(</span><span class="s">"double"</span><span class="p">).</span><span class="n">cast</span><span class="p">(</span><span class="s">"timestamp"</span><span class="p">).</span><span class="n">alias</span><span class="p">(</span><span class="s">'EndDate'</span><span class="p">)</span> \
+           <span class="p">,</span><span class="s">'Duration'</span> \
+           <span class="p">,</span><span class="s">'StartStationId'</span> \
+           <span class="p">,</span><span class="s">'EndStationId'</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p>This block uses the <code class="language-plaintext highlighter-rouge">unix_timestamp</code> function to get the long number representation of the date which we can then turn into the timstamp type. By passing the format of the date we can solve the issue of it being in a format that the <code class="language-plaintext highlighter-rouge">inferSchema</code> wasn’t expecting. I’ve used <code class="language-plaintext highlighter-rouge">.alias()</code> to specify the name of the derived column.</p>
+
+<h2 id="getting-the-stationid-data">Getting the StationId Data</h2>
+
+<p>There is an API which we can use to get the additional data for the <code class="language-plaintext highlighter-rouge">StartStation_Id</code> and <code class="language-plaintext highlighter-rouge">EndStation_Id</code>. This can be found <a href="https://api.tfl.gov.uk/swagger/ui/index.html?url=/swagger/docs/v1#!/BikePoint/BikePoint_Get">here</a> on the TfL website.</p>
+
+<p>We need a list of all the start and end bike point/stations that are in the dataset so I went for doing a <code class="language-plaintext highlighter-rouge">union</code> to get this.</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">stationids</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">((</span><span class="n">data</span><span class="p">.</span><span class="n">select</span><span class="p">(</span><span class="s">'StartStationId'</span><span class="p">)</span> \
+                    <span class="p">.</span><span class="n">union</span><span class="p">(</span><span class="n">data</span><span class="p">.</span><span class="n">select</span><span class="p">(</span><span class="s">'EndStationId'</span><span class="p">)))</span> \
+                    <span class="p">.</span><span class="n">rdd</span><span class="p">.</span><span class="nb">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">r</span><span class="p">:</span> <span class="n">r</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> \
+                    <span class="p">.</span><span class="n">distinct</span><span class="p">()</span> \
+                    <span class="p">.</span><span class="n">collect</span><span class="p">())</span>
+</code></pre></div></div>
+
+<p>This will return us a sorted list of all the Ids in the dataset which can be passed into a helper method which will call into the API mentioned about.</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">get_bike_points</span><span class="p">(</span><span class="n">points_ids</span><span class="p">):</span>
+    <span class="n">bike_point_file</span> <span class="o">=</span> <span class="s">'~/datasets/cycling/bike_points.csv'</span>
+    <span class="n">base_url</span> <span class="o">=</span> <span class="s">'https://api.tfl.gov.uk/BikePoint/BikePoints_'</span>
+
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">bike_point_file</span><span class="p">,</span> <span class="s">'w'</span><span class="p">)</span> <span class="k">as</span> <span class="n">csvfile</span><span class="p">:</span>
+        <span class="n">fieldnames</span> <span class="o">=</span> <span class="p">[</span><span class="s">'pointId'</span><span class="p">,</span> <span class="s">'commonName'</span><span class="p">,</span> <span class="s">'lat'</span><span class="p">,</span> <span class="s">'lon'</span><span class="p">,</span> <span class="s">'placeType'</span><span class="p">,</span> <span class="s">'properties'</span><span class="p">]</span>
+        <span class="n">writer</span> <span class="o">=</span> <span class="n">csv</span><span class="p">.</span><span class="n">DictWriter</span><span class="p">(</span><span class="n">csvfile</span><span class="p">,</span> <span class="n">fieldnames</span><span class="o">=</span><span class="n">fieldnames</span><span class="p">)</span>
+        <span class="n">writer</span><span class="p">.</span><span class="n">writeheader</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">point</span> <span class="ow">in</span> <span class="n">points_ids</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">point</span> <span class="o">==</span> <span class="bp">None</span><span class="p">:</span>
+                <span class="k">continue</span>
+            <span class="n">url</span> <span class="o">=</span> <span class="s">"%s%s"</span> <span class="o">%</span> <span class="p">(</span><span class="n">base_url</span><span class="p">,</span> <span class="n">point</span><span class="p">)</span>
+            <span class="n">req</span> <span class="o">=</span> <span class="n">requests</span><span class="p">.</span><span class="n">get</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">req</span><span class="p">.</span><span class="n">status_code</span> <span class="o">!=</span> <span class="mi">200</span><span class="p">:</span>
+                <span class="n">writer</span><span class="p">.</span><span class="n">writerow</span><span class="p">({</span><span class="s">"pointId"</span><span class="p">:</span> <span class="n">point</span><span class="p">,</span> <span class="s">"commonName"</span><span class="p">:</span> <span class="s">"Not Found"</span><span class="p">})</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">bike_point</span> <span class="o">=</span> <span class="n">json</span><span class="p">.</span><span class="n">loads</span><span class="p">(</span><span class="n">req</span><span class="p">.</span><span class="n">text</span><span class="p">)</span>
+                <span class="n">props</span> <span class="o">=</span> <span class="p">{}</span>
+                <span class="k">if</span> <span class="n">bike_point</span><span class="p">.</span><span class="n">has_key</span><span class="p">(</span><span class="s">'additionalProperties'</span><span class="p">):</span>
+                    <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">bike_point</span><span class="p">[</span><span class="s">'additionalProperties'</span><span class="p">]:</span>
+                        <span class="n">props</span><span class="p">[</span><span class="n">p</span><span class="p">[</span><span class="s">'key'</span><span class="p">]]</span> <span class="o">=</span> <span class="n">p</span><span class="p">[</span><span class="s">'value'</span><span class="p">]</span>
+                <span class="n">writer</span><span class="p">.</span><span class="n">writerow</span><span class="p">({</span><span class="s">"pointId"</span><span class="p">:</span> <span class="n">point</span><span class="p">,</span> <span class="s">"commonName"</span><span class="p">:</span> <span class="n">bike_point</span><span class="p">[</span><span class="s">'commonName'</span><span class="p">],</span> <span class="s">"lat"</span><span class="p">:</span> <span class="n">bike_point</span><span class="p">[</span><span class="s">'lat'</span><span class="p">],</span> \
+                                <span class="s">"lon"</span><span class="p">:</span> <span class="n">bike_point</span><span class="p">[</span><span class="s">'lon'</span><span class="p">],</span> <span class="s">"placeType"</span><span class="p">:</span> <span class="n">bike_point</span><span class="p">[</span><span class="s">'placeType'</span><span class="p">],</span> <span class="s">'properties'</span><span class="p">:</span> <span class="n">props</span><span class="p">})</span>
+        <span class="n">csvfile</span><span class="p">.</span><span class="n">flush</span>
+</code></pre></div></div>
+
+<p>This block takes the list of <code class="language-plaintext highlighter-rouge">Id</code> and collects the data for the bike station, extracts what is wanted from the returned dataset then saves it into a csv file.</p>
+
+<h3 id="cleaning-up-the-stationid-data">Cleaning up the StationId data</h3>
+
+<p>Some of the stations in the dataset aren’t there anymore so we get a <code class="language-plaintext highlighter-rouge">404</code> when we hit the page. To get round this I’ve just created a line for the ID with a common name of not found.</p>
+
+<p>That said, we do have this information in the original data set, so a bit of fiddling can be used to update the <code class="language-plaintext highlighter-rouge">bike_points</code> data with the correct <code class="language-plaintext highlighter-rouge">commonName</code>.</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">bike_points</span> <span class="o">=</span> <span class="n">spark</span><span class="p">.</span><span class="n">read</span><span class="p">.</span><span class="n">csv</span><span class="p">(</span><span class="s">'bike_points.csv'</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">inferSchema</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+
+<span class="n">combined_bike_points</span> <span class="o">=</span> <span class="n">bike_points</span><span class="p">.</span><span class="n">where</span><span class="p">(</span><span class="n">bike_points</span><span class="p">.</span><span class="n">commonName</span> <span class="o">==</span> <span class="s">"Not Found"</span><span class="p">)</span> \
+                      <span class="p">.</span><span class="n">join</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">data</span><span class="p">.</span><span class="n">StartStationId</span> <span class="o">==</span> <span class="n">bike_points</span><span class="p">.</span><span class="n">pointId</span><span class="p">)</span>\
+                      <span class="p">.</span><span class="n">select</span><span class="p">(</span><span class="n">bike_points</span><span class="p">.</span><span class="n">pointId</span> \
+                            <span class="p">,</span> <span class="n">data</span><span class="p">.</span><span class="n">StartStationName</span><span class="p">.</span><span class="n">alias</span><span class="p">(</span><span class="s">"commonName"</span><span class="p">)</span> \
+                            <span class="p">,</span> <span class="n">bike_points</span><span class="p">.</span><span class="n">lat</span> \
+                            <span class="p">,</span> <span class="n">bike_points</span><span class="p">.</span><span class="n">lon</span> \
+                            <span class="p">,</span> <span class="n">bike_points</span><span class="p">.</span><span class="n">placeType</span> \
+                            <span class="p">,</span> <span class="n">bike_points</span><span class="p">.</span><span class="n">properties</span><span class="p">)</span> \
+                      <span class="p">.</span><span class="n">distinct</span><span class="p">()</span>
+
+<span class="n">bike_points</span> <span class="o">=</span> <span class="n">combined_bike_points</span> \
+              <span class="p">.</span><span class="n">union</span><span class="p">(</span><span class="n">bike_points</span> \
+                     <span class="p">.</span><span class="n">where</span><span class="p">(</span><span class="n">bike_points</span><span class="p">.</span><span class="n">commonName</span> <span class="o">&lt;&gt;</span> <span class="s">"Not Found"</span><span class="p">))</span>
+</code></pre></div></div>
+
+<p>Okay, long winded but we now have the station data to work with too.</p>
+
+</div>
+
+            </div>
+        </main>
+    </div>
+
+    <footer class="wrapper-footer">
+        <div class="footer">
+    <span class="footer-text float-left">This work is licensed under <a rel="license" href="https://www.gnu.org/licenses/gpl-3.0.en.html" target="_blank">GPLv3</a></span>
+    <span class="footer-text float-right">
+    Site Updated: 2023-12-01  (<a href="/feed.xml" target="_blank">RSS</a>)
+  </span>
+</div>
+    </footer>
+</body>
+</html>

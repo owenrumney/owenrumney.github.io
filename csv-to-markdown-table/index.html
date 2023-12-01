@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<!-- Begin Jekyll SEO tag v2.6.1 -->
+<title>CSV to Markdown table - Sublime Package | Owen Rumney</title>
+<meta name="generator" content="Jekyll v4.2.1" />
+<meta property="og:title" content="CSV to Markdown table - Sublime Package" />
+<meta name="author" content="Owen Rumney" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="Now I’m writing almost all documentation in markdown then using Pandoc to convert it to Mediawiki or docx as required, I needed to finds an easier way to quickly create my tables." />
+<meta property="og:description" content="Now I’m writing almost all documentation in markdown then using Pandoc to convert it to Mediawiki or docx as required, I needed to finds an easier way to quickly create my tables." />
+<link rel="canonical" href="https://www.owenrumney.co.uk/csv-to-markdown-table/" />
+<meta property="og:url" content="https://www.owenrumney.co.uk/csv-to-markdown-table/" />
+<meta property="og:site_name" content="Owen Rumney" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2017-04-11T00:00:00+00:00" />
+<script type="application/ld+json">
+{"dateModified":"2017-04-11T00:00:00+00:00","datePublished":"2017-04-11T00:00:00+00:00","author":{"@type":"Person","name":"Owen Rumney"},"description":"Now I’m writing almost all documentation in markdown then using Pandoc to convert it to Mediawiki or docx as required, I needed to finds an easier way to quickly create my tables.","mainEntityOfPage":{"@type":"WebPage","@id":"https://www.owenrumney.co.uk/csv-to-markdown-table/"},"url":"https://www.owenrumney.co.uk/csv-to-markdown-table/","@type":"BlogPosting","headline":"CSV to Markdown table - Sublime Package","@context":"https://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+
+
+<meta name="keywords" content="python,programming" />
+
+<link rel="shortcut icon" href="/favicon.ico" />
+<link rel="apple-touch-icon" href="/favicon.ico"/>
+<link rel="stylesheet" type="text/css" href="/assets/css/styles.css" />
+<link rel="stylesheet" type="text/css" href="/assets/css/prism.css" />
+<script src="/assets/js/prism.js"></script>
+
+
+
+</head>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-TLCVNKXMFJ"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-TLCVNKXMFJ');
+</script>
+
+<body>
+    <div class="wrapper">
+        <header class="wrapper-header">
+            <div class="header">
+  <nav class="float-right">
+  
+  <a href="https://github.com/owenrumney" target="_blank"
+    ><img
+      src="/assets/images/github.svg"
+      style="color: white; display: inline-block"
+      height="30px"
+      alt="GitHub"
+  /></a>
+  
+  <a href="https://linkedin.com/in/owenrumney" target="_blank"
+    ><img
+      src="/assets/images/linkedin.svg"
+      style="color: white; display: inline-block"
+      height="30px"
+      alt="LinkedIn"
+  /></a>
+  
+  <a href="https://cv.owenrumney.co.uk" target="_blank"
+    ><img
+      src="/assets/images/resume.svg"
+      style="color: white; display: inline-block"
+      height="32px"
+      alt="Resume"
+  /></a>
+  
+</nav>
+
+  <a href="https://www.owenrumney.co.uk" target="_blank"><h1>Owen Rumney</h1></a>
+  <br />
+  <h5><i>Software Engineer</i></h5>
+  <br />
+
+  <hr />
+</div>
+
+        </header>
+
+        <main class="wrapper-main">
+            <div class="main-content">
+            <div class="post-info">
+    <h2>CSV to Markdown table - Sublime Package</h2>
+    <p>11 Apr 2017 - Owen Rumney</p>
+</div>
+
+<div class="post-content">
+<p>Now I’m writing almost all documentation in markdown then using Pandoc to convert it to Mediawiki or docx as required, I needed to finds an easier way to quickly create my tables.</p>
+
+<p>It doesn’t do anything fancy, but I created a sublime package to do the conversion of a csv formatted table into a markdown table.</p>
+
+<p><strong>Assumptions</strong></p>
+
+<p>The following assumptions are made about the csv</p>
+
+<ul>
+  <li>You’ve got headers in the first row</li>
+  <li>Any empty cells are correctly formatted with commas</li>
+  <li>You don’t have any commas in the values</li>
+</ul>
+
+<h2 id="creating-the-plugin">Creating the Plugin</h2>
+
+<p>Creating a new Plugin with Sublime Text 3 is a case of <code class="language-plaintext highlighter-rouge">Tools -&gt; Developer -&gt; New Plugin</code></p>
+
+<p>This will create a new templated file in the User section.</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">sublime</span>
+<span class="kn">import</span> <span class="nn">sublime_plugin</span>
+
+
+<span class="k">class</span> <span class="nc">CsvToMdCommand</span><span class="p">(</span><span class="n">sublime_plugin</span><span class="p">.</span><span class="n">TextCommand</span><span class="p">):</span>
+
+	<span class="n">content</span> <span class="o">=</span> <span class="s">""</span>
+
+	<span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">edit</span><span class="p">):</span>
+		<span class="k">for</span> <span class="n">region</span> <span class="ow">in</span> <span class="bp">self</span><span class="p">.</span><span class="n">view</span><span class="p">.</span><span class="n">sel</span><span class="p">():</span>
+			<span class="k">if</span> <span class="ow">not</span> <span class="n">region</span><span class="p">.</span><span class="n">empty</span><span class="p">():</span>
+					<span class="n">s</span> <span class="o">=</span> <span class="bp">self</span><span class="p">.</span><span class="n">view</span><span class="p">.</span><span class="n">substr</span><span class="p">(</span><span class="n">region</span><span class="p">)</span>
+					<span class="bp">self</span><span class="p">.</span><span class="n">process</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
+					<span class="bp">self</span><span class="p">.</span><span class="n">view</span><span class="p">.</span><span class="n">replace</span><span class="p">(</span><span class="n">edit</span><span class="p">,</span> <span class="n">region</span><span class="p">,</span> <span class="bp">self</span><span class="p">.</span><span class="n">content</span><span class="p">)</span>
+					<span class="bp">self</span><span class="p">.</span><span class="n">content</span> <span class="o">=</span> <span class="s">""</span>
+
+	<span class="k">def</span> <span class="nf">process_row</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">row</span><span class="p">,</span> <span class="n">isHeader</span> <span class="o">=</span> <span class="bp">False</span><span class="p">):</span>
+		<span class="bp">self</span><span class="p">.</span><span class="n">content</span> <span class="o">+=</span> <span class="p">(</span><span class="s">'|'</span> <span class="o">+</span> <span class="n">row</span><span class="p">.</span><span class="n">replace</span><span class="p">(</span><span class="s">','</span><span class="p">,</span> <span class="s">'|'</span><span class="p">)</span> <span class="o">+</span> <span class="s">'|'</span> <span class="o">+</span> <span class="s">'</span><span class="se">\n</span><span class="s">'</span><span class="p">)</span>
+		<span class="k">if</span> <span class="n">isHeader</span><span class="p">:</span>
+			<span class="bp">self</span><span class="p">.</span><span class="n">content</span> <span class="o">+=</span>  <span class="s">'|'</span> <span class="o">+</span> <span class="p">(</span><span class="s">'-|'</span> <span class="o">*</span> <span class="p">(</span><span class="n">row</span><span class="p">.</span><span class="n">count</span><span class="p">(</span><span class="s">','</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">+</span> <span class="s">'</span><span class="se">\n</span><span class="s">'</span><span class="p">)</span>
+
+
+	<span class="k">def</span> <span class="nf">process</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rows</span><span class="p">):</span>
+	    <span class="n">first</span> <span class="o">=</span> <span class="bp">True</span>
+	    <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">rows</span><span class="p">.</span><span class="n">split</span><span class="p">(</span><span class="s">"</span><span class="se">\n</span><span class="s">"</span><span class="p">):</span>
+	        <span class="bp">self</span><span class="p">.</span><span class="n">process_row</span><span class="p">(</span><span class="n">row</span><span class="p">.</span><span class="n">strip</span><span class="p">(),</span> <span class="n">first</span><span class="p">)</span>
+	        <span class="k">if</span> <span class="n">first</span><span class="p">:</span>
+	            <span class="n">first</span> <span class="o">=</span> <span class="bp">False</span>
+</code></pre></div></div>
+
+<p>To add the <code class="language-plaintext highlighter-rouge">Command Palette</code> command, use a file with the extension <code class="language-plaintext highlighter-rouge">.sublime-commands</code> in the <code class="language-plaintext highlighter-rouge">Packages/User</code> folder</p>
+
+<div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">[{</span><span class="w"> </span><span class="nl">"caption"</span><span class="p">:</span><span class="w"> </span><span class="s2">"CSV to MD: Convert"</span><span class="p">,</span><span class="w"> </span><span class="nl">"command"</span><span class="p">:</span><span class="w"> </span><span class="s2">"csv_to_md"</span><span class="w"> </span><span class="p">}]</span><span class="w">
+</span></code></pre></div></div>
+
+</div>
+
+            </div>
+        </main>
+    </div>
+
+    <footer class="wrapper-footer">
+        <div class="footer">
+    <span class="footer-text float-left">This work is licensed under <a rel="license" href="https://www.gnu.org/licenses/gpl-3.0.en.html" target="_blank">GPLv3</a></span>
+    <span class="footer-text float-right">
+    Site Updated: 2023-12-01  (<a href="/feed.xml" target="_blank">RSS</a>)
+  </span>
+</div>
+    </footer>
+</body>
+</html>

@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<!-- Begin Jekyll SEO tag v2.6.1 -->
+<title>PR Commit Commenting Library | Owen Rumney</title>
+<meta name="generator" content="Jekyll v4.2.1" />
+<meta property="og:title" content="PR Commit Commenting Library" />
+<meta name="author" content="Owen Rumney" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="Go library to facilitate writing comments to Github PR commits. Write single or multiline comments using the output of static analysis" />
+<meta property="og:description" content="Go library to facilitate writing comments to Github PR commits. Write single or multiline comments using the output of static analysis" />
+<link rel="canonical" href="https://www.owenrumney.co.uk/go-github-pr-commenter/" />
+<meta property="og:url" content="https://www.owenrumney.co.uk/go-github-pr-commenter/" />
+<meta property="og:site_name" content="Owen Rumney" />
+<meta property="og:image" content="https://www.owenrumney.co.uk/assets/img/owen.png" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2020-11-09T00:00:00+00:00" />
+<script type="application/ld+json">
+{"dateModified":"2020-11-09T00:00:00+00:00","datePublished":"2020-11-09T00:00:00+00:00","author":{"@type":"Person","name":"Owen Rumney"},"description":"Go library to facilitate writing comments to Github PR commits. Write single or multiline comments using the output of static analysis","mainEntityOfPage":{"@type":"WebPage","@id":"https://www.owenrumney.co.uk/go-github-pr-commenter/"},"url":"https://www.owenrumney.co.uk/go-github-pr-commenter/","@type":"BlogPosting","image":"https://www.owenrumney.co.uk/assets/img/owen.png","headline":"PR Commit Commenting Library","@context":"https://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+
+
+<meta name="keywords" content="git,go" />
+
+<link rel="shortcut icon" href="/favicon.ico" />
+<link rel="apple-touch-icon" href="/favicon.ico"/>
+<link rel="stylesheet" type="text/css" href="/assets/css/styles.css" />
+<link rel="stylesheet" type="text/css" href="/assets/css/prism.css" />
+<script src="/assets/js/prism.js"></script>
+
+
+
+</head>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-TLCVNKXMFJ"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-TLCVNKXMFJ');
+</script>
+
+<body>
+    <div class="wrapper">
+        <header class="wrapper-header">
+            <div class="header">
+  <nav class="float-right">
+  
+  <a href="https://github.com/owenrumney" target="_blank"
+    ><img
+      src="/assets/images/github.svg"
+      style="color: white; display: inline-block"
+      height="30px"
+      alt="GitHub"
+  /></a>
+  
+  <a href="https://linkedin.com/in/owenrumney" target="_blank"
+    ><img
+      src="/assets/images/linkedin.svg"
+      style="color: white; display: inline-block"
+      height="30px"
+      alt="LinkedIn"
+  /></a>
+  
+  <a href="https://cv.owenrumney.co.uk" target="_blank"
+    ><img
+      src="/assets/images/resume.svg"
+      style="color: white; display: inline-block"
+      height="32px"
+      alt="Resume"
+  /></a>
+  
+</nav>
+
+  <a href="https://www.owenrumney.co.uk" target="_blank"><h1>Owen Rumney</h1></a>
+  <br />
+  <h5><i>Software Engineer</i></h5>
+  <br />
+
+  <hr />
+</div>
+
+        </header>
+
+        <main class="wrapper-main">
+            <div class="main-content">
+            <div class="post-info">
+    <h2>PR Commit Commenting Library</h2>
+    <p>09 Nov 2020 - Owen Rumney</p>
+</div>
+
+<div class="post-content">
+<p>A few weeks ago I wrote <a href="https://github.com/tfsec/tfsec-pr-commenter-action" target="\_blank">tfsec-pr-commenter-action</a> , this is a ready to go Github Action that you can drop into your Terraform code repository and have each PR checked for tfsec security issues.</p>
+
+<p>If you don’t know anything about tfsec, you can learn more at <a href="https://tfsec.dev" target="\_blank">https://tfsec.dev</a></p>
+
+<h2 id="the-pr-commenter">The PR Commenter</h2>
+
+<p>It occurred to me shortly after adding it to some of our projects that the underlying commenter code could be used to comment using any static analysis tool with output.</p>
+
+<p>Of course, the wrapping action code will be needed to un-marshall the analysis results but the creation of comments could be deferred to another library.</p>
+
+<p>This is where <a href="https://github.com/owenrumney/go-github-pr-commenter" target="\_blank">go-github-pr-commenter</a> comes in.</p>
+
+<h2 id="usage">Usage</h2>
+
+<p>First, get the library;</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>go get github.com/owenrumney/go-github-pr-commenter/commenter
+</code></pre></div></div>
+
+<p>Then you need to import the library into your Github Action, or where ever it is being used.</p>
+
+<div class="language-go highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">import</span> <span class="p">(</span>
+  <span class="s">"github.com/owenrumney/go-github-pr-commenter/commenter"</span>
+<span class="p">)</span>
+</code></pre></div></div>
+
+<p>You will need a <code class="language-plaintext highlighter-rouge">GITHUB_TOKEN</code> to write the comments - if you’re using Github Actions you get one created for you when you activate Actions. If you are passing the <code class="language-plaintext highlighter-rouge">GITHUB_TOKEN</code> as a parameter to the Action called <code class="language-plaintext highlighter-rouge">GITHUB_TOKEN</code>, it is going to be available to your code as <code class="language-plaintext highlighter-rouge">INPUT_GITHUB_TOKEN</code>.</p>
+
+<div class="language-go highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">token</span> <span class="o">:=</span> <span class="n">os</span><span class="o">.</span><span class="n">Getenv</span><span class="p">(</span><span class="s">"INPUT_GITHUB_TOKEN"</span><span class="p">)</span>
+<span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">token</span><span class="p">)</span> <span class="o">==</span> <span class="m">0</span> <span class="p">{</span>
+  <span class="k">return</span> <span class="n">errors</span><span class="o">.</span><span class="n">New</span><span class="p">(</span><span class="s">"Couldn't find the token"</span><span class="p">)</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>Now that we have a token, we can create the Commenter</p>
+
+<div class="language-go highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">owner</span> <span class="o">:=</span> <span class="s">"owenrumney"</span>
+<span class="n">repo</span> <span class="o">:=</span> <span class="s">"go-github-pr-commenter"</span>
+<span class="n">prNo</span> <span class="o">:=</span> <span class="m">1</span>
+
+
+<span class="n">c</span><span class="p">,</span> <span class="n">err</span> <span class="o">:=</span> <span class="n">commenter</span><span class="o">.</span><span class="n">NewCommenter</span><span class="p">(</span><span class="n">token</span><span class="p">,</span> <span class="n">owner</span><span class="p">,</span> <span class="n">repo</span><span class="p">,</span> <span class="n">prNo</span><span class="p">)</span>
+<span class="k">if</span> <span class="n">err</span> <span class="o">!=</span> <span class="no">nil</span> <span class="p">{</span>
+    <span class="n">fmt</span><span class="o">.</span><span class="n">Println</span><span class="p">(</span><span class="n">err</span><span class="o">.</span><span class="n">Error</span><span class="p">())</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>We now have a commenter, on creation it checked that it had connectivity and that the PR exists so you would have an error if this wasn’t the case.</p>
+
+<p>Let’s assume your static analysis results are in a slice call <code class="language-plaintext highlighter-rouge">analysisResults</code> - you can now iterate over them, and create the comments;</p>
+
+<p>Lets say the <code class="language-plaintext highlighter-rouge">AnalysisResult</code> looks like this;</p>
+
+<div class="language-go highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">type</span> <span class="n">AnalysisResult</span> <span class="k">struct</span> <span class="p">{</span>
+  <span class="n">Filepath</span>  <span class="kt">string</span>
+  <span class="n">Comment</span>   <span class="kt">string</span>
+  <span class="n">StartLine</span> <span class="kt">int</span>
+  <span class="n">EndLine</span>   <span class="kt">int</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>Now we iterate over the slice</p>
+
+<div class="language-go highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">r</span> <span class="o">:=</span> <span class="n">analysisResults</span> <span class="p">{</span>
+  <span class="n">err</span> <span class="o">=</span> <span class="n">c</span><span class="o">.</span><span class="n">WriteMultiLineComment</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">Filepath</span><span class="p">,</span> <span class="n">r</span><span class="o">.</span><span class="n">Comment</span><span class="p">,</span> <span class="n">r</span><span class="o">.</span><span class="n">StartLine</span><span class="p">,</span> <span class="n">r</span><span class="o">.</span><span class="n">EndLine</span><span class="p">)</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>If <code class="language-plaintext highlighter-rouge">r.StartLine == r.EndLine</code> the library will detect this and create a single line commit comment.</p>
+
+<p>The error returned can be ignored under certain conditions. For example, if the same comment is being written again, this would return a <code class="language-plaintext highlighter-rouge">commenter.CommentAlreadyWrittenError</code> which can be dropped on the floor.</p>
+
+</div>
+
+            </div>
+        </main>
+    </div>
+
+    <footer class="wrapper-footer">
+        <div class="footer">
+    <span class="footer-text float-left">This work is licensed under <a rel="license" href="https://www.gnu.org/licenses/gpl-3.0.en.html" target="_blank">GPLv3</a></span>
+    <span class="footer-text float-right">
+    Site Updated: 2023-12-01  (<a href="/feed.xml" target="_blank">RSS</a>)
+  </span>
+</div>
+    </footer>
+</body>
+</html>

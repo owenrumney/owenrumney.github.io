@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<!-- Begin Jekyll SEO tag v2.6.1 -->
+<title>Adventures with Spark, part one | Owen Rumney</title>
+<meta name="generator" content="Jekyll v4.2.1" />
+<meta property="og:title" content="Adventures with Spark, part one" />
+<meta name="author" content="Owen Rumney" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="For 18 months I’ve been working with Hadoop. Initially it was Hortonworks HDP on Windows then Hortonworks HDP on CentOS and for production we settled on Cloudera CDH5 on Red Hat. Recently we’ve been introduced to Spark and subsequently Scala which I am now in the process of skilling up on, the plan is to blog as I learn." />
+<meta property="og:description" content="For 18 months I’ve been working with Hadoop. Initially it was Hortonworks HDP on Windows then Hortonworks HDP on CentOS and for production we settled on Cloudera CDH5 on Red Hat. Recently we’ve been introduced to Spark and subsequently Scala which I am now in the process of skilling up on, the plan is to blog as I learn." />
+<link rel="canonical" href="https://www.owenrumney.co.uk/Adventures_with_Spark_pt1/" />
+<meta property="og:url" content="https://www.owenrumney.co.uk/Adventures_with_Spark_pt1/" />
+<meta property="og:site_name" content="Owen Rumney" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2014-09-14T00:00:00+00:00" />
+<script type="application/ld+json">
+{"dateModified":"2014-09-14T00:00:00+00:00","datePublished":"2014-09-14T00:00:00+00:00","author":{"@type":"Person","name":"Owen Rumney"},"description":"For 18 months I’ve been working with Hadoop. Initially it was Hortonworks HDP on Windows then Hortonworks HDP on CentOS and for production we settled on Cloudera CDH5 on Red Hat. Recently we’ve been introduced to Spark and subsequently Scala which I am now in the process of skilling up on, the plan is to blog as I learn.","mainEntityOfPage":{"@type":"WebPage","@id":"https://www.owenrumney.co.uk/Adventures_with_Spark_pt1/"},"url":"https://www.owenrumney.co.uk/Adventures_with_Spark_pt1/","@type":"BlogPosting","headline":"Adventures with Spark, part one","@context":"https://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+
+
+<meta name="keywords" content="spark,scala" />
+
+<link rel="shortcut icon" href="/favicon.ico" />
+<link rel="apple-touch-icon" href="/favicon.ico"/>
+<link rel="stylesheet" type="text/css" href="/assets/css/styles.css" />
+<link rel="stylesheet" type="text/css" href="/assets/css/prism.css" />
+<script src="/assets/js/prism.js"></script>
+
+
+
+</head>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-TLCVNKXMFJ"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-TLCVNKXMFJ');
+</script>
+
+<body>
+    <div class="wrapper">
+        <header class="wrapper-header">
+            <div class="header">
+  <nav class="float-right">
+  
+  <a href="https://github.com/owenrumney" target="_blank"
+    ><img
+      src="/assets/images/github.svg"
+      style="color: white; display: inline-block"
+      height="30px"
+      alt="GitHub"
+  /></a>
+  
+  <a href="https://linkedin.com/in/owenrumney" target="_blank"
+    ><img
+      src="/assets/images/linkedin.svg"
+      style="color: white; display: inline-block"
+      height="30px"
+      alt="LinkedIn"
+  /></a>
+  
+  <a href="https://cv.owenrumney.co.uk" target="_blank"
+    ><img
+      src="/assets/images/resume.svg"
+      style="color: white; display: inline-block"
+      height="32px"
+      alt="Resume"
+  /></a>
+  
+</nav>
+
+  <a href="https://www.owenrumney.co.uk" target="_blank"><h1>Owen Rumney</h1></a>
+  <br />
+  <h5><i>Software Engineer</i></h5>
+  <br />
+
+  <hr />
+</div>
+
+        </header>
+
+        <main class="wrapper-main">
+            <div class="main-content">
+            <div class="post-info">
+    <h2>Adventures with Spark, part one</h2>
+    <p>14 Sep 2014 - Owen Rumney</p>
+</div>
+
+<div class="post-content">
+<p>For 18 months I’ve been working with Hadoop. Initially it was Hortonworks HDP on Windows then Hortonworks HDP on CentOS and for production we settled on Cloudera CDH5 on Red Hat. Recently we’ve been introduced to Spark and subsequently Scala which I am now in the process of skilling up on, the plan is to blog as I learn.</p>
+
+<p>For the first entries I imagine it won’t be much more than the basic tutorial you could read elsewhere, however the plan is to get more detailed as I learn more.</p>
+
+<p>I can’t introduce Scala better than <a href="https://twitter.github.io/scala_school/">Scala School</a> so its worth taking a look at that.</p>
+
+<p>I am going to use JetBrains IntelliJ IDEA for developing fuller applications, however for playing and learning you can download Spark for Hadoop in TAR format from the <a href="http://spark.apache.org/downloads.html">Spark Download Page</a> and use the Spark shell.</p>
+
+<p>For now I just extracted it to a folder in Downloads;</p>
+
+<p>To start the Spark shell</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="se">\$</span> <span class="nb">cd</span> ~/Downloads/spark-1.0.2-bin-hadoop2/bin
+./spark-shell
+</code></pre></div></div>
+
+<p>One of the key parts to Spark is the <code class="language-plaintext highlighter-rouge">SparkContext</code> which if you’ve done mapreduce seems to be similar to the <code class="language-plaintext highlighter-rouge">JobConf</code>. The SparkContext has all the required information about where to run the work and application details for view in the Spark UI web page.</p>
+
+<p>In the spark shell you can use the SparkContext <code class="language-plaintext highlighter-rouge">sc</code></p>
+
+<div class="language-scala highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+<span class="n">scala</span><span class="o">&gt;</span> <span class="k">val</span> <span class="nv">sentence</span> <span class="k">=</span> <span class="s">"The quick brown fox jumps over the lazy dog"</span>
+<span class="n">scala</span><span class="o">&gt;</span> <span class="k">val</span> <span class="nv">words</span> <span class="k">=</span> <span class="nv">sc</span><span class="o">.</span><span class="py">parallelize</span><span class="o">(</span><span class="n">sentence</span><span class="o">)</span>
+<span class="n">scala</span><span class="o">&gt;</span> <span class="nv">words</span><span class="o">.</span><span class="py">count</span><span class="o">()</span> <span class="c1">// should return 9  </span>
+<span class="n">scala</span><span class="o">&gt;</span> <span class="nv">words</span><span class="o">.</span><span class="py">filter</span><span class="o">(\</span><span class="nv">_</span><span class="o">.</span><span class="py">toLowerCase</span><span class="o">()</span> <span class="o">==</span> <span class="s">"the"</span><span class="o">).</span><span class="py">count</span><span class="o">()</span> <span class="c1">// should return 2</span>
+
+</code></pre></div></div>
+
+<p>All this is doing is creating a string, splitting it into words and creating a Spark RDD with it. We can use the <code class="language-plaintext highlighter-rouge">Action</code> count() to find out how many words there are and we can use the filter() to create a new RDD with filtered results (in this case, filter to the word ‘the’)</p>
+
+</div>
+
+            </div>
+        </main>
+    </div>
+
+    <footer class="wrapper-footer">
+        <div class="footer">
+    <span class="footer-text float-left">This work is licensed under <a rel="license" href="https://www.gnu.org/licenses/gpl-3.0.en.html" target="_blank">GPLv3</a></span>
+    <span class="footer-text float-right">
+    Site Updated: 2023-12-01  (<a href="/feed.xml" target="_blank">RSS</a>)
+  </span>
+</div>
+    </footer>
+</body>
+</html>

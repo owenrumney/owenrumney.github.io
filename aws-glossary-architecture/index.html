@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<!-- Begin Jekyll SEO tag v2.6.1 -->
+<title>How it works - www.aws-glossary.info | Owen Rumney</title>
+<meta name="generator" content="Jekyll v4.2.1" />
+<meta property="og:title" content="How it works - www.aws-glossary.info" />
+<meta name="author" content="Owen Rumney" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="Overview of how the www.aws-glossary.info website works" />
+<meta property="og:description" content="Overview of how the www.aws-glossary.info website works" />
+<link rel="canonical" href="https://www.owenrumney.co.uk/aws-glossary-architecture/" />
+<meta property="og:url" content="https://www.owenrumney.co.uk/aws-glossary-architecture/" />
+<meta property="og:site_name" content="Owen Rumney" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2019-02-27T00:00:00+00:00" />
+<script type="application/ld+json">
+{"dateModified":"2019-02-27T00:00:00+00:00","datePublished":"2019-02-27T00:00:00+00:00","author":{"@type":"Person","name":"Owen Rumney"},"description":"Overview of how the www.aws-glossary.info website works","mainEntityOfPage":{"@type":"WebPage","@id":"https://www.owenrumney.co.uk/aws-glossary-architecture/"},"url":"https://www.owenrumney.co.uk/aws-glossary-architecture/","@type":"BlogPosting","headline":"How it works - www.aws-glossary.info","@context":"https://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+
+
+<meta name="keywords" content="aws,tools" />
+
+<link rel="shortcut icon" href="/favicon.ico" />
+<link rel="apple-touch-icon" href="/favicon.ico"/>
+<link rel="stylesheet" type="text/css" href="/assets/css/styles.css" />
+<link rel="stylesheet" type="text/css" href="/assets/css/prism.css" />
+<script src="/assets/js/prism.js"></script>
+
+
+
+</head>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-TLCVNKXMFJ"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-TLCVNKXMFJ');
+</script>
+
+<body>
+    <div class="wrapper">
+        <header class="wrapper-header">
+            <div class="header">
+  <nav class="float-right">
+  
+  <a href="https://github.com/owenrumney" target="_blank"
+    ><img
+      src="/assets/images/github.svg"
+      style="color: white; display: inline-block"
+      height="30px"
+      alt="GitHub"
+  /></a>
+  
+  <a href="https://linkedin.com/in/owenrumney" target="_blank"
+    ><img
+      src="/assets/images/linkedin.svg"
+      style="color: white; display: inline-block"
+      height="30px"
+      alt="LinkedIn"
+  /></a>
+  
+  <a href="https://cv.owenrumney.co.uk" target="_blank"
+    ><img
+      src="/assets/images/resume.svg"
+      style="color: white; display: inline-block"
+      height="32px"
+      alt="Resume"
+  /></a>
+  
+</nav>
+
+  <a href="https://www.owenrumney.co.uk" target="_blank"><h1>Owen Rumney</h1></a>
+  <br />
+  <h5><i>Software Engineer</i></h5>
+  <br />
+
+  <hr />
+</div>
+
+        </header>
+
+        <main class="wrapper-main">
+            <div class="main-content">
+            <div class="post-info">
+    <h2>How it works - www.aws-glossary.info</h2>
+    <p>27 Feb 2019 - Owen Rumney</p>
+</div>
+
+<div class="post-content">
+<p>I recently posted an entry <a href="/aws-glossary-info/">announcing www.aws-glossary.info</a>. In this post I want to cover how it actually works.</p>
+
+<h2 id="basic-architecture">Basic Architecture</h2>
+
+<p>The logical diagram below details the basic structure of the application. The core components are;</p>
+
+<table>
+  <thead>
+    <tr>
+      <th style="text-align: left">Component</th>
+      <th style="text-align: left">Purpose</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="text-align: left">Github</td>
+      <td style="text-align: left">Static content stored in github</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">CodePipeline</td>
+      <td style="text-align: left">On commit to the master branch of the github repo - UI components deployed to S3</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">S3</td>
+      <td style="text-align: left">Static content for the application is stored in an S3 bucket configured for website hosting</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">CloudFront</td>
+      <td style="text-align: left">Edge location storage, but more importantly, facilitates SSL</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">Route53</td>
+      <td style="text-align: left">Hosted zone for the aws-glossary.info domain - points to the CloudFront distribution</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">Lambda</td>
+      <td style="text-align: left">Python lambda function to get the latest documentation data and store in a neat JSON file</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">CloudWatch Events</td>
+      <td style="text-align: left">Used to trigger the lambda function</td>
+    </tr>
+  </tbody>
+</table>
+
+<p><img src="../images/aws_glossary_architecture.png" alt="Basic Architecture Diagra" /></p>
+
+<h2 id="user-interface">User Interface</h2>
+
+<p>The user interface is using KnockoutJS to bind all the components together to dynamically filter the data downloaded in the service JSON file. KnockoutJS allows you to tag components as observable; for example, as you update the search text box, the collection behind the table is filtered appropriately.</p>
+
+<p>Finally, for ease (and because I’m no good a UI design), I’ve used Bootstrap 4.0 to make the look and feel slick but easy for me.</p>
+
+<p>Resources:</p>
+
+<ul>
+  <li><a href="https://knockoutjs.com/">KnockoutJS</a></li>
+  <li><a href="https://getbootstrap.com/">Bootstrap 4.0</a></li>
+</ul>
+
+</div>
+
+            </div>
+        </main>
+    </div>
+
+    <footer class="wrapper-footer">
+        <div class="footer">
+    <span class="footer-text float-left">This work is licensed under <a rel="license" href="https://www.gnu.org/licenses/gpl-3.0.en.html" target="_blank">GPLv3</a></span>
+    <span class="footer-text float-right">
+    Site Updated: 2023-12-01  (<a href="/feed.xml" target="_blank">RSS</a>)
+  </span>
+</div>
+    </footer>
+</body>
+</html>

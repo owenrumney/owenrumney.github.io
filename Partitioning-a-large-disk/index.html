@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<!-- Begin Jekyll SEO tag v2.6.1 -->
+<title>Partitioning a large disk in RedHat | Owen Rumney</title>
+<meta name="generator" content="Jekyll v4.2.1" />
+<meta property="og:title" content="Partitioning a large disk in RedHat" />
+<meta name="author" content="Owen Rumney" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="For the project I am currently working on, we have an order for a Hadoop Appliance from our supplier to be placed in the Mega Data Centre for processing all of our log files. The order is in, but with all the red tape its going to be a while before it’ll be up and running." />
+<meta property="og:description" content="For the project I am currently working on, we have an order for a Hadoop Appliance from our supplier to be placed in the Mega Data Centre for processing all of our log files. The order is in, but with all the red tape its going to be a while before it’ll be up and running." />
+<link rel="canonical" href="https://www.owenrumney.co.uk/Partitioning-a-large-disk/" />
+<meta property="og:url" content="https://www.owenrumney.co.uk/Partitioning-a-large-disk/" />
+<meta property="og:site_name" content="Owen Rumney" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2014-01-13T00:00:00+00:00" />
+<script type="application/ld+json">
+{"dateModified":"2014-01-13T00:00:00+00:00","datePublished":"2014-01-13T00:00:00+00:00","author":{"@type":"Person","name":"Owen Rumney"},"description":"For the project I am currently working on, we have an order for a Hadoop Appliance from our supplier to be placed in the Mega Data Centre for processing all of our log files. The order is in, but with all the red tape its going to be a while before it’ll be up and running.","mainEntityOfPage":{"@type":"WebPage","@id":"https://www.owenrumney.co.uk/Partitioning-a-large-disk/"},"url":"https://www.owenrumney.co.uk/Partitioning-a-large-disk/","@type":"BlogPosting","headline":"Partitioning a large disk in RedHat","@context":"https://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+
+
+<meta name="keywords" content="linux" />
+
+<link rel="shortcut icon" href="/favicon.ico" />
+<link rel="apple-touch-icon" href="/favicon.ico"/>
+<link rel="stylesheet" type="text/css" href="/assets/css/styles.css" />
+<link rel="stylesheet" type="text/css" href="/assets/css/prism.css" />
+<script src="/assets/js/prism.js"></script>
+
+
+
+</head>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-TLCVNKXMFJ"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-TLCVNKXMFJ');
+</script>
+
+<body>
+    <div class="wrapper">
+        <header class="wrapper-header">
+            <div class="header">
+  <nav class="float-right">
+  
+  <a href="https://github.com/owenrumney" target="_blank"
+    ><img
+      src="/assets/images/github.svg"
+      style="color: white; display: inline-block"
+      height="30px"
+      alt="GitHub"
+  /></a>
+  
+  <a href="https://linkedin.com/in/owenrumney" target="_blank"
+    ><img
+      src="/assets/images/linkedin.svg"
+      style="color: white; display: inline-block"
+      height="30px"
+      alt="LinkedIn"
+  /></a>
+  
+  <a href="https://cv.owenrumney.co.uk" target="_blank"
+    ><img
+      src="/assets/images/resume.svg"
+      style="color: white; display: inline-block"
+      height="32px"
+      alt="Resume"
+  /></a>
+  
+</nav>
+
+  <a href="https://www.owenrumney.co.uk" target="_blank"><h1>Owen Rumney</h1></a>
+  <br />
+  <h5><i>Software Engineer</i></h5>
+  <br />
+
+  <hr />
+</div>
+
+        </header>
+
+        <main class="wrapper-main">
+            <div class="main-content">
+            <div class="post-info">
+    <h2>Partitioning a large disk in RedHat</h2>
+    <p>13 Jan 2014 - Owen Rumney</p>
+</div>
+
+<div class="post-content">
+<p>For the project I am currently working on, we have an order for a Hadoop Appliance from our supplier to be placed in the Mega Data Centre for processing all of our log files. The order is in, but with all the red tape its going to be a while before it’ll be up and running.</p>
+
+<p>In order for this delay not to impact the project, we’ve been given dispensation to host a small cluster of machines running Cloudera in one of the local server rooms. This will give us our processing capability while we wait for the main appliance to be commissioned.</p>
+
+<p>This week I’ve been installing the corporate approved build of Red Hat onto the old trader spec desktops that we’ve managed to get our hands on. Its basically standard Red Hat Enterprise Server but with some slight modifications made to harden it.</p>
+
+<p>We have bought 3TB disks for the data storage in these boxes, given their size they’re using GPT partition tables and initially it’s been difficult to get fdisk to partition the disks correctly. In the end,
+the following steps were all that were needed to get things working and create the 3TB partition.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="se">\$</span> fdisk <span class="nt">-l</span>
+
+<span class="c">#### find the correct device name, in my case /dev/hdc</span>
+
+<span class="se">\$</span> parted /dev/hdc1
+<span class="o">(</span>parted<span class="o">)</span> mklabel gpt
+<span class="o">(</span>parted<span class="o">)</span> unit TB
+<span class="o">(</span>parted<span class="o">)</span> mkpart primary 0 3
+
+<span class="c">#### check the partition</span>
+
+<span class="o">(</span>parted<span class="o">)</span> p
+<span class="o">(</span>parted<span class="o">)</span> quit
+<span class="se">\$</span> mkfs.ext4 /dev/hdc1
+</code></pre></div></div>
+
+</div>
+
+            </div>
+        </main>
+    </div>
+
+    <footer class="wrapper-footer">
+        <div class="footer">
+    <span class="footer-text float-left">This work is licensed under <a rel="license" href="https://www.gnu.org/licenses/gpl-3.0.en.html" target="_blank">GPLv3</a></span>
+    <span class="footer-text float-right">
+    Site Updated: 2023-12-01  (<a href="/feed.xml" target="_blank">RSS</a>)
+  </span>
+</div>
+    </footer>
+</body>
+</html>

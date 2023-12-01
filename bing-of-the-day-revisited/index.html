@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<!-- Begin Jekyll SEO tag v2.6.1 -->
+<title>Bing of the Day revisited | Owen Rumney</title>
+<meta name="generator" content="Jekyll v4.2.1" />
+<meta property="og:title" content="Bing of the Day revisited" />
+<meta name="author" content="Owen Rumney" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="Walkthough of the steps required to move a bing of the day wallpaper borrower into a lambda script triggered by CloudWatch" />
+<meta property="og:description" content="Walkthough of the steps required to move a bing of the day wallpaper borrower into a lambda script triggered by CloudWatch" />
+<link rel="canonical" href="https://www.owenrumney.co.uk/bing-of-the-day-revisited/" />
+<meta property="og:url" content="https://www.owenrumney.co.uk/bing-of-the-day-revisited/" />
+<meta property="og:site_name" content="Owen Rumney" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2019-01-04T00:00:00+00:00" />
+<script type="application/ld+json">
+{"dateModified":"2019-01-04T00:00:00+00:00","datePublished":"2019-01-04T00:00:00+00:00","author":{"@type":"Person","name":"Owen Rumney"},"description":"Walkthough of the steps required to move a bing of the day wallpaper borrower into a lambda script triggered by CloudWatch","mainEntityOfPage":{"@type":"WebPage","@id":"https://www.owenrumney.co.uk/bing-of-the-day-revisited/"},"url":"https://www.owenrumney.co.uk/bing-of-the-day-revisited/","@type":"BlogPosting","headline":"Bing of the Day revisited","@context":"https://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+
+
+<meta name="keywords" content="aws,python,programming" />
+
+<link rel="shortcut icon" href="/favicon.ico" />
+<link rel="apple-touch-icon" href="/favicon.ico"/>
+<link rel="stylesheet" type="text/css" href="/assets/css/styles.css" />
+<link rel="stylesheet" type="text/css" href="/assets/css/prism.css" />
+<script src="/assets/js/prism.js"></script>
+
+
+
+</head>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-TLCVNKXMFJ"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-TLCVNKXMFJ');
+</script>
+
+<body>
+    <div class="wrapper">
+        <header class="wrapper-header">
+            <div class="header">
+  <nav class="float-right">
+  
+  <a href="https://github.com/owenrumney" target="_blank"
+    ><img
+      src="/assets/images/github.svg"
+      style="color: white; display: inline-block"
+      height="30px"
+      alt="GitHub"
+  /></a>
+  
+  <a href="https://linkedin.com/in/owenrumney" target="_blank"
+    ><img
+      src="/assets/images/linkedin.svg"
+      style="color: white; display: inline-block"
+      height="30px"
+      alt="LinkedIn"
+  /></a>
+  
+  <a href="https://cv.owenrumney.co.uk" target="_blank"
+    ><img
+      src="/assets/images/resume.svg"
+      style="color: white; display: inline-block"
+      height="32px"
+      alt="Resume"
+  /></a>
+  
+</nav>
+
+  <a href="https://www.owenrumney.co.uk" target="_blank"><h1>Owen Rumney</h1></a>
+  <br />
+  <h5><i>Software Engineer</i></h5>
+  <br />
+
+  <hr />
+</div>
+
+        </header>
+
+        <main class="wrapper-main">
+            <div class="main-content">
+            <div class="post-info">
+    <h2>Bing of the Day revisited</h2>
+    <p>04 Jan 2019 - Owen Rumney</p>
+</div>
+
+<div class="post-content">
+<p>Back in 2014 I wrote an <a href="/Update_Bing_Desktop_For_Mac/">article about borrowing the bing wallpaper</a> to use on my Macbook. Not long after that, I found that I was missing the odd “Bing of the Day” so I decided to run it in the cloud.</p>
+
+<p>This post cover the steps of how that is achieved so you can “borrow” the Bing of the Day into S3.</p>
+
+<h2 id="prerequisite">Prerequisite</h2>
+
+<p>You will need an Amazon Web Services account. The Lambda function that runs this will fit within your free tier and it will take some time before the images dent your S3 free tier.</p>
+
+<p>I’m not going to cover creating an account, but if you don’t have one then you can go to the <a href="https://portal.aws.amazon.com/billing/signup?nc2=h_ct&amp;src=header_signup&amp;redirect_url=https%3A%2F%2Faws.amazon.com%2Fregistration-confirmation#/start">AWS account creation page</a> to get started.</p>
+
+<h2 id="steps">Steps</h2>
+
+<h3 id="creating-the-s3-bucket-for-your-images">Creating the S3 Bucket for your images</h3>
+<p>First thing you’re going to need is somewhere to store the images. I’m going to create a new bucket in S3 called <code class="language-plaintext highlighter-rouge">owensbingoftheday</code>. As per S3 requirements, you’re going to need to come up with your own unique bucket name.</p>
+
+<p>In the AWS management console, go to the S3 service and create the new bucket, the create page should look like this;</p>
+
+<p><img src="../images/bing_create_bucket.png" alt="Create the S3 Bucket for storing bing image" /></p>
+
+<h3 id="creating-the-lambda-role">Creating the Lambda Role</h3>
+
+<p>The next thing you’re going to need is an IAM Role which the Lambda function can execute as. First we will create the locked down policy the role is going to use to access the S3 bucket.</p>
+
+<h4 id="creating-the-policy">Creating the policy</h4>
+
+<p>In the IAM service of the AWS Management console, create a new policy and switch to the JSON tab then add the following JSON. You need to change the bucket name in the <code class="language-plaintext highlighter-rouge">Resource</code> section to match the name of the bucket you specified in the previous step.</p>
+
+<div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">{</span><span class="w">
+    </span><span class="nl">"Version"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2012-10-17"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"Statement"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+        </span><span class="p">{</span><span class="w">
+            </span><span class="nl">"Sid"</span><span class="p">:</span><span class="w"> </span><span class="s2">"WriteBingImages"</span><span class="p">,</span><span class="w">
+            </span><span class="nl">"Effect"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Allow"</span><span class="p">,</span><span class="w">
+            </span><span class="nl">"Action"</span><span class="p">:</span><span class="w"> </span><span class="s2">"s3:PutObject"</span><span class="p">,</span><span class="w">
+            </span><span class="nl">"Resource"</span><span class="p">:</span><span class="w"> </span><span class="s2">"arn:aws:s3:::owensbingoftheday/*"</span><span class="w">
+        </span><span class="p">}</span><span class="w">
+    </span><span class="p">]</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div></div>
+
+<p>The policy should look something like this; (you can ignore the error at the top of the screen shot)</p>
+
+<p><img src="../images/bing_create_policy.png" alt="Create a new policy to write to S" /></p>
+
+<h4 id="creating-the-role">Creating the role</h4>
+
+<p>Now that the policy has been created, we need the role that Lambda will execute as. This role will be created to trust Lambda. There is no need to explicity specify the Trust Policy for the role, we just select Lambda when creating the role.</p>
+
+<p>Create a new role in the IAM service in AWS Management console. Ensure you select the service as Lambda to allow Lambda to assume the role.</p>
+
+<p><img src="../images/bing_create_lambda_role.png" alt="Create the new rol" /></p>
+
+<p>Next, attach the policy we created earlier, you can filter to find it</p>
+
+<p><img src="../images/bing_attach_policy.png" alt="Create the new rol" /></p>
+
+<p>Finally, save the policy with a unique name</p>
+
+<p><img src="../images/bing_role_name.png" alt="Create the new rol" /></p>
+
+<p>At this point, all of the plumbing is done to create the new Lambda function. Go to the Lambda service in AWS Management console.</p>
+
+<h3 id="creating-lambda-function">Creating Lambda Function</h3>
+<p>For this function we’re going to be starting a function from scratch. As the code to download the Bing of the day wallpaper is written in Python, we’ll be using that for the runtime.</p>
+
+<p>Create a new function and the first page should look something like this;</p>
+
+<p><img src="../images/bing_new_function.png" alt="Create the new rol" /></p>
+
+<p>Specify the new role that you’ve just created, it will allow the function to PUT our images into the specified bucket.</p>
+
+<p>On the next screen, paste the code below into the code box and <code class="language-plaintext highlighter-rouge">Save</code>.</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">boto3</span>
+<span class="kn">import</span> <span class="nn">json</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">urllib3</span>
+
+<span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span>
+
+<span class="n">IMAGE_ARCHIVE_URL</span> <span class="o">=</span> <span class="s">'http://www.bing.com/HPImageArchive.aspx?format=js&amp;idx=0&amp;n=1&amp;mkt=en-US'</span>
+<span class="n">http</span> <span class="o">=</span> <span class="n">urllib3</span><span class="p">.</span><span class="n">PoolManager</span><span class="p">()</span>
+
+<span class="k">def</span> <span class="nf">get_image_details</span><span class="p">(</span><span class="n">payload</span><span class="p">):</span>
+    <span class="n">image</span> <span class="o">=</span> <span class="n">payload</span><span class="p">.</span><span class="n">get</span><span class="p">(</span><span class="s">'images'</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">urlbase</span> <span class="o">=</span> <span class="n">image</span><span class="p">.</span><span class="n">get</span><span class="p">(</span><span class="s">'urlbase'</span><span class="p">)</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="n">image</span><span class="p">.</span><span class="n">get</span><span class="p">(</span><span class="s">'fullstartdate'</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">name</span><span class="p">,</span> <span class="s">'http://www.bing.com'</span><span class="o">+</span> <span class="n">urlbase</span> <span class="o">+</span> <span class="s">'_1920x1080.jpg'</span>
+
+
+<span class="k">def</span> <span class="nf">save_to_s3</span><span class="p">(</span><span class="n">name</span><span class="p">,</span>  <span class="n">path</span><span class="p">):</span>
+    <span class="n">s3</span> <span class="o">=</span> <span class="n">boto3</span><span class="p">.</span><span class="n">client</span><span class="p">(</span><span class="s">'s3'</span><span class="p">)</span>
+    <span class="n">year</span> <span class="o">=</span> <span class="n">datetime</span><span class="p">.</span><span class="n">now</span><span class="p">().</span><span class="n">year</span>
+    <span class="n">bucket_name</span> <span class="o">=</span> <span class="n">os</span><span class="p">.</span><span class="n">environ</span><span class="p">[</span><span class="s">'BUCKET_NAME'</span><span class="p">]</span>
+    <span class="n">object_name</span> <span class="o">=</span> <span class="s">'%s/%s.jpg'</span> <span class="o">%</span> <span class="p">(</span><span class="n">year</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
+    <span class="k">print</span> <span class="p">(</span><span class="s">"uploading {}"</span><span class="p">.</span><span class="nb">format</span><span class="p">(</span><span class="n">object_name</span><span class="p">))</span>
+    <span class="n">s3</span><span class="p">.</span><span class="n">upload_file</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">bucket_name</span><span class="p">,</span> <span class="n">object_name</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">get_image</span><span class="p">(</span><span class="n">payload</span><span class="p">):</span>
+    <span class="n">name</span><span class="p">,</span> <span class="n">image_url</span> <span class="o">=</span> <span class="n">get_image_details</span><span class="p">(</span><span class="n">payload</span><span class="p">)</span>
+    <span class="n">path</span> <span class="o">=</span> <span class="s">'/tmp/%s.jpg'</span> <span class="o">%</span> <span class="n">name</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s">'wb'</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="n">pic</span> <span class="o">=</span> <span class="n">http</span><span class="p">.</span><span class="n">request</span><span class="p">(</span><span class="s">'GET'</span><span class="p">,</span> <span class="n">image_url</span><span class="p">)</span>
+        <span class="n">f</span><span class="p">.</span><span class="n">write</span><span class="p">(</span><span class="n">pic</span><span class="p">.</span><span class="n">data</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">name</span><span class="p">,</span> <span class="n">path</span>
+
+
+<span class="k">def</span> <span class="nf">lambda_handler</span><span class="p">(</span><span class="n">event</span><span class="p">,</span> <span class="n">context</span><span class="p">):</span>
+    <span class="n">req</span> <span class="o">=</span> <span class="n">http</span><span class="p">.</span><span class="n">request</span><span class="p">(</span><span class="s">'GET'</span><span class="p">,</span> <span class="n">IMAGE_ARCHIVE_URL</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">req</span><span class="p">.</span><span class="n">status</span> <span class="o">!=</span> <span class="mi">200</span><span class="p">:</span>
+        <span class="k">print</span><span class="p">(</span><span class="s">"Could not get the image archive data"</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">payload</span> <span class="o">=</span> <span class="n">json</span><span class="p">.</span><span class="n">loads</span><span class="p">(</span><span class="n">req</span><span class="p">.</span><span class="n">data</span><span class="p">.</span><span class="n">decode</span><span class="p">(</span><span class="s">'utf-8'</span><span class="p">))</span>
+        <span class="n">name</span><span class="p">,</span> <span class="n">path</span> <span class="o">=</span> <span class="n">get_image</span><span class="p">(</span><span class="n">image_url</span><span class="p">,</span> <span class="n">path</span><span class="p">)</span>
+        <span class="n">save_to_s3</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">path</span><span class="p">)</span>
+        
+</code></pre></div></div>
+
+<p>The lambda function can now be tested. We’ll need an event to send so using the drop down next to the <code class="language-plaintext highlighter-rouge">Test</code> button, create a new test event.</p>
+
+<p>Fill out the details for an empty event so it looks like this;</p>
+
+<p><img src="../images/bing_test_event.png" alt="Create the test even" /></p>
+
+<p>Now, when you press the <code class="language-plaintext highlighter-rouge">Test</code> button, it will send the empty event to trigger the lambda function, all being well, you’ll find today’s image in the specified S3 bucket.</p>
+
+<h3 id="scheduling-the-function">Scheduling the function</h3>
+
+<p>The intention was to move this from the laptop to run automatically within AWS. We now need to trigger this function to download once a day. To achieve this, we’re going to use a CloudWatch trigger with a schedule of 24 hours.</p>
+
+<p><img src="../images/bing_configure_rule.png" alt="Creating the CloudWatch rul" /></p>
+
+<p>Give the rule and name and save it. Our lambda function will now be triggered every 24hours to download the Bing of the day.</p>
+
+<h3 id="downloading-to-your-machine">Downloading to your machine</h3>
+
+<p>The last thing to do is the routine download of the latest files. To do this I use the aws cli and the sync function. this will download anything not already on my machine;</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>aws s3 <span class="nb">sync </span>s3://owensbingoftheday/2019 ~/Pictures/bing-wallpapers/2019
+</code></pre></div></div>
+
+
+</div>
+
+            </div>
+        </main>
+    </div>
+
+    <footer class="wrapper-footer">
+        <div class="footer">
+    <span class="footer-text float-left">This work is licensed under <a rel="license" href="https://www.gnu.org/licenses/gpl-3.0.en.html" target="_blank">GPLv3</a></span>
+    <span class="footer-text float-right">
+    Site Updated: 2023-12-01  (<a href="/feed.xml" target="_blank">RSS</a>)
+  </span>
+</div>
+    </footer>
+</body>
+</html>
