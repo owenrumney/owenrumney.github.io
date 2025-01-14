@@ -2,7 +2,7 @@
 layout: post
 title: Deploying Prometheus to Kubernetes
 date: 2022-08-03 00:00:00
-image: '/assets/img/owen.png'
+
 description: Documenting the steps required to run Prometheus in Kubernetes
 tags: [kubernetes, learning, monitoring]
 categories: [Containers, SysAdmin]

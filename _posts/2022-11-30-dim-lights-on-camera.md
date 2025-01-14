@@ -2,7 +2,7 @@
 layout: post
 title: Controlling my office lights from my webcam!?!?
 date: 2022-11-30 00:00:00
-image: "/assets/img/owen.png"
+
 description: A dirty, dirty hacky way to control my lights from my webcam
 tags: [go, learning]
 categories: [Niche]

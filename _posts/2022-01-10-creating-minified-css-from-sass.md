@@ -2,7 +2,7 @@
 layout: post
 title: "Creating minified CSS from SCSS"
 date: 2022-01-10 00:00:00
-image: '/assets/img/owen.png'
+
 description: Reminder for creating minified css from scss file
 tags: [scss]
 categories: [Programming]

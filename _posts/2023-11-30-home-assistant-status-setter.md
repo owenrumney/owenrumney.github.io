@@ -2,7 +2,7 @@
 layout: post
 title: Set Slack status using Home Assistant
 date: 2023-11-30 00:00:00
-image: "/assets/img/owen.png"
+
 description: Adding automation triggers to home assistant to set Slack status
 tags: [python, learning, home-assistant]
 categories: [programming]
@@ -11,7 +11,8 @@ twitter_text: Set Slack status on a schedule with Home Assistant
 
 # The Brief
 
-| Note: I am on week two of running a HomeAssistant service so I'm still learning. If you have any suggestions or improvements please let me know.
+> Note: I am on week two of running a HomeAssistant service so I'm still learning. If you have any suggestions or improvements please let me know. 
+{: .prompt-info }
 
 I want to be able to set my Slack presence when I'm working and "Away" when I'm not. I want this to be automated so I don't have to remember to do it and I want the notifications muted when I'm not working.
 

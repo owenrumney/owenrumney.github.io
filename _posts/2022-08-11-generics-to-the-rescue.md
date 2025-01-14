@@ -2,7 +2,7 @@
 layout: post
 title: Generics to the Rescue
 date: 2022-08-11 00:00:00
-image: '/assets/img/owen.png'
+
 description: A tale of performance improvements using Generics
 tags: [programming, go]
 categories: [Programming]

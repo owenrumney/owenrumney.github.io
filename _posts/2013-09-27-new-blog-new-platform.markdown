@@ -4,7 +4,7 @@ author: Owen Rumney
 date: 2013-09-27
 title: New blog, new platform
 description: Moving to a new platform for my blog
-image: '/assets/img/owen.png'
+
 tags: [blogging]
 categories: [Blogging]
 ---
