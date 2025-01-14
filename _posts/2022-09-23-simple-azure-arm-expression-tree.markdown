@@ -2,7 +2,7 @@
 layout: post
 title: Parsing Azure ARM functions in Go
 date: 2022-09-23 00:00:00
-image: "/assets/img/owen.png"
+
 description: A simplified guide to parsing function expressions in Azure ARM templates
 tags: [go, programming]
 categories: [Programming]
