@@ -53,7 +53,7 @@ certbot certonly --non-interactive \
         --dns-gandi-credentials /gandi/gandi.ini \
         -d ${REGISTER_DOMAIN} -m "${EMAIL}"
 
-cp /etc/letsencrypt/live/${REGISTERED_DOMAIN}/* /certmount
+cp /etc/letsencrypt/live/${REGISTER_DOMAIN}/* /certmount
 ```
 
 ## The Compose file
@@ -71,7 +71,7 @@ services:
     environment:
       - DOMAIN=*.home.owenrumney.co.uk
       - EMAIL=owen@owenrumney.co.uk
-    build: .
+    build: . 
 ```
 
 ## The schedule
