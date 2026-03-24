@@ -9,9 +9,9 @@ categories: [Programming]
 twitter_text: Building a Language Server in Go
 ---
 
-## What are we doing?
+## What is this?
 
-I've been working on a Go library called [go-lsp](https://github.com/owenrumney/go-lsp) that handles the grunt work of building a Language Server Protocol server. The LSP spec is one of those things that sounds straightforward until you actually try to implement it — there's JSON-RPC framing, capability negotiation, a mountain of type definitions, and a lot of boilerplate that's the same every time.
+I've been working on a Go library called [go-lsp](https://github.com/owenrumney/go-lsp){:target="_blank"} that handles the grunt work of building a Language Server Protocol server. The LSP spec is one of those things that sounds straightforward until you actually try to implement it — there's JSON-RPC framing, capability negotiation, a mountain of type definitions, and a lot of boilerplate that's the same every time.
 
 The library takes care of all of that so you can focus on the interesting bit: your language logic.
 
@@ -29,7 +29,7 @@ go get github.com/owenrumney/go-lsp@latest
 
 The core idea is interface-based. You create a handler struct and implement interfaces for the features you want. The server detects what you've implemented and handles registration and capability advertisement automatically.
 
-The only thing you *must* implement is `LifecycleHandler`:
+The only thing you _must_ implement is `LifecycleHandler`:
 
 ```go
 type LifecycleHandler interface {
@@ -145,7 +145,7 @@ func (h *handler) DidSave(ctx context.Context, params *lsp.DidSaveTextDocumentPa
 
 Adding hover is just another interface. We'll show the line content when someone hovers:
 
-```go
+````go
 func (h *handler) Hover(_ context.Context, params *lsp.HoverParams) (*lsp.Hover, error) {
     content, ok := h.documents[params.TextDocument.URI]
     if !ok {
@@ -164,7 +164,7 @@ func (h *handler) Hover(_ context.Context, params *lsp.HoverParams) (*lsp.Hover,
         },
     }, nil
 }
-```
+````
 
 ## Wiring it up
 
@@ -212,20 +212,22 @@ srv := server.NewServer(h, server.WithDebugUI(":7100"))
 
 Open `http://localhost:7100` and you get a full view of every JSON-RPC message flowing between your editor and server, with timing, filtering, and a timeline view. Really useful when you're debugging capability negotiation or trying to understand what your editor is actually sending.
 
+![Debug UI](/images/debugui.png)
+
 ## Adding more features
 
 The pattern is always the same — implement an interface, the server handles registration. Some of the more commonly used ones:
 
-| What you want | Interface to implement |
-|---|---|
-| Go to definition | `DefinitionHandler` |
-| Find references | `ReferencesHandler` |
-| Code actions | `CodeActionHandler` |
-| Completions | `CompletionHandler` |
-| Formatting | `DocumentFormattingHandler` |
-| Rename | `RenameHandler` |
+| What you want    | Interface to implement      |
+| ---------------- | --------------------------- |
+| Go to definition | `DefinitionHandler`         |
+| Find references  | `ReferencesHandler`         |
+| Code actions     | `CodeActionHandler`         |
+| Completions      | `CompletionHandler`         |
+| Formatting       | `DocumentFormattingHandler` |
+| Rename           | `RenameHandler`             |
 
-The full list of interfaces is in [server/handlers.go](https://github.com/owenrumney/go-lsp/blob/main/server/handlers.go).
+The full list of interfaces is in [server/handlers.go](https://github.com/owenrumney/go-lsp/blob/main/server/handlers.go){:target="_blank"}.
 
 ## Wrap up
 
@@ -233,4 +235,4 @@ That's a working language server in about 80 lines of Go. The LSP spec is massiv
 
 The library covers the full LSP 3.17 spec, so when you need something like semantic tokens or call hierarchies, the interfaces are there waiting.
 
-Check out the [repo](https://github.com/owenrumney/go-lsp) and the [getting started guide](https://github.com/owenrumney/go-lsp/blob/main/docs/getting-started.md) for more detail.
+Check out the [repo](https://github.com/owenrumney/go-lsp){:target="_blank"} and the [getting started guide](https://github.com/owenrumney/go-lsp/blob/main/docs/getting-started.md){:target="_blank"} for more detail.
