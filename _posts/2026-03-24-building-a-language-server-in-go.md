@@ -55,6 +55,17 @@ func newHandler() *handler {
 }
 ```
 
+If you want the compiler to catch missing methods early, you can add compile-time checks using anonymous variable assignments. These zero-cost assertions fail at build time if `handler` doesn't satisfy the interface:
+
+```go
+var _ server.LifecycleHandler        = (*handler)(nil)
+var _ server.ClientHandler           = (*handler)(nil)
+var _ server.TextDocumentSyncHandler = (*handler)(nil)
+var _ server.HoverHandler            = (*handler)(nil)
+```
+
+This is especially useful as your handler grows — you'll get a clear compiler error pointing at exactly which method is missing rather than a confusing runtime failure.
+
 The `ClientHandler` interface gives us the client reference after the connection is established:
 
 ```go
